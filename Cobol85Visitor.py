@@ -1,11 +1,11 @@
-# Generated from Cobol85.g4 by ANTLR 4.7.2
+# Generated from Cobol85.g4 by ANTLR 4.13.1
 from antlr4 import *
-if __name__ is not None and "." in __name__:
+if "." in __name__:
     from .Cobol85Parser import Cobol85Parser
 else:
     from Cobol85Parser import Cobol85Parser
 
-   #package antlr;
+   package antlr;
 
 
 # This class defines a complete generic visitor for a parse tree produced by Cobol85Parser.
