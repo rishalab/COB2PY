@@ -5,7 +5,7 @@ if "." in __name__:
 else:
     from Cobol85Parser import Cobol85Parser
 
-   package antlr;
+   #package antlr;
 
 
 # This class defines a complete generic visitor for a parse tree produced by Cobol85Parser.

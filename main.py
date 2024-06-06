@@ -1,6 +1,7 @@
 import antlr4
 from Cobol85Lexer import Cobol85Lexer
 from Cobol85Parser import Cobol85Parser
+from Cobol85Visitor import Cobol85Visitor
 
 file_path = './tests/DIVIDE.cbl'
 
