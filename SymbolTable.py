@@ -33,7 +33,7 @@ class SymbolTable(Cobol85Visitor):
     
     def stringify(self):
         result = "Symbol Table \n"
-        for varible in self.table.values:
+        for varible in self.table.values():
             result += f'{varible.dataName} {varible.level} {varible.picture} {varible.length}\n'
         return result
     
