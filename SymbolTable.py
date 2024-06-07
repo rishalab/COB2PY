@@ -9,7 +9,7 @@ class SymbolCell():
         self.dataName=dataName
         self.level=level
         self.length=length
-        self.usage =0
+        self.usage =1
         self.picture=picture
         self.ref=False
         self.isMod=False
@@ -24,6 +24,21 @@ class SymbolTable(Cobol85Visitor):
     def __init__(self):
         Cobol85Visitor.__init__(self)
         self.table = defaultdict(SymbolCell)
+
+    def addCell(self,symbolCell:SymbolCell):
+        self.table[symbolCell.dataName]=symbolCell
+    
+    def getCell(self,dataName):
+        return self.table[dataName]
+    
+    def stringify(self):
+        result = "Symbol Table \n"
+        for varible in self.table.values:
+            result += f'{varible.dataName} {varible.level} {varible.picture} {varible.length}\n'
+        return result
+    
+    def __repr__(self):
+        return self.stringify()
 
     #override
     def visitDataDescriptionEntry(self, ctx:Cobol85Parser.DataDescriptionEntryContext):
@@ -43,8 +58,7 @@ class SymbolTable(Cobol85Visitor):
                 else:
                     length=int(picture[2:-1])
                     picture = picture[0]
-                self.table[dataName]=SymbolCell(dataName,level,length,picture)
-                #print(level,dataName,picture,length)
+                self.addCell(SymbolCell(dataName,level,length,picture))
         return self.visitChildren(ctx)
 
 
