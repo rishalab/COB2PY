@@ -135,11 +135,17 @@ class CustomVisitor(Cobol85Visitor):
 
 # --------------------   MULTIPLY   --------------------
 
-    def visitMultiplyStatement(self, ctx:Cobol85Parser.MultiplyStatementContext):
-        return self.visitChildren(ctx)
+    # def visitMultiplyStatement(self, ctx:Cobol85Parser.MultiplyStatementContext):
+    #     return self.visitChildren(ctx)
 
 
     def visitMultiplyRegular(self, ctx:Cobol85Parser.MultiplyRegularContext):
+        multiplends = []
+        for child in ctx.children:
+            multiplends.append(child.getText())
+        multiplier = ctx.parentCtx.children[1].getText()
+        for chi in multiplends:
+            self.python_code += f"{chi} = {chi} * {multiplier}\n"
         return self.visitChildren(ctx)
 
 
@@ -156,6 +162,10 @@ class CustomVisitor(Cobol85Visitor):
 
 
     def visitMultiplyGivingResult(self, ctx:Cobol85Parser.MultiplyGivingResultContext):
+        multiplend = ctx.parentCtx.parentCtx.children[1].getText()
+        multiplier = ctx.parentCtx.children[0].getText()
+        result = ctx.children[0].getText()
+        self.python_code += f"{result} = {multiplend} * {multiplier}\n"
         return self.visitChildren(ctx)
     
 # --------------------   DIVIDE   ---------------

@@ -1,18 +1,20 @@
 # Generated Python Code:
 A=10
-B=23
-C=10
-D=5
-E=10
-F=5
-G=11
-H=5
-B = B // A
-print('DIVIDE A INTO B.: A= ', A, '  ,B= ', B)
-J = C // D
-print('DIVIDE D INTO C GIVING J: C= ', C, ' ,D= ', D, ', J= ', J)
-I = E // F
-print('DIVIDE E BY F GIVING I.: E= ', E, ' ,F= ', F, ', I= ', I)
-K = H // G
-L = H % G
-print('DIVIDE G INTO H GIVING K REMAINDER L: G= ', G, ', H= ', H, ', K= ', K, ', L= ', L)
+B=20
+C=0
+D=0
+E=0
+F=0
+print('Initial Values: A=', A, ' B=', B, ' C=', C, ' D=', D, ' E=', E, ' F=', F)
+B = B * A
+print('After MULTIPLY A BY B: A=', A, ' B=', B)
+A = A * 2
+B = B * 2
+print('After MULTIPLY 2 BY A B: A=', A, ' B=', B)
+C = 3 * A
+print('After MULTIPLY 3 BY A GIVING C: C=', C)
+D = 4 * A
+print('After MULTIPLY 4 BY A GIVING D ROUNDED: D=', D)
+E = A * 2
+F = A * 2
+print('After MULTIPLY A BY 2 GIVING E F: E=', E, ' F=', F)

@@ -1,38 +1,30 @@
-       IDENTIFICATION DIVISION.
-       PROGRAM-ID. MultiplyExample.
-       DATA DIVISION.
-       WORKING-STORAGE SECTION.
-       77 A PIC 9(4) VALUE 10.
-       77 B PIC 9(4) VALUE 5.
-       77 C PIC 9(4) VALUE 0.
-       77 D PIC 9(4) VALUE 15.
-       77 E PIC 9(4) VALUE 3.
-       77 F PIC 9(4) VALUE 0.
-       77 G PIC 9(4) VALUE 8.
-       77 H PIC 9(4) VALUE 4.
-       77 I PIC 9(4) VALUE 0.
-       77 J PIC 9(4) VALUE 7.
-       77 K PIC 9(4) VALUE 6.
-       77 L PIC 9(4) VALUE 0.
-       77 M PIC 9(4) VALUE 12.
-       77 N PIC 9(4) VALUE 3.
-       77 O PIC 9(4) VALUE 0.
-       77 P PIC 9(4) VALUE 0.
-       
-       PROCEDURE DIVISION.
-           MULTIPLY A BY B.
-           DISPLAY 'A * B = ' B.
+IDENTIFICATION DIVISION.
+PROGRAM-ID. MULTIPLY-EXAMPLE.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+77 A PIC 9(4) VALUE 10.
+77 B PIC 9(4) VALUE 20.
+77 C PIC 9(4) VALUE 0.
+77 D PIC 9(4) VALUE 0.
+77 E PIC 9(4) VALUE 0.
+77 F PIC 9(4) VALUE 0.
 
-           MULTIPLY D BY E GIVING F.
-           DISPLAY 'D * E giving F = ' F.
+PROCEDURE DIVISION.
+   DISPLAY 'Initial Values: A=' A ' B=' B ' C=' C ' D=' D ' E=' E ' F=' F.
 
-           MULTIPLY G BY H GIVING I.
-           DISPLAY 'G * H giving I = ' I.
+   MULTIPLY A BY B.
+   DISPLAY 'After MULTIPLY A BY B: A=' A ' B=' B.
 
-           MULTIPLY J BY K GIVING L.
-           DISPLAY 'J * K giving L = ' L.
+   MULTIPLY 2 BY A B.
+   DISPLAY 'After MULTIPLY 2 BY A B: A=' A ' B=' B.
 
-           MULTIPLY M BY N GIVING O P.
-           DISPLAY 'M * N giving O = ' O ' and P = ' P.
+   MULTIPLY 3 BY A GIVING C.
+   DISPLAY 'After MULTIPLY 3 BY A GIVING C: C=' C.
 
-           STOP RUN.
+   MULTIPLY 4 BY A GIVING D ROUNDED.
+   DISPLAY 'After MULTIPLY 4 BY A GIVING D ROUNDED: D=' D.
+
+   MULTIPLY A BY 2 GIVING E F.
+   DISPLAY 'After MULTIPLY A BY 2 GIVING E F: E=' E ' F=' F.
+
+   STOP RUN.
