@@ -105,3 +105,70 @@ class CustomVisitor(Cobol85Visitor):
         if remainder:
             self.python_code += f"# Remainder into {remainder}\n"
         return self.visitChildren(ctx)
+# --------------------   ADD   ---------------
+    def visitAddToStatement(self, ctx:Cobol85Parser.AddToStatementContext):
+        rhs,lhs='',''
+        isrhs=True
+        for child in ctx.children:
+            if child.getText().upper()=='TO' and  isrhs:
+                isrhs=False
+                rhs = rhs[:-2]
+            elif isrhs:
+                rhs+=f'{child.getText()} + '
+            elif not isrhs:
+                lhs=child.getText()
+                self.python_code += f'{lhs} += {rhs}\n'
+        
+        return self.visitChildren(ctx)
+
+
+    def visitAddToGivingStatement(self, ctx:Cobol85Parser.AddToGivingStatementContext):
+        rhs,lhs='',''
+        isrhs=True
+        for child in ctx.children:
+            if child.getText().upper()=='GIVING' and  isrhs:
+                isrhs=False
+                rhs = rhs[:-2]
+            elif isrhs and child.getText().upper()!='TO':
+                rhs+=f'{child.getText()} + '
+            elif not isrhs:
+                lhs=child.getText()
+                self.python_code += f'{lhs} = {rhs}\n'
+
+        return self.visitChildren(ctx)
+# --------------------   SUBTRACT   ---------------    
+    def visitSubtractFromStatement(self, ctx:Cobol85Parser.SubtractFromStatementContext):
+        rhs,lhs='',''
+        isrhs=True
+        for child in ctx.children:
+            if child.getText().upper()=='FROM' and  isrhs:
+                isrhs=False
+                rhs = rhs[:-2]
+            elif isrhs:
+                rhs+=f'{child.getText()} + '
+            elif not isrhs:
+                lhs=child.getText()
+                self.python_code += f'{lhs} -= {rhs}\n'
+        
+        return self.visitChildren(ctx)
+
+
+    def visitSubtractFromGivingStatement(self, ctx:Cobol85Parser.SubtractFromGivingStatementContext):
+        rhs,lhs='',''
+        isrhs=True
+        afterFrom=False
+        for child in ctx.children:
+            if child.getText().upper()=='GIVING' and  isrhs:
+                isrhs=False
+            elif isrhs and child.getText().upper()!='FROM' and (not afterFrom):
+                rhs+=f'{child.getText()} + '
+            elif isrhs and child.getText().upper()!='FROM' and afterFrom:
+                rhs=f'{child.getText()} - {rhs}'
+            elif isrhs and child.getText().upper()=='FROM':
+                rhs = '('+rhs[:-3]+')'
+                afterFrom=True
+            elif not isrhs:
+                lhs=child.getText()
+                self.python_code += f'{lhs} = {rhs}\n'
+
+        return self.visitChildren(ctx)
