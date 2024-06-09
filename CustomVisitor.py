@@ -133,6 +133,31 @@ class CustomVisitor(Cobol85Visitor):
 
         return self.visitChildren(ctx)
 
+# --------------------   MULTIPLY   --------------------
+
+    def visitMultiplyStatement(self, ctx:Cobol85Parser.MultiplyStatementContext):
+        return self.visitChildren(ctx)
+
+
+    def visitMultiplyRegular(self, ctx:Cobol85Parser.MultiplyRegularContext):
+        return self.visitChildren(ctx)
+
+
+    def visitMultiplyRegularOperand(self, ctx:Cobol85Parser.MultiplyRegularOperandContext):
+        return self.visitChildren(ctx)
+
+
+    def visitMultiplyGiving(self, ctx:Cobol85Parser.MultiplyGivingContext):
+        return self.visitChildren(ctx)
+
+
+    def visitMultiplyGivingOperand(self, ctx:Cobol85Parser.MultiplyGivingOperandContext):
+        return self.visitChildren(ctx)
+
+
+    def visitMultiplyGivingResult(self, ctx:Cobol85Parser.MultiplyGivingResultContext):
+        return self.visitChildren(ctx)
+    
 # --------------------   DIVIDE   ---------------
 
     def visitDivideIntoStatement(self, ctx:Cobol85Parser.DivideIntoStatementContext):

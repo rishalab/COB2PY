@@ -17,9 +17,12 @@ def main(file_path):
     visitor = CustomVisitor(parser,sym_tab)
     visitor.python_code=initCode
     visitor.visit(tree=tree)
-    print(sym_tab.__repr__())
-    print("Generated Python Code:\n")
-    print(visitor.get_python_code())
+    with open("./outputs/symbol_table.txt", "w") as f:
+        f.write("Generated Symbol Table : \n\n")
+        f.write(sym_tab.__repr__())
+    with open("./outputs/python_output.py", "w") as f:
+        f.write("# Generated Python Code:\n")
+        f.write(visitor.get_python_code())
 
 if __name__ == '__main__':
     main(file_path)
