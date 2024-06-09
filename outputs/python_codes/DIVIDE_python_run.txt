@@ -1,0 +1,4 @@
+DIVIDE A INTO B.: A=  10   ,B=  2
+DIVIDE D INTO C GIVING J: C=  10  ,D=  5 , J=  2
+DIVIDE E BY F GIVING I.: E=  10  ,F=  5 , I=  2
+DIVIDE G INTO H GIVING K REMAINDER L: G=  11 , H=  5 , K=  0 , L=  5

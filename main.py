@@ -3,8 +3,10 @@ from Cobol85Lexer import Cobol85Lexer
 from Cobol85Parser import Cobol85Parser
 from CustomVisitor import CustomVisitor
 from SymbolTable import SymbolTable
+import os
+import subprocess
 
-file_path = './tests/MULTIPLY.cbl'
+file_path = './tests/DIVIDE.cbl'
 def main(file_path):
     input_stream = FileStream(file_path)
     lexer = Cobol85Lexer(input_stream)
@@ -17,12 +19,26 @@ def main(file_path):
     visitor = CustomVisitor(parser,sym_tab)
     visitor.python_code=initCode
     visitor.visit(tree=tree)
-    with open("./outputs/symbol_table.txt", "w") as f:
+    
+    # --------------------------------Files operations------------------------------------
+    filename = os.path.basename(file_path)
+    output_python_filename = filename.split('.')[0] + "_python_output.py"
+    output_st_filename = filename.split('.')[0] + "_symbol_table.txt"
+    with open(os.path.join("./outputs/symbol_tables", output_st_filename), "w") as f:
         f.write("Generated Symbol Table : \n\n")
         f.write(sym_tab.__repr__())
-    with open("./outputs/python_output.py", "w") as f:
+    with open(os.path.join("./outputs/python_codes", output_python_filename), "w") as f:
         f.write("# Generated Python Code:\n")
         f.write(visitor.get_python_code())
+    user_input = input("Enter '1' to execute the generated Python script: ")
+    if user_input == '1':
+        run_output_filename = filename.split('.')[0] + "_python_run.txt"
+        subprocess.run(["python", os.path.join("./outputs/python_codes", output_python_filename)], check=True, stdout=subprocess.DEVNULL)
+        with open(os.path.join("./outputs/python_codes", run_output_filename), "w") as f_out:
+            result = subprocess.run(["python", os.path.join("./outputs/python_codes", output_python_filename)], stdout=subprocess.PIPE)
+            output = result.stdout.decode('utf-8').strip()
+            f_out.write(output)
+    #-------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
     main(file_path)
