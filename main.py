@@ -4,7 +4,7 @@ from Cobol85Parser import Cobol85Parser
 from CustomVisitor import CustomVisitor
 from SymbolTable import SymbolTable
 
-file_path = './tests/ADD.cbl'
+file_path = './tests/DIVIDE.cbl'
 def main(file_path):
     input_stream = FileStream(file_path)
     lexer = Cobol85Lexer(input_stream)

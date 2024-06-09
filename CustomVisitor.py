@@ -15,36 +15,6 @@ class CustomVisitor(Cobol85Visitor):
         
         return self.visitChildren(ctx)
     
-    # def visitDivideStatement(self, ctx: Cobol85Parser.DivideStatementContext):
-    #     dividend = self.visit(ctx.getChildren(1))
-    #     division_clause = self.visit(ctx.getChildren(2))
-    #     remainder = self.visit(ctx.divideRemainder()) if ctx.divideRemainder() else None
-    #     on_size_error_phrase = self.visit(ctx.onSizeErrorPhrase()) if ctx.onSizeErrorPhrase() else None
-    #     not_on_size_error_phrase = self.visit(ctx.notOnSizeErrorPhrase()) if ctx.notOnSizeErrorPhrase() else None
-
-    #     self.python_code += f"result = {dividend} / {division_clause}"
-    #     if remainder:
-    #         self.python_code += f"  # Remainder into {remainder}"
-    #     self.python_code += "\n"
-
-    #     return self.visitChildren(ctx)
-    
-    # def visitDivideGivingPhrase(self, ctx: Cobol85Parser.DivideGivingPhraseContext):
-    #     giving_values = [self.visit(child) for child in ctx.divideGiving()]
-
-    #     return ", ".join(giving_values)
-
-    # def visitDivideInto(self, ctx: Cobol85Parser.DivideIntoContext):
-    #     into_value = self.visit(ctx.getChild(0))
-    #     rounded = "rounded" if ctx.ROUNDED() else ""
-
-    #     return f"{into_value} {rounded}"
-
-    # def visitDivideGiving(self, ctx: Cobol85Parser.DivideGivingContext):
-    #     giving_value = self.visit(ctx.getChild(0))
-    #     rounded = "rounded" if ctx.ROUNDED() else ""
-
-    #     return f"{giving_value} {rounded}"
 
 # ------------  Display  ------------------------------------------------
 
@@ -92,20 +62,8 @@ class CustomVisitor(Cobol85Visitor):
     def visitDisplayWith(self, ctx: Cobol85Parser.DisplayWithContext):
         return ctx.getText()    
 
-# --------------------   DIVIDE   ---------------
-
-    def visitDivideStatement(self, ctx: Cobol85Parser.DivideStatementContext):
-        dividend = (ctx.children[1].getText())
-        division_clause = (ctx.children[2].getText())
-
-        remainder = self.visit(ctx.divideRemainder()) if ctx.divideRemainder() else None
-        on_size_error_phrase = self.visit(ctx.onSizeErrorPhrase()) if ctx.onSizeErrorPhrase() else None
-        not_on_size_error_phrase = self.visit(ctx.notOnSizeErrorPhrase()) if ctx.notOnSizeErrorPhrase() else None
-        self.python_code += f"result = {dividend} / {division_clause}\n"
-        if remainder:
-            self.python_code += f"# Remainder into {remainder}\n"
-        return self.visitChildren(ctx)
 # --------------------   ADD   ---------------
+
     def visitAddToStatement(self, ctx:Cobol85Parser.AddToStatementContext):
         rhs,lhs='',''
         isrhs=True
@@ -136,7 +94,9 @@ class CustomVisitor(Cobol85Visitor):
                 self.python_code += f'{lhs} = {rhs}\n'
 
         return self.visitChildren(ctx)
+    
 # --------------------   SUBTRACT   ---------------    
+
     def visitSubtractFromStatement(self, ctx:Cobol85Parser.SubtractFromStatementContext):
         rhs,lhs='',''
         isrhs=True
@@ -171,4 +131,36 @@ class CustomVisitor(Cobol85Visitor):
                 lhs=child.getText()
                 self.python_code += f'{lhs} = {rhs}\n'
 
+        return self.visitChildren(ctx)
+
+# --------------------   DIVIDE   ---------------
+
+    def visitDivideIntoStatement(self, ctx:Cobol85Parser.DivideIntoStatementContext):
+        divisor = ctx.children[1].getText()
+        dividend = ctx.parentCtx.children[1].getText()
+        self.python_code += f"{divisor} = {divisor} // {dividend}\n"
+        return self.visitChildren(ctx)
+
+    def visitDivideIntoGivingStatement(self, ctx:Cobol85Parser.DivideIntoGivingStatementContext):
+        divisor = ctx.parentCtx.children[1].getText()
+        dividend = ctx.children[1].getText()
+        quotient = ctx.children[2].children[1].getText()
+        self.python_code += f"{quotient} = {dividend} // {divisor}\n"
+        return self.visitChildren(ctx)
+
+    def visitDivideByGivingStatement(self, ctx:Cobol85Parser.DivideByGivingStatementContext):
+        quotient = ctx.children[2].children[1].getText()
+        divisor = ctx.children[1].getText()
+        dividend = ctx.parentCtx.children[1].getText()
+        self.python_code += f"{quotient} = {dividend} // {divisor}\n"
+        return self.visitChildren(ctx)
+
+    def visitDivideRemainder(self, ctx:Cobol85Parser.DivideRemainderContext):
+        dividend = ctx.parentCtx.children[1].getText()
+        divisor = ctx.parentCtx.children[2].children[1].getText()
+        remainder = ctx.children[1].getText()
+        if ctx.parentCtx.children[2].children[0].getText().lower() == "by":
+            self.python_code += f"{remainder} = {dividend} % {divisor}\n"
+        else :
+            self.python_code += f"{remainder} = {divisor} % {dividend}\n"
         return self.visitChildren(ctx)
