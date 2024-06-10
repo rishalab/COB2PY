@@ -199,3 +199,10 @@ class CustomVisitor(Cobol85Visitor):
         else :
             self.python_code += f"{remainder} = {divisor} % {dividend}\n"
         return self.visitChildren(ctx)
+    
+#---------------------------- ACCEPT --------------------------------------
+
+    def visitAcceptStatement(self, ctx:Cobol85Parser.AcceptStatementContext):
+        var_accept = ctx.children[1].getText()
+        self.python_code += f"{var_accept} = input()\n"
+        return self.visitChildren(ctx)

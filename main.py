@@ -6,7 +6,7 @@ from SymbolTable import SymbolTable
 import os
 import subprocess
 
-file_path = './tests/DIVIDE.cbl'
+file_path = './tests/ACCEPT.cbl'
 def main(file_path):
     input_stream = FileStream(file_path)
     lexer = Cobol85Lexer(input_stream)
