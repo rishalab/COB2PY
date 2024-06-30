@@ -15,6 +15,7 @@ class SymbolCell():
         self.isMod=False
         self.isSuppressed=False
         self.initialized=False
+        self.children = []
         self.value=None
     
     def incrementUsage(self):
@@ -26,8 +27,11 @@ class SymbolTable(Cobol85Visitor):
     def __init__(self):
         Cobol85Visitor.__init__(self)
         self.table = defaultdict(SymbolCell)
+        self.prevLevelNumber = 0
+        self.lastDataName:list[str] = ["" for i in range(49)]
 
     def addCell(self,symbolCell:SymbolCell):
+        
         self.table[symbolCell.dataName]=symbolCell
     
     def getCell(self,dataName):
@@ -44,11 +48,16 @@ class SymbolTable(Cobol85Visitor):
     
     def getCode(self):
         code=''
-        for cell in self.table.values():
-            if cell.initialized:
-                code+=f'{cell.dataName}={cell.value}\n'
+        
         
         return code
+    def getlastDataName(self,level):
+        start = level-1
+        while(self.lastDataName[start]==""):
+            start-=1
+            if start <0:
+                break
+        return self.lastDataName[start]
 
     #override
     def visitDataDescriptionEntry(self, ctx:Cobol85Parser.DataDescriptionEntryContext):
@@ -57,6 +66,7 @@ class SymbolTable(Cobol85Visitor):
 
     # override
     def visitDataDescriptionEntryFormat1(self, ctx:Cobol85Parser.DataDescriptionEntryFormat1Context):
+        #print("hi1234",self.lastDataName,ctx.children[1].getText())
         if ctx.children[0].getText()=='77':
             if len(ctx.children)==4:
                 level='77'
@@ -81,14 +91,57 @@ class SymbolTable(Cobol85Visitor):
                     picture = picture[0]
                 cell = SymbolCell(dataName,level,length,picture)
                 cell.initialized=True
-                value = ctx.children[3].children[1].getText()
+                value = ctx.children[3].children[-1].getText()
                 if picture=='9' and value.upper()=='ZEROS':
                     value = 0
                 elif value.upper()=='SPACES':
                     value = ' '*length
                 cell.value= int(value) if picture=='9' else value
                 self.addCell(cell)
+            
+        elif int(ctx.children[0].getText())<50 and int(ctx.children[0].getText())>0:
+            level = int(ctx.children[0].getText())
+            types = []
+            dataName,picture,length,value='','',0,None
+            for child in ctx.children:
+                types .append(type(child))
+                if type(child)==Cobol85Parser.DataNameContext:
+                    dataName = child.getText()
+                if type(child)==Cobol85Parser.DataPictureClauseContext:
+                    picture = child.children[-1].getText()
+                if type(child)==Cobol85Parser.DataValueClauseContext:
+                    value = child.children[-1].getText()
+                    if picture[0]=='9' and value.upper()=='ZEROS':
+                        value = 0
+                    elif value.upper()=='SPACES':
+                        value = ' '*length
+                    value= int(value) if picture[0]=='9' else value
+
+            if Cobol85Parser.DataPictureClauseContext in types:
+                cell= SymbolCell(dataName,level,length,picture)
+                cell.value = value if value is not None else None
+                if int(ctx.children[0].getText())!=1:
+                    #print("level is",level)
+                    self.table[self.getlastDataName(level-1)].children.append(SymbolCell(dataName,level,length,picture))
+                else:
+                    self.addCell(SymbolCell(dataName,level,length,picture))
+            else:
+                if int(ctx.children[0].getText())!=1:
+                    self.table[self.getlastDataName(level-1)].children.append(SymbolCell(dataName,level,-1,'Record'))
+                    self.addCell(self.table[self.getlastDataName(level-1)].children[-1])
+                    self.lastDataName.pop(level-1)
+                    self.lastDataName.insert(level-1,dataName)
+                else:
+                    self.addCell(SymbolCell(dataName,level,-1,'Record'))
+                    #print(dataName,self.lastDataName)
+                    self.lastDataName.pop(0)
+                    self.lastDataName.insert(0,dataName)
+               
         return self.visitChildren(ctx)
+
+
+
+    
 
 
     # override

@@ -6,7 +6,7 @@ from SymbolTable import SymbolTable
 import os
 import subprocess
 
-file_path = './tests/ACCEPT.cbl'
+file_path = './tests/ADD.cbl'
 def main(file_path):
     input_stream = FileStream(file_path)
     lexer = Cobol85Lexer(input_stream)
@@ -15,6 +15,7 @@ def main(file_path):
     tree = parser.startRule()
     sym_tab=SymbolTable()
     sym_tab.visit(tree=tree)
+    print(sym_tab.stringify())
     initCode = sym_tab.getCode()
     visitor = CustomVisitor(parser,sym_tab)
     visitor.python_code=initCode
