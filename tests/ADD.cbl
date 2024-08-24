@@ -9,10 +9,12 @@
        77 E PIC 9(4) VALUE 0000.
        77 F PIC X(4) VALUE "ABCD".
        01 GROUP-1.
-          05 NUM1 PIC 9(4) VALUE 10.
+          05 NUM1 .
+             10 NUM3  PIC 9V99 VALUE 20.
           05 NUM2 PIC 9(4) VALUE 20.
        01 GROUP-2.
-          05 NUM1 PIC 9(4) VALUE 30.
+          05 NUM1.
+             10 NUM5 PIC 9(5) VALUE 20.
           05 NUM2 PIC 9(4) VALUE 40.
        
        PROCEDURE DIVISION.
