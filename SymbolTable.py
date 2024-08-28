@@ -54,7 +54,7 @@ class SymbolTable(Cobol85Visitor):
 		for varible in self.table.values():
 			if varible.level==1:
 				self.dfs2(varible,0,1)
-				self.memoryPointer2=self.memoryPointer=varible.length
+				
 		for x in self.addressMap:
 			print(x)
 
@@ -253,7 +253,7 @@ class SymbolTable(Cobol85Visitor):
 		#print("hi1234",self.lastDataName,ctx.children[1].getText())
 		if ctx.children[0].getText()=='77':
 			occurs = 1
-			picInfo=None
+			picInfo=[[[],[]],[],[]]
 			if len(ctx.children)==4:
 				level='77'
 				dataName = ctx.children[1].getText().upper().replace('-','_')
@@ -288,7 +288,7 @@ class SymbolTable(Cobol85Visitor):
 		elif int(ctx.children[0].getText())<50 and int(ctx.children[0].getText())>0:
 			level = int(ctx.children[0].getText())
 			types = []
-			dataName,picture,length,value,occurs,picInfo='','',0,None,1,None
+			dataName,picture,length,value,occurs,picInfo='','',0,None,1,[[[],[]],[],[]]
 			for child in ctx.children:
 				types .append(type(child))
 				if type(child)==Cobol85Parser.DataNameContext:

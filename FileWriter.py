@@ -1,16 +1,15 @@
 from collections import defaultdict
 
-
 class FileWriter:
 
     def __init__(self):
-        self.CurrentFile = ''
+        self.CurrentFile = 'converted'
         self.indentation = 0
         pass
 
     def writeHeader(self):
-        with open(self.Currentfile+".py", "w") as file:
-            sentences = ["import Program from Program\n",f"class {self.CurrentFile}(Program):\n"]
+        with open(self.CurrentFile+".py", "w") as file:
+            sentences = ["from Program import Program\n",f"class {self.CurrentFile}(Program):\n"]
             for s in sentences:
                 file.write(s)
             
@@ -33,7 +32,7 @@ class FileWriter:
             for parent in variable.parents:
                 if parent.occurs > 1:
                     parentOccurs.append(parent.length)
-            with open(self.Currentfile+".py", "a+") as file:
+            with open(self.CurrentFile+".py", "a+") as file:
                 offset = str(offset)
                 for i in range(0,len(parentOccurs)):
                     offset+=("+ idx"+str(i+1)+f"*{str(parentOccurs[i])}")

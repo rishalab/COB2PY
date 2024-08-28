@@ -1,15 +1,37 @@
 from antlr.Cobol85Visitor import Cobol85Visitor
 from antlr.Cobol85Parser import Cobol85Parser
+from other.necessary_functions import *
+
 
 class CustomVisitor(Cobol85Visitor):
-    def __init__(self,parser,symbol_table):
+    def __init__(self,parser,symbol_table,mapaddress):
         super().__init__()
         self.python_code = ""
         self.parser = parser
         self.symbol_table = symbol_table
-
+        self.indentation = 0
+        self.loop_indentation_level = 0
+        self.mapaddress = mapaddress
+        
     def get_python_code(self):
         return self.python_code
+    def mapsearch(self,name):
+        varName = name[0]
+        name.pop(-1)
+        name = name[::-1]
+        for x in self.mapaddress:
+            if varName == x[0].dataName:
+                diff = len(x[0].parents) - len(name)
+                found = True
+                for i in range(0,len(name)):
+                    if x[0].parents.dataName==name[i]:
+                        found&=True
+                    else:
+                        found&=False
+                if found:
+                    return x[1]
+        
+        print("Var Not Found")
     #overide
     def visitDataDescriptionEntryFormat1(self, ctx:Cobol85Parser.DataDescriptionEntryFormat1Context):
         
@@ -19,6 +41,8 @@ class CustomVisitor(Cobol85Visitor):
 # ------------  Display  ------------------------------------------------
 
     def visitDisplayStatement(self, ctx: Cobol85Parser.DisplayStatementContext):
+        # Inden.increase_indentation(self)
+        self.python_code += Inden.add_indentation(self)
         display_operands = []
 
         for operand in ctx.displayOperand():
@@ -75,6 +99,7 @@ class CustomVisitor(Cobol85Visitor):
                 rhs+=f'{child.getText()} + '
             elif not isrhs:
                 lhs=child.getText()
+                self.python_code+=Inden.add_indentation(self)
                 self.python_code += f'{lhs} += {rhs}\n'
         
         return self.visitChildren(ctx)
@@ -91,6 +116,7 @@ class CustomVisitor(Cobol85Visitor):
                 rhs+=f'{child.getText()} + '
             elif not isrhs:
                 lhs=child.getText()
+                self.python_code+=Inden.add_indentation(self)
                 self.python_code += f'{lhs} = {rhs}\n'
 
         return self.visitChildren(ctx)
@@ -108,6 +134,7 @@ class CustomVisitor(Cobol85Visitor):
                 rhs+=f'{child.getText()} + '
             elif not isrhs:
                 lhs=child.getText()
+                self.python_code+=Inden.add_indentation(self)
                 self.python_code += f'{lhs} -= {rhs}\n'
         
         return self.visitChildren(ctx)
@@ -129,6 +156,7 @@ class CustomVisitor(Cobol85Visitor):
                 afterFrom=True
             elif not isrhs:
                 lhs=child.getText()
+                self.python_code+=Inden.add_indentation(self)
                 self.python_code += f'{lhs} = {rhs}\n'
 
         return self.visitChildren(ctx)
@@ -145,7 +173,8 @@ class CustomVisitor(Cobol85Visitor):
             multiplends.append(child.getText())
         multiplier = ctx.parentCtx.children[1].getText()
         for chi in multiplends:
-            self.python_code += f"{chi} = {chi} * {multiplier}\n"
+            self.python_code+=Inden.add_indentation(self)
+            self.python_code += f"set{chi} ( get{chi}() * {multiplier})\n"
         return self.visitChildren(ctx)
 
 
@@ -165,6 +194,7 @@ class CustomVisitor(Cobol85Visitor):
         multiplend = ctx.parentCtx.parentCtx.children[1].getText()
         multiplier = ctx.parentCtx.children[0].getText()
         result = ctx.children[0].getText()
+        self.python_code+=Inden.add_indentation(self)
         self.python_code += f"{result} = {multiplend} * {multiplier}\n"
         return self.visitChildren(ctx)
     
@@ -173,6 +203,7 @@ class CustomVisitor(Cobol85Visitor):
     def visitDivideIntoStatement(self, ctx:Cobol85Parser.DivideIntoStatementContext):
         divisor = ctx.children[1].getText()
         dividend = ctx.parentCtx.children[1].getText()
+        self.python_code+=Inden.add_indentation(self)
         self.python_code += f"{divisor} = {divisor} // {dividend}\n"
         return self.visitChildren(ctx)
 
@@ -180,6 +211,7 @@ class CustomVisitor(Cobol85Visitor):
         divisor = ctx.parentCtx.children[1].getText()
         dividend = ctx.children[1].getText()
         quotient = ctx.children[2].children[1].getText()
+        self.python_code+=Inden.add_indentation(self)
         self.python_code += f"{quotient} = {dividend} // {divisor}\n"
         return self.visitChildren(ctx)
 
@@ -187,6 +219,7 @@ class CustomVisitor(Cobol85Visitor):
         quotient = ctx.children[2].children[1].getText()
         divisor = ctx.children[1].getText()
         dividend = ctx.parentCtx.children[1].getText()
+        self.python_code+=Inden.add_indentation(self)
         self.python_code += f"{quotient} = {dividend} // {divisor}\n"
         return self.visitChildren(ctx)
 
@@ -195,14 +228,181 @@ class CustomVisitor(Cobol85Visitor):
         divisor = ctx.parentCtx.children[2].children[1].getText()
         remainder = ctx.children[1].getText()
         if ctx.parentCtx.children[2].children[0].getText().lower() == "by":
+            self.python_code+=Inden.add_indentation(self)
             self.python_code += f"{remainder} = {dividend} % {divisor}\n"
         else :
+            self.python_code+=Inden.add_indentation(self)
             self.python_code += f"{remainder} = {divisor} % {dividend}\n"
         return self.visitChildren(ctx)
     
-#---------------------------- ACCEPT --------------------------------------
+#----------------------------  ACCEPT  ------------------------------------
 
     def visitAcceptStatement(self, ctx:Cobol85Parser.AcceptStatementContext):
         var_accept = ctx.children[1].getText()
+        self.python_code+=Inden.add_indentation(self)
         self.python_code += f"{var_accept} = input()\n"
+        return self.visitChildren(ctx)
+
+#-----------------------------  IF  ---------------------------------------
+
+    def visitIfStatement(self, ctx:Cobol85Parser.IfStatementContext):
+        self.python_code += Inden.add_indentation(self);
+        if_condition = ctx.children[1].getText();
+        self.python_code += f"if {if_condition} :\n"
+        Inden.increase_indentation(self);
+        result = self.visitChildren(ctx)
+        Inden.decrease_indentation(self)
+        return result
+
+    def visitIfElse(self, ctx:Cobol85Parser.IfElseContext):
+        self.python_code += Inden.add_indentation(self);
+        Inden.decrease_indentation(self);
+        self.python_code += f"else:\n"
+        Inden.increase_indentation(self);
+        print(ctx.getText())
+        return self.visitChildren(ctx)
+    
+#----------------------------- STOP & Paragraphs ---------------------------------------
+
+    def visitStopStatement(self, ctx:Cobol85Parser.StopStatementContext):
+        Inden.decrease_indentation(self)
+        return self.visitChildren(ctx)
+    def visitParagraphs(self, ctx:Cobol85Parser.ParagraphsContext):
+        self.python_code += f"def main():\n"
+        Inden.increase_indentation(self)
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Cobol85Parser#paragraph.
+    def visitParagraph(self, ctx:Cobol85Parser.ParagraphContext):
+        name = replacehypwund(ctx.children[0].getText())
+        self.python_code += Inden.add_indentation(self)
+        self.python_code += f"def {name}():\n"
+        Inden.increase_indentation(self)
+        result = self.visitChildren(ctx)
+        Inden.decrease_indentation(self)
+        return result
+#----------------------------- PERFORM ------------------------------------
+
+    def visitPerformStatement(self, ctx:Cobol85Parser.PerformStatementContext):
+        
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Cobol85Parser#performInlineStatement.
+    def visitPerformInlineStatement(self, ctx:Cobol85Parser.PerformInlineStatementContext):
+        # self.python_code += Inden.add_indentation(self)
+        # self.python_code+=f"for _ in range(1) :\n"
+        # Inden.increase_indentation(self)
+        result = self.visitChildren(ctx)
+        if(Inden.get_loop_inden(self) == 2):
+            Inden.decrease_indentation(self)
+            Inden.loop_inden_decrement(self)
+            Inden.loop_inden_decrement(self)
+            
+        Inden.decrease_indentation(self)
+        return result
+
+
+    # Visit a parse tree produced by Cobol85Parser#performProcedureStatement.
+    def visitPerformProcedureStatement(self, ctx:Cobol85Parser.PerformProcedureStatementContext):
+        i = 0
+        # print(ctx.getChildCount())
+        # print(ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText())
+        while ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText() != ctx.children[0].getText() :
+            i+=1
+            # print(ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText()+"\n")
+            # print(ctx.children[0].getText()+"\n")
+        self.python_code += Inden.add_indentation(self)
+        self.python_code+=f"{replacehypwund(ctx.children[0].getText())}()\n"
+        if ctx.getChildCount()!=1:
+            while ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText() != ctx.children[2].getText():
+                i+=1
+                self.python_code += Inden.add_indentation(self)
+                tempstr = replacehypwund(ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText())
+                # print(tempstr+"  ==\n")
+                self.python_code+=f"{tempstr}()\n"
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Cobol85Parser#performType.
+    def visitPerformType(self, ctx:Cobol85Parser.PerformTypeContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Cobol85Parser#performTimes.
+    def visitPerformTimes(self, ctx:Cobol85Parser.PerformTimesContext):
+        self.python_code += Inden.add_indentation(self)
+        self.python_code += f"for _ in range({ctx.children[0].getText()}):\n"
+        Inden.increase_indentation(self)
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Cobol85Parser#performUntil.
+    def visitPerformUntil(self, ctx:Cobol85Parser.PerformUntilContext):
+        if ctx.parentCtx.parentCtx.children[0].getText() != "VARYING" and ctx.parentCtx.parentCtx.children[0].getText() != "AFTER" :
+            self.python_code += Inden.add_indentation(self)
+            if ctx.children[0].getText() == "UNTIL":
+                self.python_code += f"while not ( {ctx.children[1].getText()}):\n"
+            else:
+                self.python_code += f"while not ( {ctx.children[2].getText()}):\n"
+            Inden.increase_indentation(self)
+        else :
+            var = ctx.parentCtx.children[0].getText()
+            start = ctx.parentCtx.children[1].children[1].getText()
+            condition = ctx.parentCtx.children[3].children[1].getText()
+            self.python_code += Inden.add_indentation(self)
+            self.python_code += f"{var} = {start}\n"
+            self.python_code += Inden.add_indentation(self)
+            self.python_code += f"while {condition} :\n"
+            Inden.increase_indentation(self)
+            Inden.loop_inden_increment(self)
+            
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Cobol85Parser#performVarying.
+    def visitPerformVarying(self, ctx:Cobol85Parser.PerformVaryingContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Cobol85Parser#performVaryingClause.
+    def visitPerformVaryingClause(self, ctx:Cobol85Parser.PerformVaryingClauseContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Cobol85Parser#performVaryingPhrase.
+    def visitPerformVaryingPhrase(self, ctx:Cobol85Parser.PerformVaryingPhraseContext):
+        # print(ctx.getToken)
+        # var = ctx.children[0].getText()
+        # start = ctx.children[1].children[1].getText()
+        # condition = ctx.children[3].children[1].getText()
+        # self.python_code += Inden.add_indentation(self)
+        # self.python_code += f"{var} = {start}\n"
+        # self.python_code += Inden.add_indentation(self)
+        # self.python_code += f"while {condition} :\n"
+        # Inden.increase_indentation(self)
+        # result = ctx
+        # self.python_code += Inden.add_indentation(self)
+        
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Cobol85Parser#performAfter.
+    def visitPerformAfter(self, ctx:Cobol85Parser.PerformAfterContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Cobol85Parser#performFrom.
+    def visitPerformFrom(self, ctx:Cobol85Parser.PerformFromContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Cobol85Parser#performBy.
+    def visitPerformBy(self, ctx:Cobol85Parser.PerformByContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by Cobol85Parser#performTestClause.
+    def visitPerformTestClause(self, ctx:Cobol85Parser.PerformTestClauseContext):
         return self.visitChildren(ctx)

@@ -2,12 +2,12 @@
        PROGRAM-ID. ADD-EXAMPLE.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       77 A PIC 9(4) VALUE 1000.
-       77 B PIC 9(4) VALUE 2000.
-       77 C PIC 9(4) VALUE 0000.
-       77 D PIC 9(4) VALUE 0000.
-       77 E PIC 9(4) VALUE 0000.
-       77 F PIC X(4) VALUE "ABCD".
+       01 A PIC 9(4) VALUE 1000.
+       01 B PIC 9(4) VALUE 2000.
+       01 C PIC 9(4) VALUE 0000.
+       01 D PIC 9(4) VALUE 0000.
+       01 E PIC 9(4) VALUE 0000.
+       01 F PIC X(4) VALUE "ABCD".
        01 GROUP-1.
           05 NUM1 .
              10 NUM3  PIC 9V99 VALUE 20.

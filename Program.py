@@ -6,13 +6,13 @@ class Program:
         self.Memory = []*length
 
     def getAsString(self,offset,length):
-        return self.Memory[offset:offset+length-1]
+        return self.Memory[offset:offset+length]
     
     def getAsInt(self,offset,length):
-        return int(self.Memory[offset:offset+length-1])
+        return int(self.Memory[offset:offset+length])
     
     def getAsFloat(self,offset,length):
-        return float(self.Memory[offset:offset+length-1])
+        return float(self.Memory[offset:offset+length])
     
     def setAsInt(self,offset,length,value,isRounded):
         value = abs(round(value)) if isRounded else abs(int(value))

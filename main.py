@@ -5,8 +5,8 @@ from CustomVisitor import CustomVisitor
 from SymbolTable import SymbolTable
 import os
 import subprocess
-
-file_path = './tests/ADD2.cbl'
+from FileWriter import FileWriter
+file_path = './tests/ADD.cbl'
 def main(file_path):
     input_stream = FileStream(file_path)
     lexer = Cobol85Lexer(input_stream)
@@ -17,10 +17,15 @@ def main(file_path):
     sym_tab.visit(tree=tree)
     print(sym_tab.stringify())
     #initCode = sym_tab.getCode()
-    visitor = CustomVisitor(parser,sym_tab)
+    writer = FileWriter()
+    writer.writeHeader()
+    mapaddress=writer.writeGetterAndSetter(sym_tab.addressMap)
+    visitor = CustomVisitor(parser,sym_tab,mapaddress)
     #visitor.python_code=initCode
     visitor.visit(tree=tree)
-    
+    with open(os.path.join(".","converted.py"),"a+") as f:
+        f.write(visitor.get_python_code())
+        
     # --------------------------------Files operations------------------------------------
     # filename = os.path.basename(file_path)
     # output_python_filename = filename.split('.')[0] + "_python_output.py"
