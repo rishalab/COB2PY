@@ -1,6 +1,6 @@
 from antlr4 import *
-from Cobol85Lexer import Cobol85Lexer
-from Cobol85Parser import Cobol85Parser
+from antlr.Cobol85Lexer import Cobol85Lexer
+from antlr.Cobol85Parser import Cobol85Parser
 from CustomVisitor import CustomVisitor
 from SymbolTable import SymbolTable
 import os
@@ -16,9 +16,9 @@ def main(file_path):
     sym_tab=SymbolTable()
     sym_tab.visit(tree=tree)
     print(sym_tab.stringify())
-    initCode = sym_tab.getCode()
+    #initCode = sym_tab.getCode()
     visitor = CustomVisitor(parser,sym_tab)
-    visitor.python_code=initCode
+    #visitor.python_code=initCode
     visitor.visit(tree=tree)
     
     # --------------------------------Files operations------------------------------------
@@ -46,7 +46,6 @@ if __name__ == '__main__':
 
 '''issues
 1.commented lines in cobol is not being ignored
-2.On SIZE ERROR,END-ADD,END-SUBTRACT
-3.add Giving statement after TO only one should be there but parser is parsing for many
-4.your grammar is not  taking ,(coma) as separator it is only taking space
+2.add Giving statement after TO only one should be there but parser is parsing for many
+3.your grammar is not  taking ,(coma) as separator it is only taking space
 '''

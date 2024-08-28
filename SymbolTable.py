@@ -1,12 +1,12 @@
-from Cobol85Parser import Cobol85Parser
-from Cobol85Visitor import Cobol85Visitor
+from antlr.Cobol85Parser import Cobol85Parser
+from antlr.Cobol85Visitor import Cobol85Visitor
 from collections import defaultdict 
 import re
 
 
 class SymbolCell():
 
-	def __init__(self,dataName,level,length,picture,occurs,picInfo,value):
+	def __init__(self,dataName,level,length,picture,occurs,picInfo,value,parents):
 		self.dataName=dataName
 		self.level=level
 		self.length=length
@@ -17,6 +17,7 @@ class SymbolCell():
 		self.isSuppressed=False
 		self.initialized=False
 		self.children = []
+		self.parents = parents
 		self.value=value
 		self.picInfo=picInfo
 
@@ -31,6 +32,7 @@ class SymbolTable(Cobol85Visitor):
 		self.memoryAdresss=[]
 		self.addressMap = []
 		self.memoryPointer=0
+		self.memoryPointer2=0
 
 	def addCell(self,symbolCell:SymbolCell):
 		
@@ -52,6 +54,7 @@ class SymbolTable(Cobol85Visitor):
 		for varible in self.table.values():
 			if varible.level==1:
 				self.dfs2(varible,0,1)
+				self.memoryPointer2=self.memoryPointer=varible.length
 		for x in self.addressMap:
 			print(x)
 
@@ -74,15 +77,20 @@ class SymbolTable(Cobol85Visitor):
 			return variable.length
 	
 	def dfs2(self,variable,level,occ):
-		print(f'{variable.dataName} {variable.level} {variable.picture} len:{variable.length} occurs{variable.occurs} {len(variable.children)}')
+		print(f'{variable.dataName} {variable.level} {variable.picInfo} len:{variable.length} occurs{variable.occurs} {len(variable.children)}')
+
+		self.addressMap.append([variable,variable.dataName,self.memoryPointer,variable.occurs*variable.length,variable.length,variable.picInfo])
+		#print(":: ",variable.dataName,self.memoryPointer,self.memoryPointer2)
+		memoryPointer2 = self.memoryPointer
+		#print(":: ",variable.dataName,self.memoryPointer,self.memoryPointer2)
+		for child in variable.children:
+			self.dfs2(child,level,occ)
+		#print(":: ",variable.dataName,self.memoryPointer,self.memoryPointer2)
+		self.memoryPointer = memoryPointer2
+		#print(":: ",variable.dataName,self.memoryPointer,self.memoryPointer2)
+		self.memoryPointer+=((variable.occurs)*(variable.length)) if len(variable.children)!=0 else (variable.occurs*variable.length)
 		
 
-		if len((variable.children))!=0:
-			for child in variable.children:
-				self.dfs2(child,level+1,occ*variable.occurs)
-		else:
-			self.addressMap.append([variable.dataName,variable.picture,self.memoryPointer,variable.length])
-			self.memoryPointer +=variable.length*variable.occurs*occ
 		
 		
 		
@@ -301,27 +309,29 @@ class SymbolTable(Cobol85Visitor):
 							maxTimes = int(chi.children[1].getText())
 					occurs=maxTimes if maxTimes is not None else minTimes
 					
-
+			parents = []
 			if Cobol85Parser.DataPictureClauseContext in types:
 				if level==1:
-					self.addCell(SymbolCell(dataName,level,picInfo[0][1],picture,occurs,picInfo,value))
+					self.addCell(SymbolCell(dataName,level,picInfo[0][1],picture,occurs,picInfo,value,parents))
 					self.levelContextStack.append([level,dataName])
 				else:
 					#print("-----------------",self.levelContextStack)
 					while len(self.levelContextStack)!=0 and level <= self.levelContextStack[-1][0]:
 						self.levelContextStack.pop(-1)
-					self.table[self.levelContextStack[-1][1]].children.append(SymbolCell(dataName,level,picInfo[0][1],picture,occurs,picInfo,value))
+					parents = self.table[self.levelContextStack[-1][1]].parents +[self.table[self.levelContextStack[-1][1]]]
+					self.table[self.levelContextStack[-1][1]].children.append(SymbolCell(dataName,level,picInfo[0][1],picture,occurs,picInfo,value,parents))
 			else:
 				if(len(self.levelContextStack)!=0):
 					#print("-----------------",self.levelContextStack)
 					while len(self.levelContextStack)!=0 and level <= self.levelContextStack[-1][0]:
 						self.levelContextStack.pop(-1)
 				if(level!=1):
-					self.table[self.levelContextStack[-1][1]].children.append(SymbolCell(dataName,level,length,picture,occurs,picInfo,value))
+					parents = self.table[self.levelContextStack[-1][1]].parents +[self.table[self.levelContextStack[-1][1]]]
+					self.table[self.levelContextStack[-1][1]].children.append(SymbolCell(dataName,level,length,picture,occurs,picInfo,value,parents))
 					currCell = self.table[self.levelContextStack[-1][1]].children[-1]
 					self.addCell(currCell)
 				else:
-					self.addCell(SymbolCell(dataName,level,length,picture,occurs,picInfo,value))
+					self.addCell(SymbolCell(dataName,level,length,picture,occurs,picInfo,value,parents))
 				self.levelContextStack.append([level,dataName])
 
 		return self.visitChildren(ctx)

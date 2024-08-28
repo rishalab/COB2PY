@@ -1,5 +1,5 @@
-from Cobol85Visitor import Cobol85Visitor
-from Cobol85Parser import Cobol85Parser
+from antlr.Cobol85Visitor import Cobol85Visitor
+from antlr.Cobol85Parser import Cobol85Parser
 
 class CustomVisitor(Cobol85Visitor):
     def __init__(self,parser,symbol_table):
