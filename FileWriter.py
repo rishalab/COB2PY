@@ -36,28 +36,33 @@ class FileWriter:
                 offset = str(offset)
                 for i in range(0,len(parentOccurs)):
                     offset+=("+ idx"+str(i+1)+f"*{str(parentOccurs[i])}")
-                if pic[1]=="decimal":
-                    file.write(f"{'\t'*self.indentation}def get{dataName}(self):\n")
-                    file.write(f"{'\t'*(self.indentation+1)}return super().getAsFloat({offset},{length})\n")
-                    file.write("\n")
-                    file.write(f"{'\t'*self.indentation}def set{dataName}(self,value,isRounded):\n")
-                    file.write(f"{'\t'*(self.indentation+1)}return super().setAsFloat({offset},{length},value,isRounded,'{pic[0][0]}')\n")
-                    file.write("\n")
-                if pic[1]=="integer":
-                    file.write(f"{'\t'*self.indentation}def get{dataName}(self):\n")
-                    file.write(f"{'\t'*(self.indentation+1)}return super().getAsInt({offset},{length})\n")
-                    file.write("\n")
-                    file.write(f"{'\t'*self.indentation}def set{dataName}(self,value,isRounded):\n")
-                    file.write(f"{'\t'*(self.indentation+1)}return super().setAsInt({offset},{length},value,isRounded)\n")
-                    file.write("\n")
-                if pic[1]=="alphaNumericEdited" or pic =='':
-                    file.write(f"{'\t'*self.indentation}def get{dataName}(self):\n")
-                    file.write(f"{'\t'*(self.indentation+1)}return super().getAsString({offset},{length})\n")
-                    file.write("\n")
-                    file.write(f"{'\t'*self.indentation}def set{dataName}(self,value):\n")
-                    file.write(f"{'\t'*(self.indentation+1)}return super().setAsString({offset},{length},value)\n")
-                    file.write("\n")
-        
+                if pic[1] == "decimal":
+                    file.write(('\t' * self.indentation) + f"def get{dataName}(self):" + '\n')
+                    file.write(('\t' * (self.indentation + 1)) + f"return super().getAsFloat({offset}, {length})" + '\n')
+                    file.write('\n')
+                    file.write(('\t' * self.indentation) + f"def set{dataName}(self, value, isRounded):" + '\n')
+                    file.write(('\t' * (self.indentation + 1)) + f"return super().setAsFloat({offset}, {length}, value, isRounded, '{pic[0][0]}')" + '\n')
+                    file.write('\n')
+
+                if pic[1] == "integer":
+                    file.write(('\t' * self.indentation) + f"def get{dataName}(self):" + '\n')
+                    file.write(('\t' * (self.indentation + 1)) + f"return super().getAsInt({offset}, {length})" + '\n')
+                    file.write('\n')
+                    file.write(('\t' * self.indentation) + f"def set{dataName}(self, value, isRounded):" + '\n')
+                    file.write(('\t' * (self.indentation + 1)) + f"return super().setAsInt({offset}, {length}, value, isRounded)" + '\n')
+                    file.write('\n')
+
+                if pic[1] == "alphaNumericEdited" or pic == '':
+                    file.write(('\t' * self.indentation) + f"def get{dataName}(self):" + '\n')
+                    file.write(('\t' * (self.indentation + 1)) + f"return super().getAsString({offset}, {length})" + '\n')
+                    file.write('\n')
+                    file.write(('\t' * self.indentation) + f"def set{dataName}(self, value):" + '\n')
+                    file.write(('\t' * (self.indentation + 1)) + f"return super().setAsString({offset}, {length}, value)" + '\n')
+                    file.write('\n')
+
+        with open(self.CurrentFile+".py", "a+") as file:
+            file.write("\tdef main(self):\n")
+
         return variableToName
 
 

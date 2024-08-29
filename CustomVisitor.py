@@ -17,14 +17,19 @@ class CustomVisitor(Cobol85Visitor):
         return self.python_code
     def mapsearch(self,name):
         varName = name[0]
-        name.pop(-1)
+        print(name)
         name = name[::-1]
+        name.pop(-1)
         for x in self.mapaddress:
             if varName == x[0].dataName:
                 diff = len(x[0].parents) - len(name)
                 found = True
+                for y in x[0].parents:
+                    print(y.dataName,"--")
+                print(name,"!!")
                 for i in range(0,len(name)):
-                    if x[0].parents.dataName==name[i]:
+                    print(x[0].parents[i+diff].dataName,name[i],"che",varName)
+                    if x[0].parents[i+diff].dataName==name[i]:
                         found&=True
                     else:
                         found&=False
@@ -89,18 +94,32 @@ class CustomVisitor(Cobol85Visitor):
 # --------------------   ADD   ---------------
 
     def visitAddToStatement(self, ctx:Cobol85Parser.AddToStatementContext):
-        rhs,lhs='',''
+        rhs,lhs=[],[]
         isrhs=True
         for child in ctx.children:
+            print(lhs,rhs,"rfd ")
             if child.getText().upper()=='TO' and  isrhs:
                 isrhs=False
-                rhs = rhs[:-2]
             elif isrhs:
-                rhs+=f'{child.getText()} + '
+               if type(child)==Cobol85Parser.AddFromContext:
+                if(len(self.mapsearch(self.extractMultipleDataNamesFrom(child)[0]))!=0):
+                    rhs.append(self.mapsearch(self.extractMultipleDataNamesFrom(child)[0]))
+                if(len(self.extractMultipleDataNamesFrom(child)[1])!=0):
+                    rhs.append(self.extractMultipleDataNamesFrom(child)[1])
             elif not isrhs:
-                lhs=child.getText()
-                self.python_code+=Inden.add_indentation(self)
-                self.python_code += f'{lhs} += {rhs}\n'
+                if type(child)==Cobol85Parser.AddToContext:
+                    if(len(self.mapsearch(self.extractMultipleDataNames(child)))!=0):
+                        print(self.extractMultipleDataNames(child),"beforee")
+                        lhs.append(self.mapsearch(self.extractMultipleDataNames(child)))
+            rhs1 = ''
+        for x in rhs:
+            if x.isdigit():
+                rhs1+=(x+"+")
+            else:
+                rhs1+=(f'self.get{x}()+')
+        for x in lhs :
+            self.python_code +=f'\t\tself.set{x}({rhs1[:-1]})\n'     
+            
         
         return self.visitChildren(ctx)
 
@@ -268,7 +287,6 @@ class CustomVisitor(Cobol85Visitor):
         Inden.decrease_indentation(self)
         return self.visitChildren(ctx)
     def visitParagraphs(self, ctx:Cobol85Parser.ParagraphsContext):
-        self.python_code += f"def main():\n"
         Inden.increase_indentation(self)
         return self.visitChildren(ctx)
 
@@ -406,3 +424,54 @@ class CustomVisitor(Cobol85Visitor):
     # Visit a parse tree produced by Cobol85Parser#performTestClause.
     def visitPerformTestClause(self, ctx:Cobol85Parser.PerformTestClauseContext):
         return self.visitChildren(ctx)
+    
+    #----------Helpers-----------------------------------#
+    def extractMultipleDataNamesFrom(self, ctx: Cobol85Parser.AddFromContext):
+        data_names,literals = [],[]
+        if ctx.identifier():
+            identifier = ctx.identifier()
+            literal= ctx.literal()
+            if literal:
+                literals.append(literal.getText())
+
+            if identifier.qualifiedDataName():
+                qualified_data_name = identifier.qualifiedDataName()
+
+                if qualified_data_name.qualifiedDataNameFormat1():
+                    format1 = qualified_data_name.qualifiedDataNameFormat1()
+
+                    if format1.dataName():
+                        data_names.append(format1.dataName().getText().replace('-','_'))
+
+                    if format1.qualifiedInData():
+                        for qualifiedInData in format1.qualifiedInData():
+                            if qualifiedInData.inData():
+                                if qualifiedInData.inData().dataName():
+                                    data_names.append(qualifiedInData.inData().dataName().getText().replace('-','_'))
+        print(data_names)
+        
+        return data_names,literals
+    
+    def extractMultipleDataNames(self, ctx: Cobol85Parser.AddToContext):
+        data_names = []
+        if ctx.identifier():
+            identifier = ctx.identifier()
+            
+
+            if identifier.qualifiedDataName():
+                qualified_data_name = identifier.qualifiedDataName()
+
+                if qualified_data_name.qualifiedDataNameFormat1():
+                    format1 = qualified_data_name.qualifiedDataNameFormat1()
+
+                    if format1.dataName():
+                        data_names.append(format1.dataName().getText().replace('-','_'))
+
+                    if format1.qualifiedInData():
+                        for qualifiedInData in format1.qualifiedInData():
+                            if qualifiedInData.inData():
+                                if qualifiedInData.inData().dataName():
+                                    data_names.append(qualifiedInData.inData().dataName().getText().replace('-','_'))
+        print(data_names,"!!!!!!!!!!!!!")
+        
+        return data_names

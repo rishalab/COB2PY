@@ -18,24 +18,7 @@
           05 NUM2 PIC 9(4) VALUE 40.
        
        PROCEDURE DIVISION.
-           ADD A TO B.
-           DISPLAY 'A + B = ' B.
-           
-           ADD A B 50 TO C E.
-           DISPLAY 'A + B + C = ' C E.
-           
-           ADD A C TO B GIVING D E.
-           DISPLAY 'A + B giving D = ' D E.
-           
-           ADD 50 TO E.
-           DISPLAY '50 + E = ' E.
-
-           SUBTRACT A B FROM C GIVING D E
-           DISPLAY  D E.
-           
-           ADD CORRESPONDING GROUP-1 TO GROUP-2.
-           DISPLAY 'NUM1 + NUM1 = ' NUM1 OF GROUP-2.
-           DISPLAY 'NUM2 + NUM2 = ' NUM2 OF GROUP-2.
+           ADD NUM5 OF NUM1 OF GROUP-2 NUM2 OF GROUP-2 TO A B .
            
            STOP RUN.
        
