@@ -457,7 +457,6 @@ class CustomVisitor(Cobol85Visitor):
         if ctx.identifier():
             identifier = ctx.identifier()
             
-
             if identifier.qualifiedDataName():
                 qualified_data_name = identifier.qualifiedDataName()
 
@@ -475,3 +474,15 @@ class CustomVisitor(Cobol85Visitor):
         print(data_names,"!!!!!!!!!!!!!")
         
         return data_names
+    def getVariableLine(self,ctx:Cobol85Parser.identifier):
+        names = []
+        node = ctx.children[0].children[0]
+        if node.getChildCount()==1:
+            names.append(node.getText())
+        else:
+            for child in node.children[0].children[0]:
+                if(child.getChildrenCount()==1):
+                    names.append(child.getText())
+                else:
+                    names.append(child.children[1].getText())
+        return names
