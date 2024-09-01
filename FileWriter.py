@@ -9,9 +9,18 @@ class FileWriter:
 
     def writeHeader(self):
         with open(self.CurrentFile+".py", "w") as file:
-            sentences = ["from Program import Program\n",f"class {self.CurrentFile}(Program):\n"]
+            sentences = ["from Program import Program\n\n\n",f"class {self.CurrentFile}(Program):\n"]
             for s in sentences:
                 file.write(s)
+    
+    def constructor(self,addressMap):
+        self.indentation=1
+        element = addressMap[-1]
+        variable,dataName,offset,totalLength,length,pic=element
+        with open(self.CurrentFile+".py", "a+") as file:
+            file.write(('\t' * self.indentation) +"def __init__(self):\n")
+            file.write(('\t' * (self.indentation+1)) +f"super().__init__({offset+totalLength})"+"\n")
+
             
     def writeGetterAndSetter(self,addressMap):
         self.indentation=1

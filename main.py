@@ -19,6 +19,7 @@ def main(file_path):
     #initCode = sym_tab.getCode()
     writer = FileWriter()
     writer.writeHeader()
+    writer.constructor(sym_tab.addressMap)
     mapaddress=writer.writeGetterAndSetter(sym_tab.addressMap)
     visitor = CustomVisitor(parser,sym_tab,mapaddress)
     #visitor.python_code=initCode
