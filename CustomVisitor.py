@@ -103,6 +103,7 @@ class CustomVisitor(Cobol85Visitor):
             elif isrhs:
                if type(child)==Cobol85Parser.AddFromContext:
                 if(len(self.mapsearch(self.extractMultipleDataNamesFrom(child)[0]))!=0):
+                    print(self.getVariableLine(child.children[0]),'--------------------------------------------------------------------------------------',child.identifier().getText())
                     rhs.append(self.mapsearch(self.extractMultipleDataNamesFrom(child)[0]))
                 if(len(self.extractMultipleDataNamesFrom(child)[1])!=0):
                     rhs.append(self.extractMultipleDataNamesFrom(child)[1])
@@ -477,12 +478,12 @@ class CustomVisitor(Cobol85Visitor):
     def getVariableLine(self,ctx:Cobol85Parser.identifier):
         names = []
         node = ctx.children[0].children[0]
-        if node.getChildCount()==1:
-            names.append(node.getText())
-        else:
-            for child in node.children[0].children[0]:
-                if(child.getChildrenCount()==1):
-                    names.append(child.getText())
-                else:
-                    names.append(child.children[1].getText())
+        start = True
+        for child in node.children:
+            if start:
+                names.append(child.getText())
+                start = False
+            else:
+                names.append(child.children[0].children[1].getText())
         return names
+    
