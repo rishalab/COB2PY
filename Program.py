@@ -3,16 +3,16 @@ import math
 class Program:
 
     def __init__(self,length):
-        self.Memory = []*length
+        self.Memory = [""]*length
 
     def getAsString(self,offset,length):
-        return self.Memory[offset:offset+length]
+        return ''.join(self.Memory[offset:offset+length])
     
     def getAsInt(self,offset,length):
-        return int(self.Memory[offset:offset+length])
+        return int(''.join(self.Memory[offset:offset+length]))
     
     def getAsFloat(self,offset,length):
-        return float(self.Memory[offset:offset+length])
+        return float(''.join(self.Memory[offset:offset+length]))
     
     def setAsInt(self,offset,length,value,isRounded):
         value = abs(round(value)) if isRounded else abs(int(value))
@@ -22,6 +22,7 @@ class Program:
             for i in range(0,length):
                 self.Memory[offset+i]=value[i]
         else:
+            value = str(value)
             for i in range(0,dataLength):
                 self.Memory[offset+i]=value[i]
             for i in range(length,dataLength):
@@ -44,6 +45,6 @@ class Program:
         intPart,decpart= pic.split('.')
         intPartLen,decPartLen=len(intPart),len(decpart)
         value = abs(round(value,decPartLen)) if isRounded else abs(int(float(value)*(10**decPartLen))/(10**decPartLen))
-        value = str(value)[-length:]
+        value = str(value)[-length-1:]
         for i in range(0,length):
                 self.Memory[offset+i]=value[i]
