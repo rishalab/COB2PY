@@ -17,6 +17,8 @@ class CustomVisitor(Cobol85Visitor):
         return self.python_code
     def mapsearch(self,name):
         varName = name[0]
+        if varName.isdigit():
+            return varName
         print(name)
         name = name[::-1]
         name.pop(-1)
@@ -36,7 +38,7 @@ class CustomVisitor(Cobol85Visitor):
                 if found:
                     return x[1]
         
-        print("Var Not Found")
+        print(name, " Var Not Found")
     #overide
     def visitDataDescriptionEntryFormat1(self, ctx:Cobol85Parser.DataDescriptionEntryFormat1Context):
         
@@ -190,11 +192,16 @@ class CustomVisitor(Cobol85Visitor):
     def visitMultiplyRegular(self, ctx:Cobol85Parser.MultiplyRegularContext):
         multiplends = []
         for child in ctx.children:
-            multiplends.append(child.getText())
-        multiplier = ctx.parentCtx.children[1].getText()
+            # print(child.getText(),"-------99999999999-------------")
+            multiplends.append(self.mapsearch(self.getVariableLine(child.children[0])))
+            print(multiplends," pppppppppppppppppppppppppppppppppppppppp")
+        multiplier = self.mapsearch(self.getVariableLine(ctx.parentCtx.children[1]))
         for chi in multiplends:
             self.python_code+=Inden.add_indentation(self)
-            self.python_code += f"set{chi} ( get{chi}() * {multiplier})\n"
+            if multiplier.isdigit():
+                self.python_code += f"set{chi}(get{chi}() * {multiplier})\n"
+            else:   
+                self.python_code += f"set{chi}(get{chi}() * get{multiplier}())\n"
         return self.visitChildren(ctx)
 
 
@@ -481,9 +488,10 @@ class CustomVisitor(Cobol85Visitor):
         start = True
         for child in node.children:
             if start:
-                names.append(child.getText())
+                names.append(child.getText().replace('-', '_'))
                 start = False
             else:
-                names.append(child.children[0].children[1].getText())
+                names.append(child.children[0].children[1].getText().replace('-', '_'))
+        print (names," --000000000000000000000000-------------------")
         return names
     
