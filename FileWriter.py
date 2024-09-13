@@ -9,17 +9,18 @@ class FileWriter:
 
     def writeHeader(self):
         with open(self.CurrentFile+".py", "w") as file:
-            sentences = ["from Program import Program\n\n\n",f"class {self.CurrentFile}(Program):\n"]
+            sentences = ["from Program import Program\n\n\n",f"class {self.CurrentFile}(Program):\n","\n"]
             for s in sentences:
                 file.write(s)
     
     def constructor(self,addressMap):
         self.indentation=1
-        element = addressMap[-1]
+        element=max(addressMap,key=lambda element:(element[2],element[3]))
         variable,dataName,offset,totalLength,length,pic=element
         with open(self.CurrentFile+".py", "a+") as file:
             file.write(('\t' * self.indentation) +"def __init__(self):\n")
             file.write(('\t' * (self.indentation+1)) +f"super().__init__({offset+totalLength})"+"\n")
+            file.write("\n")
     
     def intializer(self,variableMap):
         self.indentation=1
@@ -34,23 +35,30 @@ class FileWriter:
                         for parent in variable.parents:
                             if parent.occurs > 1:
                                 parentOccurs.append(parent.occurs)
+                        if (variable.occurs!=1):
+                            parentOccurs.append(variable.occurs)
                         if len(parentOccurs)!=0:
                             le = len(parentOccurs)
                             indexes=''
                             for i in range(le):
-                                file.write(('\t' * self.indentation) +f"for idx{i+1} in range(1,{parentOccurs[i]}+1):\n")
+                                file.write(('\t' * self.indentation) +f"for idx{i+1} in range(0,{parentOccurs[i]}):\n")
                                 indexes+=("idx"+str(i+1)+',')
                                 self.indentation+=1
-                            if variable.picInfo[-1]=='decimal' or variable.picInfo[-1]=='integer' :
-                                file.write(('\t' * self.indentation) +f'self.set{Name}({indexes}{variable.value},False)'+'\n')
+                            if variable.picInfo[-1]=='decimal' :
+                                file.write(('\t' * self.indentation) +f'self.set{Name}({indexes}{float(variable.value)},False)'+'\n')
+                            elif variable.picInfo[-1]=='integer' :
+                                file.write(('\t' * self.indentation) +f'self.set{Name}({indexes}{int(variable.value)},False)'+'\n')
                             elif variable.picInfo[-1]=="alphaNumericEdited":
                                 file.write(('\t' * self.indentation) +f'self.set{Name}({indexes}{variable.value})'+'\n')
                             self.indentation-=le
                         else:
                             print(variable,Name,variable.picInfo,"intializer")
-                            if variable.picInfo[-1]=='decimal' or variable.picInfo[-1]=='integer' :
-                                file.write(('\t' * self.indentation) +f'self.set{Name}({variable.value},False)'+'\n')
-                                print(('\t' * self.indentation) +f'self.set{Name}({variable.value},False)'+'\n')
+                            if variable.picInfo[-1]=='decimal' :
+                                file.write(('\t' * self.indentation) +f'self.set{Name}({float(variable.value)},False)'+'\n')
+                                print(('\t' * self.indentation) +f'self.set{Name}({float(variable.value)},False)'+'\n')
+                            elif variable.picInfo[-1]=='integer' :
+                                file.write(('\t' * self.indentation) +f'self.set{Name}({int(variable.value)},False)'+'\n')
+                                print(('\t' * self.indentation) +f'self.set{Name}({int(variable.value)},False)'+'\n')
                             elif variable.picInfo[-1]=="alphaNumericEdited":
                                 file.write(('\t' * self.indentation) +f'self.set{Name}({variable.value})'+'\n')
             file.write(('\t' * self.indentation) +"pass\n")
@@ -82,6 +90,8 @@ class FileWriter:
             for parent in variable.parents:
                 if parent.occurs > 1:
                     parentOccurs.append(parent.length)
+            if (variable.occurs!=1):
+                parentOccurs.append(variable.length)
             with open(self.CurrentFile+".py", "a+") as file:
                 offset = str(offset)
                 indexes = ''
@@ -114,10 +124,3 @@ class FileWriter:
 
 
         return variableToName
-
-
-
-            
-
-
-        
