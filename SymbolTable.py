@@ -44,7 +44,7 @@ class SymbolTable(Cobol85Visitor):
 	def stringify(self):
 		result = "Symbol Table \n"
 		for varible in self.table.values():
-			if varible.level==1:
+			if varible.level==1 or varible.level==77:
 				result += f'{varible} {varible.dataName} {varible.level} {varible.picture} {varible.length}\n'
 				print(f' {varible.dataName} {varible.level} {varible.picture} {varible.length}')
 				ans = self.dfs(varible,0)
@@ -52,7 +52,7 @@ class SymbolTable(Cobol85Visitor):
 
 		print("checking length--------------------------------------------------------------------------")
 		for varible in self.table.values():
-			if varible.level==1:
+			if varible.level==1 or varible.level==77:
 				self.dfs2(varible,0,1)
 				
 		for x in self.addressMap:
@@ -272,7 +272,7 @@ class SymbolTable(Cobol85Visitor):
 						if type(chi)==Cobol85Parser.DataOccursToContext:
 							maxTimes = int(chi.children[1].getText())
 					occurs=maxTimes if maxTimes is not None else minTimes
-			self.addCell(SymbolCell(dataName,'77',picInfo[0][1],picture,occurs,picInfo,value,parents))
+			self.addCell(SymbolCell(dataName,77,picInfo[0][1],picture,occurs,picInfo,value,parents))
 			
 			
 		elif int(ctx.children[0].getText())<50 and int(ctx.children[0].getText())>0:
