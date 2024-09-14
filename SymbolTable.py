@@ -272,13 +272,14 @@ class SymbolTable(Cobol85Visitor):
 						if type(chi)==Cobol85Parser.DataOccursToContext:
 							maxTimes = int(chi.children[1].getText())
 					occurs=maxTimes if maxTimes is not None else minTimes
-			self.addCell(SymbolCell(dataName,level,picInfo[0][1],picture,occurs,picInfo,value,parents))
+			self.addCell(SymbolCell(dataName,'77',picInfo[0][1],picture,occurs,picInfo,value,parents))
 			
 			
 		elif int(ctx.children[0].getText())<50 and int(ctx.children[0].getText())>0:
 			level = int(ctx.children[0].getText())
 			types = []
 			dataName,picture,length,value,occurs,picInfo='','',0,None,1,[[[],[]],[],[]]
+			self.levelContextStack.clear()
 			for child in ctx.children:
 				types .append(type(child))
 				if type(child)==Cobol85Parser.DataNameContext:
