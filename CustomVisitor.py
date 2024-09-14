@@ -16,6 +16,8 @@ class CustomVisitor(Cobol85Visitor):
     def get_python_code(self):
         return self.python_code
     def mapsearch(self,name):
+        # if not name:
+        #     return 'NOT founfed'
         varName = name[0]
         if varName.isdigit():
             return varName
@@ -192,16 +194,25 @@ class CustomVisitor(Cobol85Visitor):
     def visitMultiplyRegular(self, ctx:Cobol85Parser.MultiplyRegularContext):
         multiplends = []
         for child in ctx.children:
-            # print(child.getText(),"-------99999999999-------------")
-            multiplends.append(self.mapsearch(self.getVariableLine(child.children[0])))
-            print(multiplends," pppppppppppppppppppppppppppppppppppppppp")
-        multiplier = self.mapsearch(self.getVariableLine(ctx.parentCtx.children[1]))
-        for chi in multiplends:
             self.python_code+=Inden.add_indentation(self)
-            if multiplier.isdigit():
-                self.python_code += f"set{chi}(get{chi}() * {multiplier})\n"
-            else:   
-                self.python_code += f"set{chi}(get{chi}() * get{multiplier}())\n"
+            if child.parentCtx.parentCtx.children[1].getText().isdigit():
+                self.python_code += f"set{child.children[0].getText()}(get{child.children[0].getText()}() * {child.parentCtx.parentCtx.children[1].getText()})\n"
+            else :
+                self.python_code += self.setStringGen(child.children[0])+self.getStringGen(child.children[0])+"*"+self.getStringGen(child.parentCtx.parentCtx.children[1])+")\n"
+           
+            # print(child.parentCtx.getText(),"-------99999999999-------------")
+        # for child in ctx.children:
+        #     # print(child.getText(),"-------99999999999-------------")
+        #     multiplends.append(self.mapsearch(self.getVariableLine(child.children[0])))
+        #     # print(multiplends," pppppppppppppppppppppppppppppppppppppppp")
+        # multiplier = self.mapsearch(self.getVariableLine(ctx.parentCtx.children[1]))
+        # for chi in multiplends:
+        #     self.python_code+=Inden.add_indentation(self)
+        #     # self.python_code += self.setStringGen()
+        #     if multiplier.isdigit():
+        #         self.python_code += f"set{chi}(get{chi}() * {multiplier})\n"
+        #     else:   
+        #         self.python_code += f"set{chi}(get{chi}() * get{multiplier}())\n"
         return self.visitChildren(ctx)
 
 
@@ -235,6 +246,11 @@ class CustomVisitor(Cobol85Visitor):
         return self.visitChildren(ctx)
 
     def visitDivideIntoGivingStatement(self, ctx:Cobol85Parser.DivideIntoGivingStatementContext):
+        if ctx.children[1].qualifiedDataName():
+            print("muy iusuiefhbiodsiugiougnfs")
+        else:
+            print("uygduysiugyusiuyg udgyudiughui fdiug") 
+        print((type(ctx.children[1])==Cobol85Parser.IdentifierContext),"000000000000000-------------------00000000")
         divisor = ctx.parentCtx.children[1].getText()
         dividend = ctx.children[1].getText()
         quotient = ctx.children[2].children[1].getText()
@@ -484,14 +500,51 @@ class CustomVisitor(Cobol85Visitor):
         return data_names
     def getVariableLine(self,ctx:Cobol85Parser.identifier):
         names = []
-        node = ctx.children[0].children[0]
-        start = True
-        for child in node.children:
-            if start:
-                names.append(child.getText().replace('-', '_'))
-                start = False
-            else:
-                names.append(child.children[0].children[1].getText().replace('-', '_'))
-        print (names," --000000000000000000000000-------------------")
-        return names
+        occurs_nums = []
+        # print(ctx.getText(),"******************************8")
+        # print(type(ctx.children[0]),"-------------------")
+        if type(ctx.children[0])==Cobol85Parser.TableCallContext:
+            for child in ctx.children[0].children:
+                # print(type(child), "[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]====================")
+                if type(child)==Cobol85Parser.QualifiedDataNameContext:
+                    names.append(child.getText().replace('-', '_'))
+                elif child.getText()!="(" and child.getText()!=")":
+                    if child.getText().isdigit():
+                        occurs_nums.append(child.getText())
+                    else :
+                        arr,new = self.getVariableLine(child)
+                        # print(arr,"-----------ppppppppppp--------")
+                        occurs_nums.append(self.getStringGen(child))
+                        # occurs_nums.append("get"+self.mapsearch(arr)+"()")
+
+        elif type(ctx.children[0])==Cobol85Parser.QualifiedDataNameContext:
+            node = ctx.children[0].children[0]
+            start = True
+            for child in node.children:
+                if start:
+                    names.append(child.getText().replace('-', '_'))
+                    start = False
+                else:
+                    names.append(child.children[0].children[1].getText().replace('-', '_'))
+        print(occurs_nums,"============iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii=======")
+        print (names," --000000000000000000000000-------------------\n")
+        output_string = ','.join(occurs_nums)
+        return names,output_string
+
+    def setStringGen(self,ctx:Cobol85Parser.identifier):
+        names,occurs_nums = self.getVariableLine(ctx)
+        stringout = ''
+        if occurs_nums == '':
+            stringout += 'set' + self.mapsearch(names) + '('
+        else:
+            stringout += 'set' + self.mapsearch(names) + '(' + occurs_nums + ','
+        return stringout
     
+    def getStringGen(self,ctx:Cobol85Parser.identifier):
+        names,occurs_nums = self.getVariableLine(ctx)
+        stringout = ''
+        if self.mapsearch(names).isdigit():
+            return self.mapsearch(names)
+        stringout += 'get' + self.mapsearch(names) + '(' + occurs_nums + ')'
+        
+        return stringout

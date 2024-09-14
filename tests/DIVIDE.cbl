@@ -2,18 +2,18 @@
        PROGRAM-ID. ExampleProgram.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       77 A PIC 9(2) VALUE 10.
-       77 B PIC 9(2) VALUE 23.
-       77 C PIC 9(2) VALUE 10.
-       77 D PIC 9(2) VALUE 5.
-       77 E PIC 9(2) VALUE 10.
-       77 F PIC 9(2) VALUE 5.
-       77 G PIC 9(2) VALUE 11.
-       77 H PIC 9(2) VALUE 5.
-       77 I PIC 9(3).
-       77 J PIC 9(3).
-       77 K PIC 9(3).
-       77 L PIC 9(3).
+       01 A PIC 9(2) VALUE 10.
+       01 B PIC 9(2) VALUE 23.
+       01 C PIC 9(2) VALUE 10.
+       01 D PIC 9(2) VALUE 5.
+       01 E PIC 9(2) VALUE 10.
+       01 F PIC 9(2) VALUE 5.
+       01 G PIC 9(2) VALUE 11.
+       01 H PIC 9(2) VALUE 5.
+       01 I PIC 9(3).
+       01 J PIC 9(3).
+       01 K PIC 9(3).
+       01 L PIC 9(3).
        
        PROCEDURE DIVISION.
 

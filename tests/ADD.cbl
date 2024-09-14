@@ -19,6 +19,6 @@
        
        PROCEDURE DIVISION.
            ADD NUM5 OF NUM1 OF GROUP-2 NUM2 OF GROUP-2 TO A B .
-           
+           DISPLAY NUM5.
            STOP RUN.
        
