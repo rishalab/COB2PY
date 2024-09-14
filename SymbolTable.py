@@ -252,38 +252,28 @@ class SymbolTable(Cobol85Visitor):
 	def visitDataDescriptionEntryFormat1(self, ctx:Cobol85Parser.DataDescriptionEntryFormat1Context):
 		#print("hi1234",self.lastDataName,ctx.children[1].getText())
 		if ctx.children[0].getText()=='77':
-			occurs = 1
-			picInfo=[[[],[]],[],[]]
-			if len(ctx.children)==4:
-				level='77'
-				dataName = ctx.children[1].getText().upper().replace('-','_')
-				picture = ctx.children[2].children[1].getText().upper()
-				if '(' not in picture:
-					length=len(picture)
-					picture = picture[0]
-				else:
-					length=int(picture[2:-1])
-					picture = picture[0]
-				self.addCell(SymbolCell(dataName,level,length,picture,occurs,picInfo,None))
-			if len(ctx.children)==5:
-				level='77'
-				dataName = ctx.children[1].getText()
-				picture = ctx.children[2].children[1].getText()
-				if '(' not in picture:
-					length=len(picture)
-					picture = picture[0]
-				else:
-					length=int(picture[2:-1])
-					picture = picture[0]
-				cell = SymbolCell(dataName,level,length,picture,occurs,picInfo,None)
-				cell.initialized=True
-				value = ctx.children[3].children[-1].getText()
-				if picture=='9' and value.upper()=='ZEROS':
-					value = 0
-				elif value.upper()=='SPACES':
-					value = ' '*length
-				cell.value= int(value) if picture=='9' else value
-				self.addCell(cell)
+			dataName,picture,length,value,occurs,picInfo,parents='','',0,None,1,[[[],[]],[],[]],[]
+			for child in ctx.children:
+				types .append(type(child))
+				if type(child)==Cobol85Parser.DataNameContext:
+					dataName = child.getText().upper().replace('-','_')
+				if type(child)==Cobol85Parser.DataPictureClauseContext:
+					picture = child.children[-1].getText().upper()
+					picInfo = self.parsePic(picture)
+					picture = picInfo[0]
+					# print("picinfo ",picInfo)
+				if type(child)==Cobol85Parser.DataValueClauseContext:
+					# need to look again
+					value = child.children[-1].getText()
+				if type(child)==Cobol85Parser.DataOccursClauseContext:
+					minTimes = int(child.children[1].getText())
+					maxTimes = None
+					for chi in child.children:
+						if type(chi)==Cobol85Parser.DataOccursToContext:
+							maxTimes = int(chi.children[1].getText())
+					occurs=maxTimes if maxTimes is not None else minTimes
+			self.addCell(SymbolCell(dataName,level,picInfo[0][1],picture,occurs,picInfo,value,parents))
+			
 			
 		elif int(ctx.children[0].getText())<50 and int(ctx.children[0].getText())>0:
 			level = int(ctx.children[0].getText())
