@@ -6,7 +6,7 @@ from SymbolTable import SymbolTable
 import os
 import subprocess
 from FileWriter import FileWriter
-file_path = './tests/ADD.cbl'
+file_path = './tests/MULTIPLY.cbl'
 def main(file_path):
     input_stream = FileStream(file_path)
     lexer = Cobol85Lexer(input_stream)
@@ -16,17 +16,17 @@ def main(file_path):
     sym_tab=SymbolTable()
     sym_tab.visit(tree=tree)
     print(sym_tab.stringify())
-    #initCode = sym_tab.getCode()
+    initCode = sym_tab.getCode()
     writer = FileWriter()
     writer.writeHeader()
     writer.constructor(sym_tab.addressMap)
     mapaddress=writer.writeGetterAndSetter(sym_tab.addressMap)
     writer.intializer(mapaddress)
     visitor = CustomVisitor(parser,sym_tab,mapaddress)
-    #visitor.python_code=initCode
+    visitor.python_code=initCode
     visitor.visit(tree=tree)
-    # with open(os.path.join(".","converted.py"),"a+") as f:
-    #     f.write(visitor.get_python_code())
+    with open(os.path.join(".","converted.py"),"a+") as f:
+        f.write(visitor.get_python_code())
         
     # --------------------------------Files operations------------------------------------
     # filename = os.path.basename(file_path)

@@ -15,11 +15,17 @@ class CustomVisitor(Cobol85Visitor):
         
     def get_python_code(self):
         return self.python_code
+    def is_digdec(self,s):
+        try:
+            float(s)
+            return True
+        except ValueError:
+            return False
     def mapsearch(self,name):
         # if not name:
         #     return 'NOT founfed'
         varName = name[0]
-        if varName.isdigit():
+        if self.is_digdec(varName):
             return varName
         print(name)
         name = name[::-1]
@@ -194,12 +200,23 @@ class CustomVisitor(Cobol85Visitor):
     def visitMultiplyRegular(self, ctx:Cobol85Parser.MultiplyRegularContext):
         multiplends = []
         for child in ctx.children:
-            self.python_code+=Inden.add_indentation(self)
-            if child.parentCtx.parentCtx.children[1].getText().isdigit():
-                self.python_code += f"set{child.children[0].getText()}(get{child.children[0].getText()}() * {child.parentCtx.parentCtx.children[1].getText()})\n"
-            else :
-                self.python_code += self.setStringGen(child.children[0])+self.getStringGen(child.children[0])+"*"+self.getStringGen(child.parentCtx.parentCtx.children[1])+")\n"
-           
+            if child.getChildCount()==1:
+                self.python_code+=Inden.add_indentation(self)
+                tempstr = child.parentCtx.parentCtx.children[1].getText()
+            # print(tempstr,"-------99999999999-------------")
+                if self.is_digdec(tempstr):
+                    self.python_code += f"set{child.children[0].getText()}(get{child.children[0].getText()}() * {child.parentCtx.parentCtx.children[1].getText()})\n"
+                else :
+                    self.python_code += self.setStringGen(child.children[0])+self.getStringGen(child.children[0])+" * "+self.getStringGen(child.parentCtx.parentCtx.children[1])+")\n"
+            else:
+                self.python_code+=Inden.add_indentation(self)
+                tempstr = child.parentCtx.parentCtx.children[1].getText()
+            # print(tempstr,"-------99999999999-------------")
+                if self.is_digdec(tempstr):
+                    self.python_code += f"set{child.children[0].getText()}(get{child.children[0].getText()}() * {child.parentCtx.parentCtx.children[1].getText()}, True)\n"
+                else :
+                    self.python_code += self.setStringGen(child.children[0])+self.getStringGen(child.children[0])+" * "+self.getStringGen(child.parentCtx.parentCtx.children[1])+", True)\n"
+ 
             # print(child.parentCtx.getText(),"-------99999999999-------------")
         # for child in ctx.children:
         #     # print(child.getText(),"-------99999999999-------------")
@@ -229,11 +246,26 @@ class CustomVisitor(Cobol85Visitor):
 
 
     def visitMultiplyGivingResult(self, ctx:Cobol85Parser.MultiplyGivingResultContext):
-        multiplend = ctx.parentCtx.parentCtx.children[1].getText()
-        multiplier = ctx.parentCtx.children[0].getText()
-        result = ctx.children[0].getText()
-        self.python_code+=Inden.add_indentation(self)
-        self.python_code += f"{result} = {multiplend} * {multiplier}\n"
+        # multiplend = ctx.parentCtx.parentCtx.children[1].getText()
+        # multiplier = ctx.parentCtx.children[0].getText()
+        # result = ctx.children[0].getText()
+        # self.python_code+=Inden.add_indentation(self)
+        # self.python_code += f"{result} = {multiplend} * {multiplier}\n"
+        
+        if self.is_digdec(ctx.parentCtx.parentCtx.children[1].getText()):
+            multiplend = ctx.parentCtx.parentCtx.children[1].getText()
+        else :
+            multiplend = self.getStringGen(ctx.parentCtx.parentCtx.children[1])
+        if self.is_digdec(ctx.parentCtx.children[0].getText()):
+            multiplier = ctx.parentCtx.children[0].getText()
+        else :
+            multiplier = self.getStringGen(ctx.parentCtx.children[0].children[0])
+        if ctx.getChildCount()==2:
+            self.python_code+=Inden.add_indentation(self)
+            self.python_code += self.setStringGen(ctx.children[0])+multiplend+" * "+multiplier+", True)\n"
+        else:
+            self.python_code+=Inden.add_indentation(self)
+            self.python_code += self.setStringGen(ctx.children[0])+multiplend+" * "+multiplier+")\n"
         return self.visitChildren(ctx)
     
 # --------------------   DIVIDE   ---------------
@@ -526,8 +558,8 @@ class CustomVisitor(Cobol85Visitor):
                     start = False
                 else:
                     names.append(child.children[0].children[1].getText().replace('-', '_'))
-        print(occurs_nums,"============iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii=======")
-        print (names," --000000000000000000000000-------------------\n")
+        # print(occurs_nums,"============iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii=======")
+        # print (names," --000000000000000000000000-------------------\n")
         output_string = ','.join(occurs_nums)
         return names,output_string
 
@@ -543,8 +575,7 @@ class CustomVisitor(Cobol85Visitor):
     def getStringGen(self,ctx:Cobol85Parser.identifier):
         names,occurs_nums = self.getVariableLine(ctx)
         stringout = ''
-        if self.mapsearch(names).isdigit():
+        if self.is_digdec(self.mapsearch(names)):
             return self.mapsearch(names)
         stringout += 'get' + self.mapsearch(names) + '(' + occurs_nums + ')'
-        
         return stringout

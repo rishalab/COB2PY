@@ -253,6 +253,7 @@ class SymbolTable(Cobol85Visitor):
 		#print("hi1234",self.lastDataName,ctx.children[1].getText())
 		if ctx.children[0].getText()=='77':
 			dataName,picture,length,value,occurs,picInfo,parents='','',0,None,1,[[[],[]],[],[]],[]
+			self.levelContextStack.clear()
 			for child in ctx.children:
 				types .append(type(child))
 				if type(child)==Cobol85Parser.DataNameContext:
@@ -279,7 +280,6 @@ class SymbolTable(Cobol85Visitor):
 			level = int(ctx.children[0].getText())
 			types = []
 			dataName,picture,length,value,occurs,picInfo='','',0,None,1,[[[],[]],[],[]]
-			self.levelContextStack.clear()
 			for child in ctx.children:
 				types .append(type(child))
 				if type(child)==Cobol85Parser.DataNameContext:
