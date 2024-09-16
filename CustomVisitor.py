@@ -61,10 +61,14 @@ class CustomVisitor(Cobol85Visitor):
         display_operands = []
 
         for operand in ctx.displayOperand():
-            operand_text = self.visit(operand)
+            # print(type(operand.children[0]),"-----------------")
+            if type(operand.children[0])==Cobol85Parser.IdentifierContext:
+                operand_text=self.getStringGen(operand.children[0])
+            else:
+                operand_text = self.visit(operand)
             if operand_text:
                 display_operands.append(operand_text)
-
+        # print(display_operands,"-----------------")
         display_at = self.visit(ctx.displayAt()) if ctx.displayAt() else None
         display_upon = self.visit(ctx.displayUpon()) if ctx.displayUpon() else None
         display_with = ctx.displayWith() is not None
@@ -86,7 +90,6 @@ class CustomVisitor(Cobol85Visitor):
                 self.python_code += f"print(' upon {display_upon}', end='')\n"
             else:
                 self.python_code += f"print(' upon {display_upon}')\n"
-
 
         return self.visitChildren(ctx)
     def visitDisplayOperand(self, ctx: Cobol85Parser.DisplayOperandContext):
