@@ -270,45 +270,83 @@ class CustomVisitor(Cobol85Visitor):
     
 # --------------------   DIVIDE   ---------------
 
-    def visitDivideIntoStatement(self, ctx:Cobol85Parser.DivideIntoStatementContext):
-        divisor = ctx.children[1].getText()
-        dividend = ctx.parentCtx.children[1].getText()
-        self.python_code+=Inden.add_indentation(self)
-        self.python_code += f"{divisor} = {divisor} // {dividend}\n"
-        return self.visitChildren(ctx)
+    # def visitDivideIntoStatement(self, ctx:Cobol85Parser.DivideIntoStatementContext):
+    #     divisor = ctx.children[1].getText()
+    #     dividend = ctx.parentCtx.children[1].getText()
+    #     self.python_code+=Inden.add_indentation(self)
+    #     self.python_code += f"{divisor} = {divisor} // {dividend}\n"
+    #     return self.visitChildren(ctx)
 
-    def visitDivideIntoGivingStatement(self, ctx:Cobol85Parser.DivideIntoGivingStatementContext):
-        if ctx.children[1].qualifiedDataName():
-            print("muy iusuiefhbiodsiugiougnfs")
+    # def visitDivideIntoGivingStatement(self, ctx:Cobol85Parser.DivideIntoGivingStatementContext):
+    #     if ctx.children[1].qualifiedDataName():
+    #         print("muy iusuiefhbiodsiugiougnfs")
+    #     else:
+    #         print("uygduysiugyusiuyg udgyudiughui fdiug") 
+    #     print((type(ctx.children[1])==Cobol85Parser.IdentifierContext),"000000000000000-------------------00000000")
+    #     divisor = ctx.parentCtx.children[1].getText()
+    #     dividend = ctx.children[1].getText()
+    #     quotient = ctx.children[2].children[1].getText()
+    #     self.python_code+=Inden.add_indentation(self)
+    #     self.python_code += f"{quotient} = {dividend} // {divisor}\n"
+    #     return self.visitChildren(ctx)
+
+    # def visitDivideByGivingStatement(self, ctx:Cobol85Parser.DivideByGivingStatementContext):
+    #     quotient = ctx.children[2].children[1].getText()
+    #     divisor = ctx.children[1].getText()
+    #     dividend = ctx.parentCtx.children[1].getText()
+    #     self.python_code+=Inden.add_indentation(self)
+    #     self.python_code += f"{quotient} = {dividend} // {divisor}\n"
+    #     return self.visitChildren(ctx)
+
+    # def visitDivideRemainder(self, ctx:Cobol85Parser.DivideRemainderContext):
+    #     dividend = ctx.parentCtx.children[1].getText()
+    #     divisor = ctx.parentCtx.children[2].children[1].getText()
+    #     remainder = ctx.children[1].getText()
+    #     if ctx.parentCtx.children[2].children[0].getText().lower() == "by":
+    #         self.python_code+=Inden.add_indentation(self)
+    #         self.python_code += f"{remainder} = {dividend} % {divisor}\n"
+    #     else :
+    #         self.python_code+=Inden.add_indentation(self)
+    #         self.python_code += f"{remainder} = {divisor} % {dividend}\n"
+    #     return self.visitChildren(ctx)
+    def visitDivideInto(self, ctx:Cobol85Parser.DivideIntoContext):
+        dividend = ctx.children[0]
+        divisor = ctx.parentCtx.parentCtx.children[1]
+        self.python_code+=Inden.add_indentation(self)
+        if ctx.getChildCount()==2:
+            self.python_code += self.setStringGen(dividend)+self.getStringGen(dividend)+" / "+self.getStringGen(divisor)+", True)\n"
         else:
-            print("uygduysiugyusiuyg udgyudiughui fdiug") 
-        print((type(ctx.children[1])==Cobol85Parser.IdentifierContext),"000000000000000-------------------00000000")
-        divisor = ctx.parentCtx.children[1].getText()
-        dividend = ctx.children[1].getText()
-        quotient = ctx.children[2].children[1].getText()
-        self.python_code+=Inden.add_indentation(self)
-        self.python_code += f"{quotient} = {dividend} // {divisor}\n"
+            self.python_code += self.setStringGen(dividend)+self.getStringGen(dividend)+" / "+self.getStringGen(divisor)+")\n"
         return self.visitChildren(ctx)
 
-    def visitDivideByGivingStatement(self, ctx:Cobol85Parser.DivideByGivingStatementContext):
-        quotient = ctx.children[2].children[1].getText()
-        divisor = ctx.children[1].getText()
-        dividend = ctx.parentCtx.children[1].getText()
-        self.python_code+=Inden.add_indentation(self)
-        self.python_code += f"{quotient} = {dividend} // {divisor}\n"
+    def visitDivideGiving(self, ctx:Cobol85Parser.DivideGivingContext):
+        quotient = ctx.children[0]
+        dividend = ctx.parentCtx.parentCtx.children[1]
+        divisor = ctx.parentCtx.parentCtx.parentCtx.children[1]
+        if ctx.parentCtx.parentCtx.children[0].getText().lower() == "by":
+            self.python_code+=Inden.add_indentation(self)
+            if ctx.getChildCount()==2:
+                self.python_code += self.setStringGen(quotient)+self.getStringGen(divisor)+" / "+self.getStringGen(dividend)+", True)\n"
+            else:
+                self.python_code += self.setStringGen(quotient)+self.getStringGen(divisor)+" / "+self.getStringGen(dividend)+")\n"
+        else :
+            self.python_code+=Inden.add_indentation(self)
+            if ctx.getChildCount()==2:
+                self.python_code += self.setStringGen(quotient)+self.getStringGen(dividend)+" / "+self.getStringGen(divisor)+", True)\n"
+            else:
+                self.python_code += self.setStringGen(quotient)+self.getStringGen(dividend)+" / "+self.getStringGen(divisor)+")\n"
         return self.visitChildren(ctx)
 
     def visitDivideRemainder(self, ctx:Cobol85Parser.DivideRemainderContext):
-        dividend = ctx.parentCtx.children[1].getText()
-        divisor = ctx.parentCtx.children[2].children[1].getText()
-        remainder = ctx.children[1].getText()
+        divisor = ctx.parentCtx.children[1]
+        dividend = ctx.parentCtx.children[2].children[1]
+        self.python_code+=Inden.add_indentation(self)
         if ctx.parentCtx.children[2].children[0].getText().lower() == "by":
-            self.python_code+=Inden.add_indentation(self)
-            self.python_code += f"{remainder} = {dividend} % {divisor}\n"
+            self.python_code += self.setStringGen(ctx.children[1])+self.getStringGen(divisor)+" % "+self.getStringGen(dividend)+")\n"
         else :
-            self.python_code+=Inden.add_indentation(self)
-            self.python_code += f"{remainder} = {divisor} % {dividend}\n"
+            self.python_code += self.setStringGen(ctx.children[1])+self.getStringGen(dividend)+" % "+self.getStringGen(divisor)+")\n"
         return self.visitChildren(ctx)
+
     
 #----------------------------  ACCEPT  ------------------------------------
 

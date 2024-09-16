@@ -6,7 +6,7 @@ from SymbolTable import SymbolTable
 import os
 import subprocess
 from FileWriter import FileWriter
-file_path = './tests/MULTIPLY.cbl'
+file_path = './tests/DIVIDE.cbl'
 def main(file_path):
     input_stream = FileStream(file_path)
     lexer = Cobol85Lexer(input_stream)
@@ -29,9 +29,9 @@ def main(file_path):
         f.write(visitor.get_python_code())
         
     # --------------------------------Files operations------------------------------------
-    # filename = os.path.basename(file_path)
-    # output_python_filename = filename.split('.')[0] + "_python_output.py"
-    # output_st_filename = filename.split('.')[0] + "_symbol_table.txt"
+    filename = os.path.basename(file_path)
+    output_python_filename = filename.split('.')[0] + "_python_output.py"
+    output_st_filename = filename.split('.')[0] + "_symbol_table.txt"
     # with open(os.path.join("./outputs/symbol_tables", output_st_filename), "w") as f:
     #     f.write("Generated Symbol Table : \n\n")
     #     f.write(sym_tab.__repr__())
@@ -46,6 +46,8 @@ def main(file_path):
     #         result = subprocess.run(["python", os.path.join("./outputs/python_codes", output_python_filename)], stdout=subprocess.PIPE)
     #         output = result.stdout.decode('utf-8').strip()
     #         f_out.write(output)
+    with open(os.path.join("./outputs/python_codes", output_python_filename), "w") as f, open('./converted.py', 'r') as source:
+        f.write(source.read())
     # #-------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
