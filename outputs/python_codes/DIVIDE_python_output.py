@@ -9,97 +9,97 @@ class converted(Program):
 	def getA(self):
 		return super().getAsInt(0, 2)
 
-	def setA(self, value, isRounded):
+	def setA(self, value, isRounded=False):
 		return super().setAsInt(0, 2, value, isRounded)
 
 	def getB(self):
 		return super().getAsInt(2, 2)
 
-	def setB(self, value, isRounded):
+	def setB(self, value, isRounded=False):
 		return super().setAsInt(2, 2, value, isRounded)
 
 	def getC(self):
 		return super().getAsInt(4, 2)
 
-	def setC(self, value, isRounded):
+	def setC(self, value, isRounded=False):
 		return super().setAsInt(4, 2, value, isRounded)
 
 	def getD(self):
 		return super().getAsInt(6, 2)
 
-	def setD(self, value, isRounded):
+	def setD(self, value, isRounded=False):
 		return super().setAsInt(6, 2, value, isRounded)
 
 	def getE(self):
 		return super().getAsInt(8, 2)
 
-	def setE(self, value, isRounded):
+	def setE(self, value, isRounded=False):
 		return super().setAsInt(8, 2, value, isRounded)
 
 	def getF(self):
 		return super().getAsInt(10, 2)
 
-	def setF(self, value, isRounded):
+	def setF(self, value, isRounded=False):
 		return super().setAsInt(10, 2, value, isRounded)
 
 	def getG(self):
 		return super().getAsInt(12, 2)
 
-	def setG(self, value, isRounded):
+	def setG(self, value, isRounded=False):
 		return super().setAsInt(12, 2, value, isRounded)
 
 	def getH(self):
 		return super().getAsInt(14, 2)
 
-	def setH(self, value, isRounded):
+	def setH(self, value, isRounded=False):
 		return super().setAsInt(14, 2, value, isRounded)
 
 	def getI(self):
 		return super().getAsInt(16, 3)
 
-	def setI(self, value, isRounded):
+	def setI(self, value, isRounded=False):
 		return super().setAsInt(16, 3, value, isRounded)
 
 	def getJ(self):
 		return super().getAsInt(19, 3)
 
-	def setJ(self, value, isRounded):
+	def setJ(self, value, isRounded=False):
 		return super().setAsInt(19, 3, value, isRounded)
 
 	def getK(self):
 		return super().getAsInt(22, 3)
 
-	def setK(self, value, isRounded):
+	def setK(self, value, isRounded=False):
 		return super().setAsInt(22, 3, value, isRounded)
 
 	def getL(self):
 		return super().getAsInt(25, 3)
 
-	def setL(self, value, isRounded):
+	def setL(self, value, isRounded=False):
 		return super().setAsInt(25, 3, value, isRounded)
 
 	def getNUM3(self):
 		return super().getAsFloat(28, 4)
 
-	def setNUM3(self, value, isRounded):
+	def setNUM3(self, value, isRounded=False):
 		return super().setAsFloat(28, 4, value, isRounded, '99.99')
 
 	def getNUM4(self):
 		return super().getAsInt(32, 4)
 
-	def setNUM4(self, value, isRounded):
+	def setNUM4(self, value, isRounded=False):
 		return super().setAsInt(32, 4, value, isRounded)
 
 	def getNUM5(self):
 		return super().getAsFloat(36, 4)
 
-	def setNUM5(self, value, isRounded):
+	def setNUM5(self, value, isRounded=False):
 		return super().setAsFloat(36, 4, value, isRounded, '99.99')
 
 	def getNUM2(self):
 		return super().getAsFloat(40, 4)
 
-	def setNUM2(self, value, isRounded):
+	def setNUM2(self, value, isRounded=False):
 		return super().setAsFloat(40, 4, value, isRounded, '99.99')
 
 	def initialize(self):

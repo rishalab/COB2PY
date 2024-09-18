@@ -102,7 +102,7 @@ class FileWriter:
                     file.write(('\t' * self.indentation) + f"def get{dataName}(self{indexes}):" + '\n')
                     file.write(('\t' * (self.indentation + 1)) + f"return super().getAsFloat({offset}, {length})" + '\n')
                     file.write('\n')
-                    file.write(('\t' * self.indentation) + f"def set{dataName}(self{indexes}, value, isRounded):" + '\n')
+                    file.write(('\t' * self.indentation) + f"def set{dataName}(self{indexes}, value, isRounded=False):" + '\n')
                     file.write(('\t' * (self.indentation + 1)) + f"return super().setAsFloat({offset}, {length}, value, isRounded, '{pic[0][0]}')" + '\n')
                     file.write('\n')
 
@@ -110,7 +110,7 @@ class FileWriter:
                     file.write(('\t' * self.indentation) + f"def get{dataName}(self{indexes}):" + '\n')
                     file.write(('\t' * (self.indentation + 1)) + f"return super().getAsInt({offset}, {length})" + '\n')
                     file.write('\n')
-                    file.write(('\t' * self.indentation) + f"def set{dataName}(self{indexes}, value, isRounded):" + '\n')
+                    file.write(('\t' * self.indentation) + f"def set{dataName}(self{indexes}, value, isRounded=False):" + '\n')
                     file.write(('\t' * (self.indentation + 1)) + f"return super().setAsInt({offset}, {length}, value, isRounded)" + '\n')
                     file.write('\n')
 
