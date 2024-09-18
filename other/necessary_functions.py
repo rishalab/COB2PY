@@ -8,7 +8,7 @@ def replacehypwund(input_string):
 # -----------------------------  INDENtATION PART  ----------------------------------
 
 def add_indentation(indentation_level):
-    return '    ' * indentation_level
+    return  '\t' * indentation_level
 
 def increase_indentation(indentation_level):
     return indentation_level + 1

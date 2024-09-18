@@ -9,7 +9,7 @@ class CustomVisitor(Cobol85Visitor):
         self.python_code = ""
         self.parser = parser
         self.symbol_table = symbol_table
-        self.indentation = 0
+        self.indentation = 1
         self.loop_indentation_level = 0
         self.mapaddress = mapaddress
         
@@ -608,9 +608,9 @@ class CustomVisitor(Cobol85Visitor):
         names,occurs_nums = self.getVariableLine(ctx)
         stringout = ''
         if occurs_nums == '':
-            stringout += 'set' + self.mapsearch(names) + '('
+            stringout += 'self.set' + self.mapsearch(names) + '('
         else:
-            stringout += 'set' + self.mapsearch(names) + '(' + occurs_nums + ','
+            stringout += 'self.set' + self.mapsearch(names) + '(' + occurs_nums + ','
         return stringout
     
     def getStringGen(self,ctx:Cobol85Parser.identifier):
@@ -618,5 +618,5 @@ class CustomVisitor(Cobol85Visitor):
         stringout = ''
         if self.is_digdec(self.mapsearch(names)):
             return self.mapsearch(names)
-        stringout += 'get' + self.mapsearch(names) + '(' + occurs_nums + ')'
+        stringout += 'self.get' + self.mapsearch(names) + '(' + occurs_nums + ')'
         return stringout
