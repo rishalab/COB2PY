@@ -6,7 +6,7 @@ from SymbolTable import SymbolTable
 import os
 import subprocess
 from FileWriter import FileWriter
-file_path = './tests/DIVIDE.cbl'
+file_path = './tests/MULTIPLY.cbl'
 def main(file_path):
     input_stream = FileStream(file_path)
     lexer = Cobol85Lexer(input_stream)
@@ -27,6 +27,7 @@ def main(file_path):
     visitor.visit(tree=tree)
     with open(os.path.join(".","converted.py"),"a+") as f:
         f.write(visitor.get_python_code())
+        f.write("converted().main()\n")
         
     # --------------------------------Files operations------------------------------------
     filename = os.path.basename(file_path)

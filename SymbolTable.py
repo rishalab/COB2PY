@@ -101,7 +101,7 @@ class SymbolTable(Cobol85Visitor):
 		return self.stringify()
 	
 	def getCode(self):
-		code=''
+		code='\tdef main(self):\n\t\tself.initialize()\n'
 		return code
 	
 	def parsePic(self,picture):

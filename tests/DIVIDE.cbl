@@ -30,7 +30,7 @@
            DISPLAY 'DIVIDE A INTO B.: NUM3= ' NUM3  '  ,NUM5= ' NUM5 'kjj' NUM2.
            DISPLAY 'DIVIDE D INTO C GIVING J: C= ' C ' ,D= 'D ', J= ' J.
 
-            DIVIDE D INTO C GIVING J K  ROUNDED REMAINDER H.
+            DIVIDE D INTO C GIVING J   ROUNDED REMAINDER H.
            DISPLAY 'DIVIDE D INTO C GIVING J: C= ' C ' ,D= 'D ', J= ' J.
 
            DISPLAY 'DIVIDE E BY F GIVING I .: E= ' E ' ,F= 'F ', I= ' I.

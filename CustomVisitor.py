@@ -208,7 +208,7 @@ class CustomVisitor(Cobol85Visitor):
                 tempstr = child.parentCtx.parentCtx.children[1].getText()
             # print(tempstr,"-------99999999999-------------")
                 if self.is_digdec(tempstr):
-                    self.python_code += f"set{child.children[0].getText()}(get{child.children[0].getText()}() * {child.parentCtx.parentCtx.children[1].getText()})\n"
+                    self.python_code += f"self.set{child.children[0].getText()}(self.get{child.children[0].getText()}() * {child.parentCtx.parentCtx.children[1].getText()})\n"
                 else :
                     self.python_code += self.setStringGen(child.children[0])+self.getStringGen(child.children[0])+" * "+self.getStringGen(child.parentCtx.parentCtx.children[1])+")\n"
             else:
@@ -216,7 +216,7 @@ class CustomVisitor(Cobol85Visitor):
                 tempstr = child.parentCtx.parentCtx.children[1].getText()
             # print(tempstr,"-------99999999999-------------")
                 if self.is_digdec(tempstr):
-                    self.python_code += f"set{child.children[0].getText()}(get{child.children[0].getText()}() * {child.parentCtx.parentCtx.children[1].getText()}, True)\n"
+                    self.python_code += f"self.set{child.children[0].getText()}(self.get{child.children[0].getText()}() * {child.parentCtx.parentCtx.children[1].getText()}, True)\n"
                 else :
                     self.python_code += self.setStringGen(child.children[0])+self.getStringGen(child.children[0])+" * "+self.getStringGen(child.parentCtx.parentCtx.children[1])+", True)\n"
  

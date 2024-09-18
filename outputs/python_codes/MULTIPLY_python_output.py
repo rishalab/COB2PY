@@ -9,72 +9,72 @@ class converted(Program):
 	def getA(self):
 		return super().getAsInt(0, 4)
 
-	def setA(self, value, isRounded):
+	def setA(self, value, isRounded=False):
 		return super().setAsInt(0, 4, value, isRounded)
 
 	def getB(self):
 		return super().getAsInt(4, 4)
 
-	def setB(self, value, isRounded):
+	def setB(self, value, isRounded=False):
 		return super().setAsInt(4, 4, value, isRounded)
 
 	def getC(self):
 		return super().getAsInt(8, 4)
 
-	def setC(self, value, isRounded):
+	def setC(self, value, isRounded=False):
 		return super().setAsInt(8, 4, value, isRounded)
 
 	def getD(self):
 		return super().getAsInt(12, 4)
 
-	def setD(self, value, isRounded):
+	def setD(self, value, isRounded=False):
 		return super().setAsInt(12, 4, value, isRounded)
 
 	def getE(self):
 		return super().getAsInt(16, 4)
 
-	def setE(self, value, isRounded):
+	def setE(self, value, isRounded=False):
 		return super().setAsInt(16, 4, value, isRounded)
 
 	def getF(self):
 		return super().getAsInt(20, 4)
 
-	def setF(self, value, isRounded):
+	def setF(self, value, isRounded=False):
 		return super().setAsInt(20, 4, value, isRounded)
 
 	def getG(self):
 		return super().getAsInt(24, 4)
 
-	def setG(self, value, isRounded):
+	def setG(self, value, isRounded=False):
 		return super().setAsInt(24, 4, value, isRounded)
 
 	def getNUM3(self):
 		return super().getAsFloat(28, 3)
 
-	def setNUM3(self, value, isRounded):
+	def setNUM3(self, value, isRounded=False):
 		return super().setAsFloat(28, 3, value, isRounded, '9.99')
 
 	def getNUM2(self):
 		return super().getAsInt(31, 4)
 
-	def setNUM2(self, value, isRounded):
+	def setNUM2(self, value, isRounded=False):
 		return super().setAsInt(31, 4, value, isRounded)
 
 	def getNUM5(self):
 		return super().getAsInt(35, 5)
 
-	def setNUM5(self, value, isRounded):
+	def setNUM5(self, value, isRounded=False):
 		return super().setAsInt(35, 5, value, isRounded)
 
 	def getNUM2_1(self):
 		return super().getAsInt(40, 4)
 
-	def setNUM2_1(self, value, isRounded):
+	def setNUM2_1(self, value, isRounded=False):
 		return super().setAsInt(40, 4, value, isRounded)
 
 	def initialize(self):
 		self.setA(10,False)
-		self.setB(20,False)
+		self.setB(2000,False)
 		self.setC(0,False)
 		self.setD(0,False)
 		self.setE(0,False)
@@ -85,17 +85,20 @@ class converted(Program):
 		self.setNUM5(20,False)
 		self.setNUM2_1(40,False)
 		pass
-    print('Initial Values: A=', A, ' B=', B, ' C=', C, ' D=', D, ' E=', E, ' F=', F)
-    setB(getB() * getA())
-    print('After MULTIPLY A BY B: A=', A, ' B=', B)
-    setA(getA() * 2, True)
-    setB(getB() * 2)
-    print('After MULTIPLY 2 BY A B: A=', A, ' B=', B)
-    setC(3 * getA())
-    print('After MULTIPLY 3 BY A GIVING C: C=', C)
-    setD(4 * getA(), True)
-    print('After MULTIPLY 4 BY A GIVING D ROUNDED: D=', D)
-    setE(getA() * 2, True)
-    setF(getA() * 2, True)
-    print('After MULTIPLY A BY 2 GIVING E F: E=', E, ' F=', F)
-    setNUM3(getNUM3() * getNUM5(), True)
+	def main(self):
+		self.initialize()
+		print('Initial Values: A=', self.getA(), ' B=', self.getB(), ' C=', self.getC(), ' D=', self.getD(), ' E=', self.getE(), ' F=', self.getF())
+		self.setB(self.getB() * self.getA())
+		print('After MULTIPLY A BY B: A=', self.getA(), ' B=', self.getB())
+		self.setA(self.getA() * 2, True)
+		self.setB(self.getB() * 2)
+		print('After MULTIPLY 2 BY A B: A=', self.getA(), ' B=', self.getB())
+		self.setC(3 * self.getA())
+		print('After MULTIPLY 3 BY A GIVING C: C=', self.getC())
+		self.setD(4 * self.getA(), True)
+		print('After MULTIPLY 4 BY A GIVING D ROUNDED: D=', self.getD())
+		self.setE(self.getA() * 2, True)
+		self.setF(self.getA() * 2, True)
+		print('After MULTIPLY A BY 2 GIVING E F: E=', self.getE(), ' F=', self.getF())
+		self.setNUM3(self.getNUM3() * self.getNUM5(), True)
+converted().main()
