@@ -42,9 +42,16 @@ class Program:
                 self.Memory[offset+i]=' '
     
     def setAsFloat(self,offset,length,value,isRounded,pic):
-        intPart,decpart= pic.split('.')
-        intPartLen,decPartLen=len(intPart),len(decpart)
+        intPart,decPart= pic.split('.')
+        intPartLen,decPartLen=len(intPart),len(decPart)
         value = abs(round(value,decPartLen)) if isRounded else abs(int(float(value)*(10**decPartLen))/(10**decPartLen))
         value = str(value)[-length-1:]
+        intPart,decPart=value.split('.')
+        intPart,decPart=intPart[-intPartLen:],decPart[:decPartLen]
+        while(len(intPart)<intPartLen):
+            intPart= '0'+intPart
+        while(len(decPart)<decPartLen):
+            decPart= decPart+'0'
+        value= intPart+'.'+decPart
         for i in range(0,length):
                 self.Memory[offset+i]=value[i]
