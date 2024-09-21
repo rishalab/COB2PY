@@ -8,7 +8,7 @@
        PROCEDURE DIVISION.
            PERFORM UNTIL A > 10
                DISPLAY 'Value of A: ' A
-               ADD 1 TO A
+               MULTIPLY 2 BY A
            END-PERFORM.
            DISPLAY 'HI'
            STOP RUN.

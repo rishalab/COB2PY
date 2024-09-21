@@ -15,8 +15,12 @@ class FileWriter:
     
     def constructor(self,addressMap):
         self.indentation=1
-        element=max(addressMap,key=lambda element:(element[2],element[3]))
-        variable,dataName,offset,totalLength,length,pic=element
+        if len(addressMap)!=0:
+            element=max(addressMap,key=lambda element:(element[2],element[3]))
+            variable,dataName,offset,totalLength,length,pic=element
+        else:
+            offset=0
+            totalLength=0
         with open(self.CurrentFile+".py", "a+") as file:
             file.write(('\t' * self.indentation) +"def __init__(self):\n")
             file.write(('\t' * (self.indentation+1)) +f"super().__init__({offset+totalLength})"+"\n")

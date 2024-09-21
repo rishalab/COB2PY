@@ -27,7 +27,7 @@ class CustomVisitor(Cobol85Visitor):
         varName = name[0]
         if self.is_digdec(varName):
             return varName
-        print(name)
+        # print(name)
         name = name[::-1]
         name.pop(-1)
         for x in self.mapaddress:
@@ -36,7 +36,7 @@ class CustomVisitor(Cobol85Visitor):
                 found = True
                 for y in x[0].parents:
                     print(y.dataName,"--")
-                print(name,"!!")
+                # print(name,"!!")
                 for i in range(0,len(name)):
                     print(x[0].parents[i+diff].dataName,name[i],"che",varName)
                     if x[0].parents[i+diff].dataName==name[i]:
@@ -362,8 +362,9 @@ class CustomVisitor(Cobol85Visitor):
 #-----------------------------  IF  ---------------------------------------
 
     def visitIfStatement(self, ctx:Cobol85Parser.IfStatementContext):
+        # print("hi",self.arithmeticExpressionget(ctx.children[1].children[0].children[0].children[0].children[0].children[0]))
         self.python_code += Inden.add_indentation(self);
-        if_condition = ctx.children[1].getText();
+        if_condition = self.conditionget(ctx.children[1])
         self.python_code += f"if {if_condition} :\n"
         Inden.increase_indentation(self);
         result = self.visitChildren(ctx)
@@ -371,11 +372,11 @@ class CustomVisitor(Cobol85Visitor):
         return result
 
     def visitIfElse(self, ctx:Cobol85Parser.IfElseContext):
-        self.python_code += Inden.add_indentation(self);
         Inden.decrease_indentation(self);
+        self.python_code += Inden.add_indentation(self);
         self.python_code += f"else:\n"
         Inden.increase_indentation(self);
-        print(ctx.getText())
+        # print(ctx.getText())
         return self.visitChildren(ctx)
     
 #----------------------------- STOP & Paragraphs ---------------------------------------
@@ -392,7 +393,7 @@ class CustomVisitor(Cobol85Visitor):
     def visitParagraph(self, ctx:Cobol85Parser.ParagraphContext):
         name = replacehypwund(ctx.children[0].getText())
         self.python_code += Inden.add_indentation(self)
-        self.python_code += f"def {name}():\n"
+        self.python_code += f"def {name}(self):\n"
         Inden.increase_indentation(self)
         result = self.visitChildren(ctx)
         Inden.decrease_indentation(self)
@@ -429,14 +430,14 @@ class CustomVisitor(Cobol85Visitor):
             # print(ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText()+"\n")
             # print(ctx.children[0].getText()+"\n")
         self.python_code += Inden.add_indentation(self)
-        self.python_code+=f"{replacehypwund(ctx.children[0].getText())}()\n"
+        self.python_code+=f"self.{replacehypwund(ctx.children[0].getText())}()\n"
         if ctx.getChildCount()!=1:
             while ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText() != ctx.children[2].getText():
                 i+=1
                 self.python_code += Inden.add_indentation(self)
                 tempstr = replacehypwund(ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText())
                 # print(tempstr+"  ==\n")
-                self.python_code+=f"{tempstr}()\n"
+                self.python_code+=f"self.{tempstr}()\n"
         return self.visitChildren(ctx)
 
 
@@ -614,9 +615,175 @@ class CustomVisitor(Cobol85Visitor):
         return stringout
     
     def getStringGen(self,ctx:Cobol85Parser.identifier):
+        if(self.is_digdec(ctx.getText())):
+            return ctx.getText()
         names,occurs_nums = self.getVariableLine(ctx)
         stringout = ''
-        if self.is_digdec(self.mapsearch(names)):
-            return self.mapsearch(names)
+        # print(names," 9999999999999999999 ")
         stringout += 'self.get' + self.mapsearch(names) + '(' + occurs_nums + ')'
         return stringout
+    
+    def conditionget(self,ctx:Cobol85Parser.condition):
+        if ctx.getChildCount()==1:
+            return self.combinableConditionget(ctx.children[0])
+        else:
+            number = ctx.getChildCount()
+            temp1 = 1
+            stringout = self.combinableConditionget(ctx.children[0])
+            while temp1 != number:
+                if ctx.children[temp1].children[0].getText().upper() == "AND":
+                    if type(ctx.children[temp1].children[1])==Cobol85Parser.ConditionContext:
+                        stringout += " and " + self.combinableConditionget(ctx.children[temp1].children[1])
+                else:
+                    if type(ctx.children[temp1].children[1])==Cobol85Parser.ConditionContext:
+                        stringout += " or " + self.combinableConditionget(ctx.children[temp1].children[1])
+                temp1 += 1
+            return stringout
+    def combinableConditionget(self,ctx:Cobol85Parser.combinableCondition):
+        if ctx.children[0].getText().upper() == "NOT":
+            return "not " + self.simpleConditionget(ctx.children[1])
+        else :
+            return self.simpleConditionget(ctx.children[0])
+    def simpleConditionget(self,ctx:Cobol85Parser.simpleCondition):
+        if type(ctx.children[0])==Cobol85Parser.RelationConditionContext:
+            return self.relationConditionget(ctx.children[0])
+        elif type(ctx.children[0])==Cobol85Parser.ClassConditionContext:
+            return self.classConditionget(ctx.children[0])
+        # elif type(ctx.children[0])==Cobol85Parser.ConditionNameReferenceContext:
+        #     return conditionNameConditionget(ctx.children[0])
+        else :
+            return '(' + self.conditionget(ctx.children[1]) + ')'
+    def classConditionget(self,ctx:Cobol85Parser.classCondition):
+        value = self.getStringGen(ctx.children[0])
+        count = ctx.getChildCount()
+        if count == 3:
+            if ctx.children[2].getText().upper() == "NUMERIC":
+                return value + ".isnumeric()"
+            elif ctx.children[2].getText().upper() == "ALPHABETIC":
+                return value + ".isalpha()"
+            elif ctx.children[2].getText().upper() == "ALPHANUMERIC":
+                return value + ".isalnum()"
+            elif ctx.children[2].getText().upper() == "DBCS":
+                return value + ".isprintable()"
+            elif ctx.children[2].getText().upper() == "KANJI":
+                return value + ".isprintable()"
+        if count == 4:
+            if ctx.children[2].getText().upper() == "NOT":
+                if ctx.children[3].getText().upper() == "NUMERIC":
+                    return "not " + value + ".isnumeric()"
+                elif ctx.children[3].getText().upper() == "ALPHABETIC":
+                    return "not " + value + ".isalpha()"
+                elif ctx.children[3].getText().upper() == "ALPHANUMERIC":
+                    return "not " + value + ".isalnum()"
+                elif ctx.children[3].getText().upper() == "DBCS":
+                    return "not " + value + ".isprintable()"
+                elif ctx.children[3].getText().upper() == "KANJI":
+                    return "not " + value + ".isprintable()"
+        print("Error in classCondition")
+    def relationConditionget(self,ctx:Cobol85Parser.relationCondition):
+        if type(ctx.children[0])==Cobol85Parser.RelationSignConditionContext:
+            return self.relationSignConditionget(ctx.children[0])
+        elif type(ctx.children[0])==Cobol85Parser.RelationArithmeticComparisonContext:
+            return self.relationArithmeticComparisonget(ctx.children[0])
+        elif type(ctx.children[0])==Cobol85Parser.RelationCombinedComparisonContext:
+            return self.relationCombinedComparisonget(ctx.children[0])
+    def relationSignConditionget(self,ctx:Cobol85Parser.relationSignCondition):
+        count = ctx.getChildCount()
+        if count == 3:
+            if ctx.children[2].getText().upper() == "ZERO":
+                return self.arithmeticExpressionget(ctx.children[0]) + " == 0"
+            elif ctx.children[2].getText().upper() == "POSITIVE":
+                return self.arithmeticExpressionget(ctx.children[0]) + " > 0"
+            elif ctx.children[2].getText().upper() == "NEGATIVE":
+                return self.arithmeticExpressionget(ctx.children[0]) + " < 0"
+        elif ctx.children[2].getText().upper() == "NOT":
+            if ctx.children[1].getText().upper() == "ZERO":
+                return self.arithmeticExpressionget(ctx.children[0]) + " != 0"
+            elif ctx.children[1].getText().upper() == "POSITIVE":
+                return self.arithmeticExpressionget(ctx.children[0]) + " <= 0"
+            elif ctx.children[1].getText().upper() == "NEGATIVE":
+                return self.arithmeticExpressionget(ctx.children[0]) + " >= 0"
+        else :
+            print("Error in relationSignCondition")
+    def relationArithmeticComparisonget(self,ctx:Cobol85Parser.relationArithmeticComparison):
+        return self.arithmeticExpressionget(ctx.children[0]) + " " + self.relationalOperatorget(ctx.children[1]) + " " + self.arithmeticExpressionget(ctx.children[2])
+    def relationCombinedComparisonget(self,ctx:Cobol85Parser.relationCombinedComparison):
+        return self.arithmeticExpressionget(ctx.children[0]) + " " + self.relationalOperatorget(ctx.children[1]) + "(" +  self.relationCombinedConditionget(ctx.children[3]) + ")"
+    def relationCombinedConditionget(self,ctx:Cobol85Parser.relationCombinedCondition):
+        count = ctx.getChildCount()
+        string = self.arithmeticExpressionget(ctx.children[0])
+        temp = 1
+        while temp != count:
+            if ctx.children[temp].getText().upper() == "AND":
+                string += " and " + self.arithmeticExpressionget(ctx.children[temp+1])
+            else:
+                string += " or " + self.arithmeticExpressionget(ctx.children[temp+1])
+            temp += 2
+        return string
+    def relationalOperatorget(self,ctx:Cobol85Parser.relationalOperator):
+        operator_input = ctx.getText().upper()
+        print(operator_input," ((((((((((((((((()))))))))))))))))")
+        operator_mapping = {">": ">", ">": ">", "<": "<", "<": "<", "=": "==", "=": "==", "<>": "!=", ">=": ">=", "MORETHANOREQUAL": ">=", "LESSTHANOREQUALTO": "<=", "LESSTHANOREQUAL": "<="}
+        negated_operator_mapping = {">": "<=", "<": ">=", "=": "!=", ">=": "<", "<=": ">", "<>": "=="}
+        if operator_input.startswith("IS"):
+            operator_input = operator_input[2:]
+        elif operator_input.startswith("ARE"):
+            operator_input = operator_input[3:]
+        if operator_input.startswith("NOT"):
+            operator_input = operator_input[3:]
+            return negated_operator_mapping.get(operator_input, operator_input)
+
+        return operator_mapping.get(operator_input, operator_input)
+#Abbrevation is not done yet
+
+    def arithmeticExpressionget(self,ctx:Cobol85Parser.arithmeticExpression):
+        node_type = type(ctx)
+        # print(node_type,"-----------------")
+        if node_type == Cobol85Parser.ArithmeticExpressionContext:
+            # Handle the root arithmetic expression
+            # print(ctx.getText()," uyusyud ft ")
+            return self.arithmeticExpressionget(ctx.children[0]) + ''.join(self.arithmeticExpressionget(child) for child in ctx.children[1:])
+    
+        elif node_type == Cobol85Parser.PlusMinusContext:
+            # Handle addition and subtraction
+            operator = '+' if ctx.children[0].getText() == '+' else '-'
+            return operator + self.arithmeticExpressionget(ctx.children[1])
+    
+        elif node_type == Cobol85Parser.MultDivsContext:
+            # Handle multiplication and division
+            return self.arithmeticExpressionget(ctx.children[0]) + ''.join(self.arithmeticExpressionget(child) for child in ctx.children[1:])
+    
+        elif node_type == Cobol85Parser.MultDivContext:
+            # Handle multiplication (*) or division (/)
+            operator = '*' if ctx.children[0].getText() == '*' else '/'
+            return operator + self.arithmeticExpressionget(ctx.children[1])
+    
+        elif node_type == Cobol85Parser.PowersContext:
+            # Handle power (**) with possible sign
+            current_child = 0
+            if ctx.children[current_child].getText() in ['+', '-']:
+                sign = ctx.children[current_child].getText()
+                current_child += 1
+            else:
+                sign = ''
+            base = self.arithmeticExpressionget(ctx.children[current_child])
+            current_child += 1
+            exponent = ''.join(f' ** {self.arithmeticExpressionget(ctx.children[i].children[1])}' for i in range(current_child, len(ctx.children), 1))
+            return sign + base + exponent
+    
+        elif node_type == Cobol85Parser.BasisContext:
+            # Handle parentheses, identifiers, and literals
+            if ctx.children[0].getText() == '(':
+                return f'({self.arithmeticExpressionget(ctx.children[1])})'
+            elif type(ctx.children[0]) == Cobol85Parser.IdentifierContext:
+                # print (type(ctx.children[0])," 00000000000000000 ")
+                # print (ctx.children[0].getText()," iuhiu huo hoiuh iu")
+                # return ""
+                return f'{self.getStringGen(ctx.children[0])}'
+            elif type(ctx.children[0]) == Cobol85Parser.LiteralContext:
+                return str(ctx.children[0].getText())
+        # Default case, in case something is not handled
+        return ''
+    def visitArithmeticExpression(self, ctx:Cobol85Parser.ArithmeticExpressionContext):
+        # print(self.arithmeticExpressionget(ctx),"------------------")
+        return self.visitChildren(ctx)
