@@ -522,7 +522,27 @@ class CustomVisitor(Cobol85Visitor):
     # Visit a parse tree produced by Cobol85Parser#performTestClause.
     def visitPerformTestClause(self, ctx:Cobol85Parser.PerformTestClauseContext):
         return self.visitChildren(ctx)
+    #----------COMPUTE-----------------------------------#
     
+    def visitComputeStatement(self, ctx: Cobol85Parser.ComputeStatementContext):
+        i = 1
+        # print(ctx.getChildCount(), " ================== ")
+        # for child in ctx.children:
+        #     print(child.getText(), " ================== ")
+            
+        for child in ctx.children:
+            if child.getText().upper() == "EQUAL" or child.getText().upper() == "=":
+                break
+            i+=1
+        print(i,"====================")
+        for j in range(1,i):
+            if type(ctx.children[j])==Cobol85Parser.ComputeStoreContext:
+                self.python_code += Inden.add_indentation(self)
+                if ctx.children[j].getChildCount()==1:
+                    self.python_code += f"{self.setStringGen(ctx.children[j].children[0])} {self.arithmeticExpressionget(ctx.children[i])})\n"
+                elif ctx.children[j].getChildCount()==2:
+                    self.python_code += f"{self.setStringGen(ctx.children[j].children[0])} {self.arithmeticExpressionget(ctx.children[i])}, True)\n"
+        return self.visitChildren(ctx)
     #----------Helpers-----------------------------------#
     def extractMultipleDataNamesFrom(self, ctx: Cobol85Parser.AddFromContext):
         data_names,literals = [],[]
@@ -569,7 +589,7 @@ class CustomVisitor(Cobol85Visitor):
                             if qualifiedInData.inData():
                                 if qualifiedInData.inData().dataName():
                                     data_names.append(qualifiedInData.inData().dataName().getText().replace('-','_'))
-        print(data_names,"!!!!!!!!!!!!!")
+        # print(data_names,"!!!!!!!!!!!!!")
         
         return data_names
     def getVariableLine(self,ctx:Cobol85Parser.identifier):
