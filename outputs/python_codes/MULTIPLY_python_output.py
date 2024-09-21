@@ -48,8 +48,20 @@ class converted(Program):
 	def setG(self, value, isRounded=False):
 		return super().setAsInt(24, 4, value, isRounded)
 
+	def getGROUP_1(self):
+		return super().getAsString(28, 7)
+
+	def setGROUP_1(self, value):
+		return super().setAsString(28, 7, value)
+
+	def getNUM1(self):
+		return super().getAsString(28, 3)
+
+	def setNUM1(self, value):
+		return super().setAsString(28, 3, value)
+
 	def getNUM3(self):
-		return super().getAsFloat(28, 3)
+		return super().getAsFloat(28, 3, '9.99')
 
 	def setNUM3(self, value, isRounded=False):
 		return super().setAsFloat(28, 3, value, isRounded, '9.99')
@@ -59,6 +71,18 @@ class converted(Program):
 
 	def setNUM2(self, value, isRounded=False):
 		return super().setAsInt(31, 4, value, isRounded)
+
+	def getGROUP_2(self):
+		return super().getAsString(35, 9)
+
+	def setGROUP_2(self, value):
+		return super().setAsString(35, 9, value)
+
+	def getNUM1_1(self):
+		return super().getAsString(35, 5)
+
+	def setNUM1_1(self, value):
+		return super().setAsString(35, 5, value)
 
 	def getNUM5(self):
 		return super().getAsInt(35, 5)

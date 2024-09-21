@@ -11,8 +11,10 @@ class Program:
     def getAsInt(self,offset,length):
         return int(''.join(self.Memory[offset:offset+length]))
     
-    def getAsFloat(self,offset,length):
-        return float(''.join(self.Memory[offset:offset+length]))
+    def getAsFloat(self,offset,length,pic):
+        intPart,decPart= pic.split('.')
+        intPartLen,decPartLen=len(intPart),len(decPart)
+        return float(int(''.join(self.Memory[offset:offset+length]))/10** decPartLen)
     
     def setAsInt(self,offset,length,value,isRounded):
         value = abs(round(value)) if isRounded else abs(int(value))
@@ -52,6 +54,6 @@ class Program:
             intPart= '0'+intPart
         while(len(decPart)<decPartLen):
             decPart= decPart+'0'
-        value= intPart+'.'+decPart
+        value= intPart+decPart
         for i in range(0,length):
                 self.Memory[offset+i]=value[i]

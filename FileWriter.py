@@ -104,7 +104,7 @@ class FileWriter:
                     indexes+=(",idx"+str(i+1))
                 if pic[1] == "decimal":
                     file.write(('\t' * self.indentation) + f"def get{dataName}(self{indexes}):" + '\n')
-                    file.write(('\t' * (self.indentation + 1)) + f"return super().getAsFloat({offset}, {length})" + '\n')
+                    file.write(('\t' * (self.indentation + 1)) + f"return super().getAsFloat({offset}, {length}, '{pic[0][0]}')" + '\n')
                     file.write('\n')
                     file.write(('\t' * self.indentation) + f"def set{dataName}(self{indexes}, value, isRounded=False):" + '\n')
                     file.write(('\t' * (self.indentation + 1)) + f"return super().setAsFloat({offset}, {length}, value, isRounded, '{pic[0][0]}')" + '\n')
@@ -118,7 +118,7 @@ class FileWriter:
                     file.write(('\t' * (self.indentation + 1)) + f"return super().setAsInt({offset}, {length}, value, isRounded)" + '\n')
                     file.write('\n')
 
-                if pic[1] == "alphaNumericEdited" or pic == '':
+                if pic[1] == "alphaNumericEdited" or pic[1] == '':
                     file.write(('\t' * self.indentation) + f"def get{dataName}(self{indexes}):" + '\n')
                     file.write(('\t' * (self.indentation + 1)) + f"return super().getAsString({offset}, {length})" + '\n')
                     file.write('\n')

@@ -6,19 +6,21 @@ import re
 
 class SymbolCell():
 
-	def __init__(self,dataName,level,length,picture,occurs,picInfo,value,parents):
+	def __init__(self,dataName,level,length,picture,occurs,picInfo,value,parents,redefined,redefinedVariable):
 		self.dataName=dataName
 		self.level=level
 		self.length=length
 		self.occurs = occurs
 		self.picture=picture
-		self.ref=False
+		self.isRedefined=redefined
 		self.isMod=False
 		self.isSuppressed=False
 		self.initialized=False
 		self.children = []
+		self.redefinedVariable=redefinedVariable
 		self.parents = parents
 		self.value=value
+		self.offset=0
 		self.picInfo=picInfo
 
 
@@ -42,19 +44,23 @@ class SymbolTable(Cobol85Visitor):
 		return self.table[dataName]
 	
 	def stringify(self):
-		result = "Symbol Table \n"
 		for varible in self.table.values():
 			if varible.level==1 or varible.level==77:
-				result += f'{varible} {varible.dataName} {varible.level} {varible.picture} {varible.length}\n'
 				print(f' {varible.dataName} {varible.level} {varible.picture} {varible.length}')
 				ans = self.dfs(varible,0)
 				print("size is ",ans)
 
 		print("checking length--------------------------------------------------------------------------")
+		offsets={}
 		for varible in self.table.values():
+			offsets[varible.dataName]=self.memoryAdresss
 			if varible.level==1 or varible.level==77:
+				if not varible.isRedefined:
+					offsets[varible.dataName]=self.memoryPointer
+				else:
+					self.memoryPointer=offsets[varible.redefinedVariable]
 				self.dfs2(varible,0,1)
-				
+		print("checking addressMap--------------------------------------------------------------------------")		
 		for x in self.addressMap:
 			print(x)
 
@@ -65,9 +71,12 @@ class SymbolTable(Cobol85Visitor):
 		if len((variable.children))!=0:
 			length = 0
 			for child in variable.children:
-				#print(f'{child} {child.dataName} {child.level} {child.picture} {child.length} level{level} {len(child.children)}')
+				print(f'length cal {child} {child.dataName} {child.level} {child.picture} {child.length} level{level} {len(child.children)}')
 				#print("ins ",child.dataName,' le:',length)
-				length+=self.dfs(child,level+1)*child.occurs
+				if child.isRedefined:
+					self.dfs(child,level+1)
+				else:
+					length+=self.dfs(child,level+1)*child.occurs
 				#print("ins----------------------------------- ",child.dataName,' le:',length)
 			#print("recu ",length,variable.dataName)
 			variable.length=length
@@ -80,11 +89,18 @@ class SymbolTable(Cobol85Visitor):
 		print(f'{variable.dataName} {variable.level} {variable.picInfo} len:{variable.length} occurs{variable.occurs} {len(variable.children)}')
 
 		self.addressMap.append([variable,variable.dataName,self.memoryPointer,variable.occurs*variable.length,variable.length,variable.picInfo])
+		variable.offset = self.memoryPointer
 		#print(":: ",variable.dataName,self.memoryPointer,self.memoryPointer2)
 		memoryPointer2 = self.memoryPointer
 		#print(":: ",variable.dataName,self.memoryPointer,self.memoryPointer2)
+		offsets={}
 		for child in variable.children:
+			if not child.isRedefined:
+				offsets[child.dataName]=self.memoryPointer
+			else:
+				self.memoryPointer=offsets[child.redefinedVariable]
 			self.dfs2(child,level,occ)
+			
 		#print(":: ",variable.dataName,self.memoryPointer,self.memoryPointer2)
 		self.memoryPointer = memoryPointer2
 		#print(":: ",variable.dataName,self.memoryPointer,self.memoryPointer2)
@@ -92,11 +108,103 @@ class SymbolTable(Cobol85Visitor):
 		
 
 		
-		
-		
+	#override
+	def visitDataDescriptionEntry(self, ctx:Cobol85Parser.DataDescriptionEntryContext):
+		return self.visitChildren(ctx)
 
 
+	# override
+	def visitDataDescriptionEntryFormat1(self, ctx:Cobol85Parser.DataDescriptionEntryFormat1Context):
+		#print("hi1234",self.lastDataName,ctx.children[1].getText())
+		if ctx.children[0].getText()=='77':
+			dataName,picture,length,value,occurs,picInfo,parents,isRedefined,redinedvariable='','',0,None,1,[[[],[]],[],[]],[],False,''
+			self.levelContextStack.clear()
+			for child in ctx.children:
+				types .append(type(child))
+				if type(child)==Cobol85Parser.DataNameContext:
+					dataName = child.getText().upper().replace('-','_')
+				if type(child)==Cobol85Parser.DataPictureClauseContext:
+					picture = child.children[-1].getText().upper()
+					picInfo = self.parsePic(picture)
+					picture = picInfo[0]
+					# print("picinfo ",picInfo)
+				if type(child)==Cobol85Parser.DataValueClauseContext:
+					# need to look again
+					value = child.children[-1].getText()
+				if type(child)==Cobol85Parser.DataOccursClauseContext:
+					minTimes = int(child.children[1].getText())
+					maxTimes = None
+					for chi in child.children:
+						if type(chi)==Cobol85Parser.DataOccursToContext:
+							maxTimes = int(chi.children[1].getText())
+					occurs=maxTimes if maxTimes is not None else minTimes
+			self.addCell(SymbolCell(dataName,77,picInfo[0][1],picture,occurs,picInfo,value,parents,isRedefined,redinedvariable))
+			
+			
+		elif int(ctx.children[0].getText())<50 and int(ctx.children[0].getText())>0:
+			level = int(ctx.children[0].getText())
+			types = []
+			dataName,picture,length,value,occurs,picInfo,isRedefined,redinedvariable='','',0,None,1,(('',-1,False),''),False,''
+			for child in ctx.children:
+				types .append(type(child))
+				if type(child)==Cobol85Parser.DataNameContext:
+					dataName = child.getText().upper().replace('-','_')
+				if type(child)==Cobol85Parser.DataPictureClauseContext:
+					picture = child.children[-1].getText().upper()
+					picInfo = self.parsePic(picture)
+					picture = picInfo[0]
+					# print("picinfo ",picInfo)
+				if type(child)==Cobol85Parser.DataValueClauseContext:
+					# need to look again
+					value = child.children[-1].getText()
+				if type(child)==Cobol85Parser.DataRedefinesClauseContext:
+					# need to look again
+					redinedvariable= child.children[-1].getText().upper().replace('-','_')
+					isRedefined=True
+				if type(child)==Cobol85Parser.DataOccursClauseContext:
+					minTimes = int(child.children[1].getText())
+					maxTimes = None
+					for chi in child.children:
+						if type(chi)==Cobol85Parser.DataOccursToContext:
+							maxTimes = int(chi.children[1].getText())
+					occurs=maxTimes if maxTimes is not None else minTimes
+					
+			parents = []
+			if Cobol85Parser.DataPictureClauseContext in types:
+				if level==1:
+					self.addCell(SymbolCell(dataName,level,picInfo[0][1],picture,occurs,picInfo,value,parents,isRedefined,redinedvariable))
+					self.levelContextStack.append([level,dataName])
+				else:
+					#print("-----------------",self.levelContextStack)
+					while len(self.levelContextStack)!=0 and level <= self.levelContextStack[-1][0]:
+						self.levelContextStack.pop(-1)
+					parents = self.table[self.levelContextStack[-1][1]].parents +[self.table[self.levelContextStack[-1][1]]]
+					self.table[self.levelContextStack[-1][1]].children.append(SymbolCell(dataName,level,picInfo[0][1],picture,occurs,picInfo,value,parents,isRedefined,redinedvariable))
+			else:
+				if(len(self.levelContextStack)!=0):
+					#print("-----------------",self.levelContextStack)
+					while len(self.levelContextStack)!=0 and level <= self.levelContextStack[-1][0]:
+						self.levelContextStack.pop(-1)
+				if(level!=1):
+					parents = self.table[self.levelContextStack[-1][1]].parents +[self.table[self.levelContextStack[-1][1]]]
+					self.table[self.levelContextStack[-1][1]].children.append(SymbolCell(dataName,level,length,picture,occurs,picInfo,value,parents,isRedefined,redinedvariable))
+					currCell = self.table[self.levelContextStack[-1][1]].children[-1]
+					self.addCell(currCell)
+				else:
+					self.addCell(SymbolCell(dataName,level,length,picture,occurs,picInfo,value,parents,isRedefined,redinedvariable))
+				self.levelContextStack.append([level,dataName])
+
+		return self.visitChildren(ctx)
 	
+	# override
+	def visitDataDescriptionEntryFormat2(self, ctx:Cobol85Parser.DataDescriptionEntryFormat2Context):
+		return self.visitChildren(ctx)
+
+	# override
+	def visitDataDescriptionEntryFormat3(self, ctx:Cobol85Parser.DataDescriptionEntryFormat3Context):
+		return self.visitChildren(ctx)
+	
+
 	def __repr__(self):
 		return self.stringify()
 	
@@ -239,98 +347,3 @@ class SymbolTable(Cobol85Visitor):
 			i+=1
 
 		return newPicture,length
-
-		
-
-
-	#override
-	def visitDataDescriptionEntry(self, ctx:Cobol85Parser.DataDescriptionEntryContext):
-		return self.visitChildren(ctx)
-
-
-	# override
-	def visitDataDescriptionEntryFormat1(self, ctx:Cobol85Parser.DataDescriptionEntryFormat1Context):
-		#print("hi1234",self.lastDataName,ctx.children[1].getText())
-		if ctx.children[0].getText()=='77':
-			dataName,picture,length,value,occurs,picInfo,parents='','',0,None,1,[[[],[]],[],[]],[]
-			self.levelContextStack.clear()
-			for child in ctx.children:
-				types .append(type(child))
-				if type(child)==Cobol85Parser.DataNameContext:
-					dataName = child.getText().upper().replace('-','_')
-				if type(child)==Cobol85Parser.DataPictureClauseContext:
-					picture = child.children[-1].getText().upper()
-					picInfo = self.parsePic(picture)
-					picture = picInfo[0]
-					# print("picinfo ",picInfo)
-				if type(child)==Cobol85Parser.DataValueClauseContext:
-					# need to look again
-					value = child.children[-1].getText()
-				if type(child)==Cobol85Parser.DataOccursClauseContext:
-					minTimes = int(child.children[1].getText())
-					maxTimes = None
-					for chi in child.children:
-						if type(chi)==Cobol85Parser.DataOccursToContext:
-							maxTimes = int(chi.children[1].getText())
-					occurs=maxTimes if maxTimes is not None else minTimes
-			self.addCell(SymbolCell(dataName,77,picInfo[0][1],picture,occurs,picInfo,value,parents))
-			
-			
-		elif int(ctx.children[0].getText())<50 and int(ctx.children[0].getText())>0:
-			level = int(ctx.children[0].getText())
-			types = []
-			dataName,picture,length,value,occurs,picInfo='','',0,None,1,[[[],[]],[],[]]
-			for child in ctx.children:
-				types .append(type(child))
-				if type(child)==Cobol85Parser.DataNameContext:
-					dataName = child.getText().upper().replace('-','_')
-				if type(child)==Cobol85Parser.DataPictureClauseContext:
-					picture = child.children[-1].getText().upper()
-					picInfo = self.parsePic(picture)
-					picture = picInfo[0]
-					# print("picinfo ",picInfo)
-				if type(child)==Cobol85Parser.DataValueClauseContext:
-					# need to look again
-					value = child.children[-1].getText()
-				if type(child)==Cobol85Parser.DataOccursClauseContext:
-					minTimes = int(child.children[1].getText())
-					maxTimes = None
-					for chi in child.children:
-						if type(chi)==Cobol85Parser.DataOccursToContext:
-							maxTimes = int(chi.children[1].getText())
-					occurs=maxTimes if maxTimes is not None else minTimes
-					
-			parents = []
-			if Cobol85Parser.DataPictureClauseContext in types:
-				if level==1:
-					self.addCell(SymbolCell(dataName,level,picInfo[0][1],picture,occurs,picInfo,value,parents))
-					self.levelContextStack.append([level,dataName])
-				else:
-					#print("-----------------",self.levelContextStack)
-					while len(self.levelContextStack)!=0 and level <= self.levelContextStack[-1][0]:
-						self.levelContextStack.pop(-1)
-					parents = self.table[self.levelContextStack[-1][1]].parents +[self.table[self.levelContextStack[-1][1]]]
-					self.table[self.levelContextStack[-1][1]].children.append(SymbolCell(dataName,level,picInfo[0][1],picture,occurs,picInfo,value,parents))
-			else:
-				if(len(self.levelContextStack)!=0):
-					#print("-----------------",self.levelContextStack)
-					while len(self.levelContextStack)!=0 and level <= self.levelContextStack[-1][0]:
-						self.levelContextStack.pop(-1)
-				if(level!=1):
-					parents = self.table[self.levelContextStack[-1][1]].parents +[self.table[self.levelContextStack[-1][1]]]
-					self.table[self.levelContextStack[-1][1]].children.append(SymbolCell(dataName,level,length,picture,occurs,picInfo,value,parents))
-					currCell = self.table[self.levelContextStack[-1][1]].children[-1]
-					self.addCell(currCell)
-				else:
-					self.addCell(SymbolCell(dataName,level,length,picture,occurs,picInfo,value,parents))
-				self.levelContextStack.append([level,dataName])
-
-		return self.visitChildren(ctx)
-	
-	# override
-	def visitDataDescriptionEntryFormat2(self, ctx:Cobol85Parser.DataDescriptionEntryFormat2Context):
-		return self.visitChildren(ctx)
-
-	# override
-	def visitDataDescriptionEntryFormat3(self, ctx:Cobol85Parser.DataDescriptionEntryFormat3Context):
-		return self.visitChildren(ctx)
