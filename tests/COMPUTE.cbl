@@ -9,6 +9,7 @@
        01  AVERAGE     PIC 9(4)V9(2). 
 
        PROCEDURE DIVISION.
+       STOP RUN.
        BEGIN.
            COMPUTE TOTAL ROUNDED AVERAGE = SUM1 / COUNT1
            END-COMPUTE.

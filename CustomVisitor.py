@@ -807,3 +807,27 @@ class CustomVisitor(Cobol85Visitor):
     def visitArithmeticExpression(self, ctx:Cobol85Parser.ArithmeticExpressionContext):
         # print(self.arithmeticExpressionget(ctx),"------------------")
         return self.visitChildren(ctx)
+    
+    def visitDataValueClause(self, ctx:Cobol85Parser.DataValueClauseContext):
+        i = 0
+        for child in ctx.children:
+            if type(child)==Cobol85Parser.DataValueIntervalContext:
+                break
+            i+=1
+        countchil = ctx.getChildCount()
+        arr = []
+        brr = []
+        while i != countchil:
+            if ctx.children[i].getChildCount()==1:
+                brr.append(ctx.children[i].getText())
+            else:
+                a = ctx.children[i].children[0].getText()
+                b = ctx.children[i].children[1].children[1].getText()
+                pair = (a,b)
+                arr.append(pair)
+            i+=1
+        print(arr, " arr===============")
+        print(brr, " brr===============")
+        return arr,brr
+    
+    

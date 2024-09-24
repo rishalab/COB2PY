@@ -25,7 +25,7 @@ class converted(Program):
 		return super().setAsInt(6, 4, value, isRounded)
 
 	def getAVERAGE(self):
-		return super().getAsFloat(10, 6)
+		return super().getAsFloat(10, 6, '9999.99')
 
 	def setAVERAGE(self, value, isRounded=False):
 		return super().setAsFloat(10, 6, value, isRounded, '9999.99')
@@ -36,9 +36,9 @@ class converted(Program):
 		pass
 	def main(self):
 		self.initialize()
-		def BEGIN(self):
-			self.setTOTAL( self.getSUM1()/self.getCOUNT1(), True)
-			self.setAVERAGE( self.getSUM1()/self.getCOUNT1())
-			print("Total: ", self.getTOTAL())
-			print("Average: ", self.getAVERAGE())
+	def BEGIN(self):
+		self.setTOTAL( self.getSUM1()/self.getCOUNT1(), True)
+		self.setAVERAGE( self.getSUM1()/self.getCOUNT1())
+		print("Total: ", self.getTOTAL())
+		print("Average: ", self.getAVERAGE())
 converted().main()

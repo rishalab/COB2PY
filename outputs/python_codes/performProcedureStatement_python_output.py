@@ -10,13 +10,13 @@ class converted(Program):
 		pass
 	def main(self):
 		self.initialize()
-		PROCEDURE_1()
-		PROCEDURE_2()
-		PROCEDURE_3()
-	def PROCEDURE_1():
+		self.PROCEDURE_1()
+		self.PROCEDURE_2()
+		self.PROCEDURE_3()
+	def PROCEDURE_1(self):
 		print('This is PROCEDURE-1')
-	def PROCEDURE_2():
+	def PROCEDURE_2(self):
 		print('This is PROCEDURE-2')
-	def PROCEDURE_3():
+	def PROCEDURE_3(self):
 		print('This is PROCEDURE-3')
 converted().main()

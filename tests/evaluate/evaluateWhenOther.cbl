@@ -1,0 +1,17 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. EVAL-EX8.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 X PIC 9 VALUE 15.
+
+       PROCEDURE DIVISION.
+       EVALUATE TRUE
+           WHEN X > 10
+               DISPLAY "X IS GREATER THAN 10"
+           WHEN X < 10
+               DISPLAY "X IS LESS THAN 10"
+           WHEN OTHER
+               DISPLAY "X IS EXACTLY 10"
+       END-EVALUATE.
+       STOP RUN.
