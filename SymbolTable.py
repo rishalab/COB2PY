@@ -17,6 +17,7 @@ class SymbolCell():
 		self.isSuppressed=False
 		self.initialized=False
 		self.children = []
+		self.level88Vars=[]
 		self.redefinedVariable=redefinedVariable
 		self.parents = parents
 		self.value=value
@@ -35,6 +36,7 @@ class SymbolTable(Cobol85Visitor):
 		self.addressMap = []
 		self.memoryPointer=0
 		self.memoryPointer2=0
+		self.level66vars=[]
 
 	def addCell(self,symbolCell:SymbolCell):
 		
@@ -198,10 +200,32 @@ class SymbolTable(Cobol85Visitor):
 	
 	# override
 	def visitDataDescriptionEntryFormat2(self, ctx:Cobol85Parser.DataDescriptionEntryFormat2Context):
+		dataName= ctx.children[1].getText()
 		return self.visitChildren(ctx)
-
 	# override
 	def visitDataDescriptionEntryFormat3(self, ctx:Cobol85Parser.DataDescriptionEntryFormat3Context):
+		level = int(ctx.children[0].getText())
+		types = []
+		dataName,picture,length,value,occurs,picInfo,isRedefined,redinedvariable='','',0,None,1,(('',-1,False),''),False,''
+		for child in ctx.children:
+			types .append(type(child))
+			if type(child)==Cobol85Parser.DataNameContext:
+				dataName = child.getText().upper().replace('-','_')
+			if type(child)==Cobol85Parser.DataPictureClauseContext:
+				picture = child.children[-1].getText().upper()
+				picInfo = self.parsePic(picture)
+				picture = picInfo[0]
+				# print("picinfo ",picInfo)
+			if type(child)==Cobol85Parser.DataValueClauseContext:
+				# need to look again
+				# extract posiblr values
+				value = child.children[-1].getText()
+
+				
+		parents = []
+		parents = self.table[self.levelContextStack[-1][1]].parents +[self.table[self.levelContextStack[-1][1]]]
+		self.table[self.levelContextStack[-1][1]].level88Vars.append(SymbolCell(dataName,level,length,picture,occurs,picInfo,value,parents,isRedefined,redinedvariable))
+		currCell = self.table[self.levelContextStack[-1][1]].children[-1]
 		return self.visitChildren(ctx)
 	
 

@@ -78,8 +78,20 @@ class converted(Program):
 	def setL(self, value, isRounded=False):
 		return super().setAsInt(25, 3, value, isRounded)
 
+	def getGROUP_1(self):
+		return super().getAsString(28, 8)
+
+	def setGROUP_1(self, value):
+		return super().setAsString(28, 8, value)
+
+	def getNUM1(self):
+		return super().getAsString(28, 4)
+
+	def setNUM1(self, value):
+		return super().setAsString(28, 4, value)
+
 	def getNUM3(self):
-		return super().getAsFloat(28, 4)
+		return super().getAsFloat(28, 4, '99.99')
 
 	def setNUM3(self, value, isRounded=False):
 		return super().setAsFloat(28, 4, value, isRounded, '99.99')
@@ -90,14 +102,26 @@ class converted(Program):
 	def setNUM4(self, value, isRounded=False):
 		return super().setAsInt(32, 4, value, isRounded)
 
+	def getGROUP_2(self):
+		return super().getAsString(36, 8)
+
+	def setGROUP_2(self, value):
+		return super().setAsString(36, 8, value)
+
+	def getNUM1_1(self):
+		return super().getAsString(36, 4)
+
+	def setNUM1_1(self, value):
+		return super().setAsString(36, 4, value)
+
 	def getNUM5(self):
-		return super().getAsFloat(36, 4)
+		return super().getAsFloat(36, 4, '99.99')
 
 	def setNUM5(self, value, isRounded=False):
 		return super().setAsFloat(36, 4, value, isRounded, '99.99')
 
 	def getNUM2(self):
-		return super().getAsFloat(40, 4)
+		return super().getAsFloat(40, 4, '99.99')
 
 	def setNUM2(self, value, isRounded=False):
 		return super().setAsFloat(40, 4, value, isRounded, '99.99')
