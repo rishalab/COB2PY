@@ -13,14 +13,14 @@ class converted(Program):
 		return super().setAsInt(0, 1, value, isRounded)
 
 	def initialize(self):
-		self.setX(3,False)
+		self.setX(4,False)
 		pass
 	def main(self):
 		self.initialize()
-		if (self.getX() != 5):
-			print("X IS NOT 5")
-		elif (self.getX() == 5):
-			print("X IS 5")
+		if (1 <= self.getX() <= 5):
+			print("X IS BETWEEN 1 AND 5")
+		elif (self.getX() == 6):
+			print("X IS 6")
 		else:
-			print("X IS SOMETHING ELSE")
+			print("X IS GREATER THAN 6")
 converted().main()

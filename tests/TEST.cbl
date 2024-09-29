@@ -1,22 +1,17 @@
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. IntervalExample.
+       PROGRAM-ID. EVAL-EX6.
 
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-
-       01 my-number PIC 9(3) VALUE 0.
-
-          88 is-low-range       VALUE IS 0 THRU 49 ,42 89 51 THRU 55.
-          88 is-mid-range       VALUE 50 THRU 79.
-          88 is-high-range      VALUE 80 THRU 100.
-
-          88 is-multiple-of-5   VALUE 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 
-          55, 60, 65, 70, 75, 80, 85, 90, 95, 100.
+       01 X PIC 9 VALUE 3.
 
        PROCEDURE DIVISION.
-       MAIN-PARA.
-           DISPLAY "Enter a number (0-100): "
-           ACCEPT my-number
-
-           
-           STOP RUN.
+       EVALUATE X
+           WHEN NOT 5
+               DISPLAY "X IS NOT 5"
+           WHEN 5
+               DISPLAY "X IS 5"
+           WHEN OTHER
+               DISPLAY "X IS SOMETHING ELSE"
+       END-EVALUATE.
+       STOP RUN.
