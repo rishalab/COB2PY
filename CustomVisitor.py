@@ -652,129 +652,34 @@ class CustomVisitor(Cobol85Visitor):
 			return ctx.children[0].getText()
 		else:
 			return self.conditionget(ctx.children[0])
-# -----------------  EVALUATE  ------------------------------
-	# def visitEvaluateStatement(self, ctx: Cobol85Parser.EvaluateStatementContext):
-	# 	r = self.visitChildren(ctx)
-	# 	# Inden.decrease_indentation(self)
-	# 	return r
-	# def evaluatesetget(self,ctx:Cobol85Parser.EvaluateStatementContext):
-	# 	a = []
-	# 	for child in ctx.children:
-	# 		if type(child)==Cobol85Parser.EvaluateSelectContext:
-	# 			a.append(self.evaluateselectget(child))
-	# 		elif type(child)==Cobol85Parser.EvaluateAlsoSelectContext:
-	# 			a.append(self.evaluateselectget(child.children[1]))
-	# 	print(a,"-----------------")
-	# 	return a
 
-	# def evaluateselectget(self,ctx:Cobol85Parser.EvaluateSelectContext):
-	# 	print(ctx.children[0].getText()," 888888888888888888888********8 ")
-	# 	if type(ctx.children[0])==Cobol85Parser.IdentifierContext or type(ctx.children[0])==Cobol85Parser.LiteralContext:
-	# 		x = self.getStringGen(ctx.children[0])
-	# 		pair = (1,x)
-	# 		return pair
-	# 	elif type(ctx.children[0])==Cobol85Parser.ArithmeticExpressionContext:
-	# 		return (1,self.arithmeticExpressionget(ctx.children[0]))
-	# 	elif type(ctx.children[0])==Cobol85Parser.LiteralContext:
-	# 		return (1,ctx.children[0].getText())
-	# 	else:
-	# 		return (2,self.conditionget(ctx.children[0]))
-	# def visitEvaluateStatement(self,ctx:Cobol85Parser.EvaluateStatementContext):
-	# 	a = self.evaluateselectget(ctx)
-	# 	print(len(a),"}}}}}}}")
-	# 	return self.visitChildren(ctx)
-
-	# def visitEvaluateWhenPhrase(self, ctx: Cobol85Parser.EvaluateWhenPhraseContext):
-	# 	self.python_code += Inden.add_indentation(self)
-	# 	self.python_code += "if "
-	# 	a = self.evaluatesetget(ctx.parentCtx)
-	# 	# print(a," 999999 ")
-	# 	# print(len(a)," 999999 ")
-	# 	b = []
-
-	# 	print(ctx.children[0].getText()," 999999 ")
-	# 	print(ctx.children[0].children[0].getText()," ----------------- ")
-	# 	# for child in ctx.children[0].children:
-	# 	# 	print(child.getText()," iiiiiiiiiiiiiiii ")
-	# 	# 	if child.getText().upper() == 'WHEN':
-	# 	# 		continue
-	# 	# 	if type(child)==Cobol85Parser.EvaluateConditionContext:
-	# 	# 		ki = child.getChildCount()
-	# 	# 		if ki==1:
-	# 	# 			if type(child.children[0]) == Cobol85Parser.ConditionContext:
-	# 	# 				b.append(self.conditionget(child.children[0]))
-	# 	# 			elif type(child.children[0])==Cobol85Parser.BooleanLiteralContext:
-	# 	# 				b.append(child.children[0].getText())
-
-	# 	# 		b.append(self.conditionget(child.children[0]))
-	# 	# 	elif type(child)==Cobol85Parser.EvaluateAlsoConditionContext:
-	# 	# 		b.append("True")
-	# 	# for i in range(0,len(a)):
-	# 	# 	if a[i][0]==1:
-	# 	# 		self.python_code += f"{a[i][1]} == "
-	# 	# 	else:
-	# 	# 		self.python_code += f"{a[i][1]} "
-	# 	# 	if i!=len(a)-1:
-	# 	# 		self.python_code += "or "
-	# 	r = self.visitChildren(ctx)
-	# 	Inden.decrease_indentation(self)
-	# 	return r
-	# def visitEvaluateWhenOther(self, ctx: Cobol85Parser.EvaluateWhenOtherContext):
-	# 	self.python_code += Inden.add_indentation(self)
-	# 	self.python_code += "else:\n"
-	# 	Inden.increase_indentation(self)
-	# 	r = self.visitChildren(ctx)
-	# 	Inden.decrease_indentation(self)
-	# 	return r
+	#----------------------MOVE-----------------------------------#
+	def visitMoveStatement(self, ctx: Cobol85Parser.MoveStatementContext):
+		if ctx.getChildCount()==2:
+			if type(ctx.children[1])==Cobol85Parser.MoveToStatementContext:
+				str = self.getMoveTo(ctx.children[1])
+				for x in str:
+					# print(x," 888888888888888888888********8 ")
+					self.python_code += Inden.add_indentation(self)
+					self.python_code += x
+			elif type(ctx.children[1])==Cobol85Parser.MoveCorrespondingStatementContext:
+				
+				pass
+		else:
+			if type(ctx.children[2])==Cobol85Parser.MoveToStatementContext:
+				
+				pass
+			elif type(ctx.children[2])==Cobol85Parser.MoveCorrespondingStatementContext:
+				pass
+		return self.visitChildren(ctx)
 	#----------Helpers-----------------------------------#
-	def extractMultipleDataNamesFrom(self, ctx: Cobol85Parser.AddFromContext):
-		data_names,literals = [],[]
-		if ctx.identifier():
-			identifier = ctx.identifier()
-			literal= ctx.literal()
-			if literal:
-				literals.append(literal.getText())
-
-			if identifier.qualifiedDataName():
-				qualified_data_name = identifier.qualifiedDataName()
-
-				if qualified_data_name.qualifiedDataNameFormat1():
-					format1 = qualified_data_name.qualifiedDataNameFormat1()
-
-					if format1.dataName():
-						data_names.append(format1.dataName().getText().replace('-','_'))
-
-					if format1.qualifiedInData():
-						for qualifiedInData in format1.qualifiedInData():
-							if qualifiedInData.inData():
-								if qualifiedInData.inData().dataName():
-									data_names.append(qualifiedInData.inData().dataName().getText().replace('-','_'))
-		print(data_names)
-		
-		return data_names,literals
-	
-	def extractMultipleDataNames(self, ctx: Cobol85Parser.AddToContext):
-		data_names = []
-		if ctx.identifier():
-			identifier = ctx.identifier()
-			
-			if identifier.qualifiedDataName():
-				qualified_data_name = identifier.qualifiedDataName()
-
-				if qualified_data_name.qualifiedDataNameFormat1():
-					format1 = qualified_data_name.qualifiedDataNameFormat1()
-
-					if format1.dataName():
-						data_names.append(format1.dataName().getText().replace('-','_'))
-
-					if format1.qualifiedInData():
-						for qualifiedInData in format1.qualifiedInData():
-							if qualifiedInData.inData():
-								if qualifiedInData.inData().dataName():
-									data_names.append(qualifiedInData.inData().dataName().getText().replace('-','_'))
-		# print(data_names,"!!!!!!!!!!!!!")
-		
-		return data_names
+	def getMoveTo(self,ctx:Cobol85Parser.MoveToStatementContext):
+		get = self.getStringGen(ctx.children[0].children[0])
+		set = []
+		for child in ctx.children[2:]:
+			print(child.getText()," -----------------")
+			set.append(self.setStringGen(child)+get+")\n")
+		return set
 	def getVariableLine(self,ctx:Cobol85Parser.identifier):
 		names = []
 		occurs_nums = []
@@ -818,6 +723,8 @@ class CustomVisitor(Cobol85Visitor):
 		return stringout
 	
 	def getStringGen(self,ctx:Cobol85Parser.identifier):
+		if(type(ctx) == Cobol85Parser.LiteralContext):
+			return ctx.getText()
 		if(self.is_digdec(ctx.getText())):
 			return ctx.getText()
 		names,occurs_nums = self.getVariableLine(ctx)
