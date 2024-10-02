@@ -100,10 +100,10 @@ class Program:
                     self.Memory[offset+i]=value[i]
             else:
                 value = str(value)
-                for i in range(0,dataLength):
-                    self.Memory[offset+i]=value[i]
-                for i in range(length,dataLength):
+                for i in range(0,length-dataLength):
                     self.Memory[offset+i]='0'
+                for i in range(length-dataLength,length):
+                    self.Memory[offset+i]=value[i+dataLength-length]
     
     def setAsString(self,offset,length,value):
         value=str(value)
