@@ -83,4 +83,5 @@ class converted(Program):
 		print("Trailing Embedded Sign: ", self.getWS_DECIMAL3())
 		print("Leading Embedded Sign: ", self.getWS_DECIMAL4())
 		print("NUM group: ", self.getNUM_DECIMAL())
+		exit()
 converted().main()

@@ -6,7 +6,7 @@ from SymbolTable import SymbolTable
 import os
 import subprocess
 from FileWriter import FileWriter
-file_path = './tests/signedDecimal.cbl'
+file_path = './tests/EXHIBIT.cbl'
 def main(file_path):
     input_stream = FileStream(file_path)
     lexer = Cobol85Lexer(input_stream)
