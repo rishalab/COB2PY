@@ -137,61 +137,134 @@ class CustomVisitor(Cobol85Visitor):
 			
 		
 		return self.visitChildren(ctx)
+    def visitAddToStatement(self, ctx:Cobol85Parser.AddToStatementContext):
+        rhs,lhs=[],[]
+        for child in ctx.children:
+            
+            if type(child)==Cobol85Parser.AddFromContext:
+                if self.is_digdec(child.getText()):
+                    rhs.append(child.getText())
+                else:
+                   print("add== ",child.children[0].getText())
+                   rhs.append(self.getStringGen(child.children[0]))
+            if type(child)==Cobol85Parser.AddToContext:
+                print("add== ",child.children[0].getText())
+                lhs.append([self.getStringGen(child.children[0]),self.setStringGen(child.children[0]),True if len(child.children)==2 else False])
+        rhs1 = ''
+        for x in rhs:
+            if x.isdigit():
+                rhs1+=(x+"+")
+            else:
+                rhs1+=(x+"+")
+        lhs1=''
+        for x in lhs :
+            lhs1+=(x[0]+"+")
+        lhs1=lhs1[:-1]
+        
+        for x in lhs :
+            y = 'True' if x[2] else ''
+            self.python_code+=Inden.add_indentation(self)
+            self.python_code+=f'{x[1]}{rhs1+x[0]}'+y+')\n'
+            
+        
+        return self.visitChildren(ctx)
 
 
-	def visitAddToGivingStatement(self, ctx:Cobol85Parser.AddToGivingStatementContext):
-		rhs,lhs='',''
-		isrhs=True
-		for child in ctx.children:
-			if child.getText().upper()=='GIVING' and  isrhs:
-				isrhs=False
-				rhs = rhs[:-2]
-			elif isrhs and child.getText().upper()!='TO':
-				rhs+=f'{child.getText()} + '
-			elif not isrhs:
-				lhs=child.getText()
-				self.python_code+=Inden.add_indentation(self)
-				self.python_code += f'{lhs} = {rhs}\n'
+    def visitAddToGivingStatement(self, ctx:Cobol85Parser.AddToGivingStatementContext):
+        rhs,lhs=[],[]
+        for child in ctx.children:
+            
+            if type(child)==Cobol85Parser.AddFromContext or type(child)==Cobol85Parser.AddToGivingContext:
+                if self.is_digdec(child.getText()):
+                    rhs.append(child.getText())
+                else:
+                   print("add1== ",child.children[0].getText())
+                   rhs.append(self.getStringGen(child.children[0]))
+            if type(child)==Cobol85Parser.AddGivingContext:
+                print("add== ",child.children[0].getText())
+                lhs.append([self.getStringGen(child.children[0]),self.setStringGen(child.children[0]),True if len(child.children)==2 else False])
+        rhs1 = ''
+        for x in rhs:
+            if x.isdigit():
+                rhs1+=(x+"+")
+            else:
+                rhs1+=(x+"+")
+        rhs1=rhs1[:-1]
+        
+        for x in lhs :
+            y = 'True' if x[2] else ''
+            self.python_code+=Inden.add_indentation(self)
+            self.python_code+=f'{x[1]}{rhs1}'+y+')\n'
 
 		return self.visitChildren(ctx)
 	
 # --------------------   SUBTRACT   ---------------    
 
-	def visitSubtractFromStatement(self, ctx:Cobol85Parser.SubtractFromStatementContext):
-		rhs,lhs='',''
-		isrhs=True
-		for child in ctx.children:
-			if child.getText().upper()=='FROM' and  isrhs:
-				isrhs=False
-				rhs = rhs[:-2]
-			elif isrhs:
-				rhs+=f'{child.getText()} + '
-			elif not isrhs:
-				lhs=child.getText()
-				self.python_code+=Inden.add_indentation(self)
-				self.python_code += f'{lhs} -= {rhs}\n'
-		
-		return self.visitChildren(ctx)
+    def visitSubtractFromStatement(self, ctx:Cobol85Parser.SubtractFromStatementContext):
+        rhs,lhs=[],[]
+        for child in ctx.children:
+            
+            if type(child)==Cobol85Parser.SubtractSubtrahendContext:
+                if self.is_digdec(child.getText()):
+                    rhs.append(child.getText())
+                else:
+                   rhs.append(self.getStringGen(child.children[0]))
+            if type(child)==Cobol85Parser.SubtractMinuendContext:
+                lhs.append([self.getStringGen(child.children[0]),self.setStringGen(child.children[0]),True if len(child.children)==2 else False])
+        rhs1 = ''
+        for x in rhs:
+            if x.isdigit():
+                rhs1+=(x+"+")
+            else:
+                rhs1+=(x+"+")
+        rhs1 = rhs1[:-1]
+        lhs1=''
+        for x in lhs :
+            lhs1+=(x[0]+"+")
+        lhs1=lhs1[:-1]
+        print(rhs1,lhs1)
+        for x in lhs :
+            y = 'True' if x[2] else ''
+            self.python_code+=Inden.add_indentation(self)
+            self.python_code+=f'{x[1]}{x[0]}-'+f'({rhs1})'+y+')\n'
+            
+        
+        return self.visitChildren(ctx)
+        
 
 
-	def visitSubtractFromGivingStatement(self, ctx:Cobol85Parser.SubtractFromGivingStatementContext):
-		rhs,lhs='',''
-		isrhs=True
-		afterFrom=False
-		for child in ctx.children:
-			if child.getText().upper()=='GIVING' and  isrhs:
-				isrhs=False
-			elif isrhs and child.getText().upper()!='FROM' and (not afterFrom):
-				rhs+=f'{child.getText()} + '
-			elif isrhs and child.getText().upper()!='FROM' and afterFrom:
-				rhs=f'{child.getText()} - {rhs}'
-			elif isrhs and child.getText().upper()=='FROM':
-				rhs = '('+rhs[:-3]+')'
-				afterFrom=True
-			elif not isrhs:
-				lhs=child.getText()
-				self.python_code+=Inden.add_indentation(self)
-				self.python_code += f'{lhs} = {rhs}\n'
+    def visitSubtractFromGivingStatement(self, ctx:Cobol85Parser.SubtractFromGivingStatementContext):
+        rhs,lhs=[],[]
+        minuend=''
+        for child in ctx.children:
+            print("--",child.getText(),type(child))
+            if type(child)==Cobol85Parser.SubtractMinuendGivingContext:
+                if self.is_digdec(child.getText()):
+                    minuend=(child.getText())
+                else:
+                   print("add== ",child.children[0].getText())
+                   minuend=(self.getStringGen(child.children[0]))
+            if type(child)==Cobol85Parser.SubtractSubtrahendContext:
+                if self.is_digdec(child.getText()):
+                    rhs.append(child.getText())
+                else:
+                   print("add== ",child.children[0].getText())
+                   rhs.append(self.getStringGen(child.children[0]))
+            if type(child)==Cobol85Parser.SubtractGivingContext:
+                print("add== ",child.children[0].getText())
+                lhs.append([self.getStringGen(child.children[0]),self.setStringGen(child.children[0]),True if len(child.children)==2 else False])
+        rhs1 = ''
+        for x in rhs:
+            if x.isdigit():
+                rhs1+=(x+"+")
+            else:
+                rhs1+=(x+"+")
+        rhs1=rhs1[:-1]
+        
+        for x in lhs :
+            y = 'True' if x[2] else ''
+            self.python_code+=Inden.add_indentation(self)
+            self.python_code+=f'{x[1]}{minuend}-({rhs1})'+y+')\n'
 
 		return self.visitChildren(ctx)
 
@@ -699,19 +772,19 @@ class CustomVisitor(Cobol85Visitor):
 						occurs_nums.append(self.getStringGen(child))
 						# occurs_nums.append("get"+self.mapsearch(arr)+"()")
 
-		elif type(ctx.children[0])==Cobol85Parser.QualifiedDataNameContext:
-			node = ctx.children[0].children[0]
-			start = True
-			for child in node.children:
-				if start:
-					names.append(child.getText().replace('-', '_'))
-					start = False
-				else:
-					names.append(child.children[0].children[1].getText().replace('-', '_'))
-		# print(occurs_nums,"============iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii=======")
-		# print (names," --000000000000000000000000-------------------\n")
-		output_string = ','.join(occurs_nums)
-		return names,output_string
+        elif type(ctx.children[0])==Cobol85Parser.QualifiedDataNameContext:
+            node = ctx.children[0].children[0]
+            start = True
+            for child in node.children:
+                if start:
+                    names.append(child.getText().replace('-', '_').upper())
+                    start = False
+                else:
+                    names.append(child.children[0].children[1].getText().replace('-', '_').upper())
+        # print(occurs_nums,"============iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii=======")
+        # print (names," --000000000000000000000000-------------------\n")
+        output_string = ','.join(occurs_nums)
+        return names,output_string
 
 	def setStringGen(self,ctx:Cobol85Parser.identifier):
 		names,occurs_nums = self.getVariableLine(ctx)
@@ -896,7 +969,7 @@ class CustomVisitor(Cobol85Visitor):
 		return ''
 	def visitArithmeticExpression(self, ctx:Cobol85Parser.ArithmeticExpressionContext):
 		# print(self.arithmeticExpressionget(ctx),"------------------")
-		return self.visitChildren(ctx)
+        return self.visitChildren(ctx)
 	
 	def visitDataValueClause(self, ctx:Cobol85Parser.DataValueClauseContext):
 		i = 0

@@ -6,7 +6,7 @@ import re
 
 class SymbolCell():
 
-	def __init__(self,dataName,level,length,picture,occurs,picInfo,value,parents,redefined,redefinedVariable):
+	def __init__(self,dataName,level,length,picture,occurs,picInfo,value,parents,redefined,redefinedVariable,isSignLeading,isSignSeparate):
 		self.dataName=dataName
 		self.level=level
 		self.length=length
@@ -23,6 +23,8 @@ class SymbolCell():
 		self.value=value
 		self.offset=0
 		self.picInfo=picInfo
+		self.isSignLeading=isSignLeading
+		self.isSignSeparate=isSignSeparate
 
 
 class SymbolTable(Cobol85Visitor):
@@ -37,6 +39,7 @@ class SymbolTable(Cobol85Visitor):
 		self.memoryPointer=0
 		self.memoryPointer2=0
 		self.level66vars=[]
+		self.lastSymbol=''
 
 	def addCell(self,symbolCell:SymbolCell):
 		
@@ -119,7 +122,7 @@ class SymbolTable(Cobol85Visitor):
 	def visitDataDescriptionEntryFormat1(self, ctx:Cobol85Parser.DataDescriptionEntryFormat1Context):
 		#print("hi1234",self.lastDataName,ctx.children[1].getText())
 		if ctx.children[0].getText()=='77':
-			dataName,picture,length,value,occurs,picInfo,parents,isRedefined,redinedvariable='','',0,None,1,[[[],[]],[],[]],[],False,''
+			dataName,picture,length,value,occurs,picInfo,parents,isRedefined,redinedvariable,isSignLeading,isSignSeparate='','',0,None,1,[[[],[]],[],[]],[],False,'',False,False
 			self.levelContextStack.clear()
 			for child in ctx.children:
 				types .append(type(child))
@@ -133,6 +136,11 @@ class SymbolTable(Cobol85Visitor):
 				if type(child)==Cobol85Parser.DataValueClauseContext:
 					# need to look again
 					value = child.children[-1].getText()
+				if type(child)==Cobol85Parser.DataSignClauseContext:
+					if "SEPARATE" in child.getText().upper():
+						isSignSeparate=True
+					if "LEADING" in child.getText().upper():
+						isSignLeading=True
 				if type(child)==Cobol85Parser.DataOccursClauseContext:
 					minTimes = int(child.children[1].getText())
 					maxTimes = None
@@ -140,13 +148,14 @@ class SymbolTable(Cobol85Visitor):
 						if type(chi)==Cobol85Parser.DataOccursToContext:
 							maxTimes = int(chi.children[1].getText())
 					occurs=maxTimes if maxTimes is not None else minTimes
-			self.addCell(SymbolCell(dataName,77,picInfo[0][1],picture,occurs,picInfo,value,parents,isRedefined,redinedvariable))
+			length= 1+picInfo[0][1] if isSignSeparate else picInfo[0][1]
+			self.addCell(SymbolCell(dataName,77,length,[0][1],picture,occurs,picInfo,value,parents,isRedefined,redinedvariable,isSignLeading,isSignSeparate))
 			
 			
 		elif int(ctx.children[0].getText())<50 and int(ctx.children[0].getText())>0:
 			level = int(ctx.children[0].getText())
 			types = []
-			dataName,picture,length,value,occurs,picInfo,isRedefined,redinedvariable='','',0,None,1,(('',-1,False),''),False,''
+			dataName,picture,length,value,occurs,picInfo,isRedefined,redinedvariable,isSignLeading,isSignSeparate='','',0,None,1,(('',-1,False),''),False,'',False,False
 			for child in ctx.children:
 				types .append(type(child))
 				if type(child)==Cobol85Parser.DataNameContext:
@@ -159,6 +168,11 @@ class SymbolTable(Cobol85Visitor):
 				if type(child)==Cobol85Parser.DataValueClauseContext:
 					# need to look again
 					value = child.children[-1].getText()
+				if type(child)==Cobol85Parser.DataSignClauseContext:
+					if "SEPARATE" in child.getText().upper():
+						isSignSeparate=True
+					if "LEADING" in child.getText().upper():
+						isSignLeading=True
 				if type(child)==Cobol85Parser.DataRedefinesClauseContext:
 					# need to look again
 					redinedvariable= child.children[-1].getText().upper().replace('-','_')
@@ -170,18 +184,20 @@ class SymbolTable(Cobol85Visitor):
 						if type(chi)==Cobol85Parser.DataOccursToContext:
 							maxTimes = int(chi.children[1].getText())
 					occurs=maxTimes if maxTimes is not None else minTimes
-					
+			length= 1+picInfo[0][1] if isSignSeparate else picInfo[0][1]
 			parents = []
 			if Cobol85Parser.DataPictureClauseContext in types:
 				if level==1:
-					self.addCell(SymbolCell(dataName,level,picInfo[0][1],picture,occurs,picInfo,value,parents,isRedefined,redinedvariable))
+					self.lastSymbol=SymbolCell(dataName,level,length,picture,occurs,picInfo,value,parents,isRedefined,redinedvariable,isSignLeading,isSignSeparate)
+					self.addCell(self.lastSymbol)
 					self.levelContextStack.append([level,dataName])
 				else:
 					#print("-----------------",self.levelContextStack)
 					while len(self.levelContextStack)!=0 and level <= self.levelContextStack[-1][0]:
 						self.levelContextStack.pop(-1)
 					parents = self.table[self.levelContextStack[-1][1]].parents +[self.table[self.levelContextStack[-1][1]]]
-					self.table[self.levelContextStack[-1][1]].children.append(SymbolCell(dataName,level,picInfo[0][1],picture,occurs,picInfo,value,parents,isRedefined,redinedvariable))
+					self.lastSymbol=SymbolCell(dataName,level,length,picture,occurs,picInfo,value,parents,isRedefined,redinedvariable,isSignLeading,isSignSeparate)
+					self.table[self.levelContextStack[-1][1]].children.append(self.lastSymbol)
 			else:
 				if(len(self.levelContextStack)!=0):
 					#print("-----------------",self.levelContextStack)
@@ -189,11 +205,11 @@ class SymbolTable(Cobol85Visitor):
 						self.levelContextStack.pop(-1)
 				if(level!=1):
 					parents = self.table[self.levelContextStack[-1][1]].parents +[self.table[self.levelContextStack[-1][1]]]
-					self.table[self.levelContextStack[-1][1]].children.append(SymbolCell(dataName,level,length,picture,occurs,picInfo,value,parents,isRedefined,redinedvariable))
+					self.table[self.levelContextStack[-1][1]].children.append(SymbolCell(dataName,level,length,picture,occurs,picInfo,value,parents,isRedefined,redinedvariable,isSignLeading,isSignSeparate))
 					currCell = self.table[self.levelContextStack[-1][1]].children[-1]
 					self.addCell(currCell)
 				else:
-					self.addCell(SymbolCell(dataName,level,length,picture,occurs,picInfo,value,parents,isRedefined,redinedvariable))
+					self.addCell(SymbolCell(dataName,level,length,picture,occurs,picInfo,value,parents,isRedefined,redinedvariable,isSignLeading,isSignSeparate))
 				self.levelContextStack.append([level,dataName])
 
 		return self.visitChildren(ctx)
@@ -209,23 +225,18 @@ class SymbolTable(Cobol85Visitor):
 		dataName,picture,length,value,occurs,picInfo,isRedefined,redinedvariable='','',0,None,1,(('',-1,False),''),False,''
 		for child in ctx.children:
 			types .append(type(child))
-			if type(child)==Cobol85Parser.DataNameContext:
+			if type(child)==Cobol85Parser.ConditionNameContext:
 				dataName = child.getText().upper().replace('-','_')
 			if type(child)==Cobol85Parser.DataPictureClauseContext:
 				picture = child.children[-1].getText().upper()
 				picInfo = self.parsePic(picture)
 				picture = picInfo[0]
-				# print("picinfo ",picInfo)
 			if type(child)==Cobol85Parser.DataValueClauseContext:
-				# need to look again
-				# extract posiblr values
-				value = child.children[-1].getText()
+				a,b=self.getDataValueClause(child)
+		parents=[]
+		cell= SymbolCell(dataName,level,length,picture,occurs,picInfo,value,parents,isRedefined,redinedvariable,False,False)
+		self.lastSymbol.level88Vars.append([cell,a,b])
 
-				
-		parents = []
-		parents = self.table[self.levelContextStack[-1][1]].parents +[self.table[self.levelContextStack[-1][1]]]
-		self.table[self.levelContextStack[-1][1]].level88Vars.append(SymbolCell(dataName,level,length,picture,occurs,picInfo,value,parents,isRedefined,redinedvariable))
-		currCell = self.table[self.levelContextStack[-1][1]].children[-1]
 		return self.visitChildren(ctx)
 	
 
@@ -368,6 +379,29 @@ class SymbolTable(Cobol85Visitor):
 					newPicture+=picture[i]
 			else:
 				newPicture+=picture[i]
+				length+=1
 			i+=1
 
 		return newPicture,length
+	
+	def getDataValueClause(self, ctx:Cobol85Parser.dataValueClause):
+		i = 0
+		for child in ctx.children:
+			if type(child)==Cobol85Parser.DataValueIntervalContext:
+				break
+			i+=1
+		countchil = ctx.getChildCount()
+		arr = []
+		brr = []
+		while i != countchil:
+			if ctx.children[i].getChildCount()==1:
+				brr.append(ctx.children[i].getText())
+			else:
+				a = ctx.children[i].children[0].getText()
+				b = ctx.children[i].children[1].children[1].getText()
+				pair = (a,b)
+				arr.append(pair)
+			i+=1
+		print(arr, " arr===============")
+		print(brr, " brr===============")
+		return arr,brr

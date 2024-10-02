@@ -6,7 +6,7 @@ from SymbolTable import SymbolTable
 import os
 import subprocess
 from FileWriter import FileWriter
-file_path = './tests/DIVIDE.cbl'
+file_path = './tests/signedDecimal.cbl'
 def main(file_path):
     input_stream = FileStream(file_path)
     lexer = Cobol85Lexer(input_stream)
@@ -56,6 +56,6 @@ if __name__ == '__main__':
 
 '''issues
 1.commented lines in cobol is not being ignored
-2.add Giving statement after TO only one should be there but parser is parsing for many
-3.your grammar is not  taking ,(coma) as separator it is only taking space
+2.your grammar is not  taking ,(coma) as separator it is only taking space
+By default sign is trailing in cobol
 '''

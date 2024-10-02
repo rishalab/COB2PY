@@ -10,12 +10,12 @@
           88 is-mid-range       VALUE 50 THRU 79.
           88 is-high-range      VALUE 80 THRU 100.
 
-          88 is-multiple-of-5   VALUE 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 
-          55, 60, 65, 70, 75, 80, 85, 90, 95, 100.
+          88 is-multiple-of-5   VALUE 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100.
 
        PROCEDURE DIVISION.
        MAIN-PARA.
            DISPLAY "Enter a number (0-100): "
+           ADD 1 TO my-number
            ACCEPT my-number
 
            
