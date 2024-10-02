@@ -159,4 +159,5 @@ class converted(Program):
 		self.setK(self.getH() / self.getG(), True)
 		self.setL(self.getH() % self.getG())
 		print('DIVIDE G INTO H GIVING K REMAINDER L: G= ', self.getG(), ', H= ', self.getH(), ', K= ', self.getK(), ', L= ', self.getL())
+		exit()
 converted().main()

@@ -13,6 +13,7 @@ class CustomVisitor(Cobol85Visitor):
 		self.loop_indentation_level = 0
 		self.mapaddress = mapaddress
 		self.isEvaluateStarted = False
+		self.proc_end = 1
 		
 	def get_python_code(self):
 		return self.python_code
@@ -383,7 +384,9 @@ class CustomVisitor(Cobol85Visitor):
 #----------------------------- STOP & Paragraphs ---------------------------------------
 
 	def visitStopStatement(self, ctx:Cobol85Parser.StopStatementContext):
-		Inden.decrease_indentation(self)
+		self.python_code += Inden.add_indentation(self)
+		self.python_code += f"exit()\n"
+		# Inden.decrease_indentation(self)
 		return self.visitChildren(ctx)
 	def visitParagraphs(self, ctx:Cobol85Parser.ParagraphsContext):
 		Inden.increase_indentation(self)
@@ -392,6 +395,9 @@ class CustomVisitor(Cobol85Visitor):
 
 	# Visit a parse tree produced by Cobol85Parser#paragraph.
 	def visitParagraph(self, ctx:Cobol85Parser.ParagraphContext):
+		if self.proc_end == 1:
+			self.proc_end = 0
+			Inden.decrease_indentation(self)
 		name = replacehypwund(ctx.children[0].getText())
 		self.python_code += Inden.add_indentation(self)
 		self.python_code += f"def {name}(self):\n"
@@ -523,6 +529,29 @@ class CustomVisitor(Cobol85Visitor):
 	# Visit a parse tree produced by Cobol85Parser#performTestClause.
 	def visitPerformTestClause(self, ctx:Cobol85Parser.PerformTestClauseContext):
 		return self.visitChildren(ctx)
+	#----------------------------- GO TO ------------------------------------
+	def visitGoToStatementSimple(self, ctx: Cobol85Parser.GoToStatementSimpleContext):
+		self.python_code += Inden.add_indentation(self)
+		self.python_code += f"self.{replacehypwund(ctx.children[0].getText())}()\n"
+		return self.visitChildren(ctx)
+	def visitGoToDependingOnStatement(self, ctx: Cobol85Parser.GoToDependingOnStatementContext):
+		i = 0
+		for child in ctx.children:
+			if child.getText().upper() == "DEPENDING" :
+				break
+			i+=1
+		n = ctx.getChildCount()
+		print(ctx.children[n-1].getText(),"====================")
+		print(i,"====================")
+		for j in range(0,i):
+			if type(ctx.children[j])==Cobol85Parser.ProcedureNameContext:
+				self.python_code += Inden.add_indentation(self)
+				self.python_code += f"if {self.getStringGen(ctx.children[n-1])} == {j+1}:\n"
+				Inden.increase_indentation(self)
+				self.python_code += Inden.add_indentation(self)
+				self.python_code += f"self.{replacehypwund(ctx.children[j].children[0].getText())}()\n"
+				Inden.decrease_indentation(self)
+		return self.visitChildren(ctx)
 	#----------COMPUTE-----------------------------------#
 	
 	def visitComputeStatement(self, ctx: Cobol85Parser.ComputeStatementContext):
@@ -544,7 +573,27 @@ class CustomVisitor(Cobol85Visitor):
 				elif ctx.children[j].getChildCount()==2:
 					self.python_code += f"{self.setStringGen(ctx.children[j].children[0])} {self.arithmeticExpressionget(ctx.children[i])}, True)\n"
 		return self.visitChildren(ctx)
-
+#----------------------- EXHIBIT -------------------------
+	def visitExhibitStatement(self, ctx: Cobol85Parser.ExhibitStatementContext):
+		i = 0
+		for child in ctx.children:
+			if type(child)==Cobol85Parser.ExhibitOperandContext:
+				break
+			i+=1
+		print (i, "====================")
+		for child in ctx.children[i:]:
+			if type(child.children[0])==Cobol85Parser.LiteralContext:
+				self.python_code += Inden.add_indentation(self)
+				self.python_code += f"print({child.children[0].getText()},end='\t')\n"
+			if type(child.children[0])==Cobol85Parser.IdentifierContext:
+				arr, brr = self.getVariableLine(child.children[0])
+				str = ""
+				str = " in ".join(arr)
+				print(str, "====================")	
+				self.python_code += Inden.add_indentation(self)
+				self.python_code += f"print('{str}',' = ', {self.getStringGen(child.children[0])},end='\t\t')\n"
+			
+			
 # ----------------------- EVALUATE -------------------------
 	def visitEvaluateStatement(self, ctx: Cobol85Parser.EvaluateStatementContext):
 		r = self.visitChildren(ctx)
