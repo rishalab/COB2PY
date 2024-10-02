@@ -103,28 +103,104 @@ class FileWriter:
                     offset+=("+ idx"+str(i+1)+f"*{str(parentOccurs[i])}")
                     indexes+=(",idx"+str(i+1))
                 if pic[1] == "decimal":
-                    file.write(('\t' * self.indentation) + f"def get{dataName}(self{indexes}):" + '\n')
-                    file.write(('\t' * (self.indentation + 1)) + f"return super().getAsFloat({offset}, {length}, '{pic[0][0]}')" + '\n')
-                    file.write('\n')
-                    file.write(('\t' * self.indentation) + f"def set{dataName}(self{indexes}, value, isRounded=False):" + '\n')
-                    file.write(('\t' * (self.indentation + 1)) + f"return super().setAsFloat({offset}, {length}, value, isRounded, '{pic[0][0]}')" + '\n')
-                    file.write('\n')
+                    if len(variable.level88Vars)==0:
+                        file.write(('\t' * self.indentation) + f"def get{dataName}(self{indexes}):" + '\n')
+                        file.write(('\t' * (self.indentation + 1)) + f"return super().getAsFloat({offset}, {length}, '{pic[0][0]}', {pic[0][2]}, {variable.isSignSeparate}, {variable.isSignLeading})" + '\n')
+                        file.write('\n')
+                        file.write(('\t' * self.indentation) + f"def set{dataName}(self{indexes}, value, isRounded=False):" + '\n')
+                        file.write(('\t' * (self.indentation + 1)) + f"return super().setAsFloat({offset}, {length}, value, isRounded, '{pic[0][0]}', {pic[0][2]}, {variable.isSignSeparate}, {variable.isSignLeading})" + '\n')
+                        file.write('\n')
+                    else:
+                        file.write(('\t' * self.indentation) + f"def get{dataName}(self{indexes}):" + '\n')
+                        file.write(('\t' * (self.indentation + 1)) + f"val = super().getAsFloat({offset}, {length}, '{pic[0][0]}', {pic[0][2]}, {variable.isSignSeparate}, {variable.isSignLeading})" + '\n')
+                        for condition in variable.level88Vars:
+                            file.write(('\t' * (self.indentation + 1)) + f"def get{condition[0].dataName}(self):" + '\n')
+                            cond=''
+                            for x in condition[1]:
+                                cond+=f'(val>={x[0]} and val<={x[1]}) or '
+                            for x in condition[2]:
+                                x=x.replace(',','')
+                                cond+=f'(val=={x}) or '
+                            cond=cond[:-3]
+                            file.write(('\t' * (self.indentation + 2)) + f"val = super().getAsFloat({offset}, {length}, '{pic[0][0]}', {pic[0][2]}, {variable.isSignSeparate}, {variable.isSignLeading})" + '\n')
+                            file.write(('\t' * (self.indentation + 2)) + f"return True if ({cond}) else False" + '\n')
+                        file.write(('\t' * (self.indentation + 1)) + 'return val'+'\n')
+                        file.write('\n')
+                        file.write(('\t' * self.indentation) + f"def set{dataName}(self{indexes}, value, isRounded=False):" + '\n')
+                        file.write(('\t' * (self.indentation + 1)) + f"return super().setAsFloat({offset}, {length}, value, isRounded, '{pic[0][0]}', {pic[0][2]}, {variable.isSignSeparate}, {variable.isSignLeading})" + '\n')
+                        file.write('\n')
+
 
                 if pic[1] == "integer":
-                    file.write(('\t' * self.indentation) + f"def get{dataName}(self{indexes}):" + '\n')
-                    file.write(('\t' * (self.indentation + 1)) + f"return super().getAsInt({offset}, {length})" + '\n')
-                    file.write('\n')
-                    file.write(('\t' * self.indentation) + f"def set{dataName}(self{indexes}, value, isRounded=False):" + '\n')
-                    file.write(('\t' * (self.indentation + 1)) + f"return super().setAsInt({offset}, {length}, value, isRounded)" + '\n')
-                    file.write('\n')
+                    if len(variable.level88Vars)==0:
+                        file.write(('\t' * self.indentation) + f"def get{dataName}(self{indexes}):" + '\n')
+                        file.write(('\t' * (self.indentation + 1)) + f"return super().getAsInt({offset}, {length}, {pic[0][2]}, {variable.isSignSeparate}, {variable.isSignLeading})" + '\n')
+                        file.write('\n')
+                        file.write(('\t' * self.indentation) + f"def set{dataName}(self{indexes}, value, isRounded=False):" + '\n')
+                        file.write(('\t' * (self.indentation + 1)) + f"return super().setAsInt({offset}, {length}, value, isRounded, {pic[0][2]}, {variable.isSignSeparate}, {variable.isSignLeading})" + '\n')
+                        file.write('\n')
+                    else:
+                        file.write(('\t' * self.indentation) + f"def get{dataName}(self{indexes}):" + '\n')
+                        file.write(('\t' * (self.indentation + 1)) + f"val = super().getAsInt({offset}, {length}, {pic[0][2]}, {variable.isSignSeparate}, {variable.isSignLeading})" + '\n')
+                        for condition in variable.level88Vars:
+                            file.write(('\t' * (self.indentation + 1)) + f"def get{condition[0].dataName}(self):" + '\n')
+                            cond=''
+                            for x in condition[1]:
+                                cond+=f'(val>={x[0]} and val<={x[1]}) or '
+                            for x in condition[2]:
+                                x=x.replace(',','')
+                                cond+=f'(val=={x}) or '
+                            cond=cond[:-3]
+                            file.write(('\t' * (self.indentation + 2)) + f"val = super().getAsInt({offset}, {length}, {pic[0][2]}, {variable.isSignSeparate}, {variable.isSignLeading})" + '\n')
+                            file.write(('\t' * (self.indentation + 2)) + f"return True if ({cond}) else False" + '\n')
+                        file.write(('\t' * (self.indentation + 1)) + 'return val'+'\n')
+                        file.write('\n')
+                        file.write(('\t' * self.indentation) + f"def set{dataName}(self{indexes}, value, isRounded=False):" + '\n')
+                        file.write(('\t' * (self.indentation + 1)) + f"return super().setAsInt({offset}, {length}, value, isRounded, {pic[0][2]}, {variable.isSignSeparate}, {variable.isSignLeading})" + '\n')
+                        file.write('\n')
 
-                if pic[1] == "alphaNumericEdited" or pic[1] == '':
+
+                if pic[1] == "alphaNumericEdited":
+                    if len(variable.level88Vars)==0:
+                        file.write(('\t' * self.indentation) + f"def get{dataName}(self{indexes}):" + '\n')
+                        file.write(('\t' * (self.indentation + 1)) + f"return super().getAsString({offset}, {length})" + '\n')
+                        file.write('\n')
+                        file.write(('\t' * self.indentation) + f"def set{dataName}(self{indexes}, value):" + '\n')
+                        file.write(('\t' * (self.indentation + 1)) + f"return super().setAsString({offset}, {length}, value)" + '\n')
+                        file.write('\n')
+                    else:
+                        file.write(('\t' * self.indentation) + f"def get{dataName}(self{indexes}):" + '\n')
+                        file.write(('\t' * (self.indentation + 1)) + f"val = super().getAsString({offset}, {length})" + '\n')
+                        for condition in variable.level88Vars:
+                            file.write(('\t' * (self.indentation + 1)) + f"def get{condition[0].dataName}(self):" + '\n')
+                            cond=''
+                            for x in condition[1]:
+                                cond+=f'(val>={x[0]} and val<={x[1]}) or '
+                            for x in condition[2]:
+                                cond+=f'(val=={x}) or '
+                            cond=cond[:-3]
+                            file.write(('\t' * (self.indentation + 2)) + f"val = super().getAsString({offset}, {length})" + '\n')
+                            file.write(('\t' * (self.indentation + 2)) + f"return True if ({cond}) else False" + '\n')
+                        file.write(('\t' * (self.indentation + 1)) + 'return val'+'\n')
+                        file.write('\n')
+                        file.write(('\t' * self.indentation) + f"def set{dataName}(self{indexes}, value):" + '\n')
+                        file.write(('\t' * (self.indentation + 1)) + f"return super().setAsString({offset}, {length}, value)" + '\n')
+                        file.write('\n')
+                        
+                if pic[1]=='':
                     file.write(('\t' * self.indentation) + f"def get{dataName}(self{indexes}):" + '\n')
                     file.write(('\t' * (self.indentation + 1)) + f"return super().getAsString({offset}, {length})" + '\n')
                     file.write('\n')
                     file.write(('\t' * self.indentation) + f"def set{dataName}(self{indexes}, value):" + '\n')
                     file.write(('\t' * (self.indentation + 1)) + f"return super().setAsString({offset}, {length}, value)" + '\n')
                     file.write('\n')
+                
+                file.write(('\t' * self.indentation) + f"def getDispaly{dataName}(self{indexes}):" + '\n')
+                file.write(('\t' * (self.indentation + 1)) + f"return super().getAsString({offset}, {length})" + '\n')
+                file.write('\n')
+                file.write(('\t' * self.indentation) + f"def setDispaly{dataName}(self{indexes}, value):" + '\n')
+                file.write(('\t' * (self.indentation + 1)) + f"return super().setAsString({offset}, {length}, value)" + '\n')
+                file.write('\n')
 
 
         return variableToName
