@@ -9,7 +9,7 @@ class FileWriter:
 
     def writeHeader(self):
         with open(self.CurrentFile+".py", "w") as file:
-            sentences = ["from Program import Program\n\n\n",f"class {self.CurrentFile}(Program):\n","\n"]
+            sentences = ["from Program import Program\nimport os\n\n",f"class {self.CurrentFile}(Program):\n","\n"]
             for s in sentences:
                 file.write(s)
     

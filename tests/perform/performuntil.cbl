@@ -3,7 +3,7 @@
 
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01 A PIC 9(02) VALUE 0.
+       01 A PIC 9(02) VALUE 1.
 
        PROCEDURE DIVISION.
            PERFORM UNTIL A > 10

@@ -528,7 +528,7 @@ class CustomVisitor(Cobol85Visitor):
 	# Visit a parse tree produced by Cobol85Parser#performTimes.
 	def visitPerformTimes(self, ctx:Cobol85Parser.PerformTimesContext):
 		self.python_code += Inden.add_indentation(self)
-		self.python_code += f"for _ in range({ctx.children[0].getText()}):\n"
+		self.python_code += f"for _ in range({self.getStringGen(ctx.children[0])}):\n"
 		Inden.increase_indentation(self)
 		return self.visitChildren(ctx)
 
@@ -538,19 +538,23 @@ class CustomVisitor(Cobol85Visitor):
 		if ctx.parentCtx.parentCtx.children[0].getText() != "VARYING" and ctx.parentCtx.parentCtx.children[0].getText() != "AFTER" :
 			self.python_code += Inden.add_indentation(self)
 			if ctx.children[0].getText() == "UNTIL":
-				self.python_code += f"while not ( {ctx.children[1].getText()}):\n"
+				self.python_code += f"while not ( {self.conditionget(ctx.children[1])}):\n"
 			else:
-				self.python_code += f"while not ( {ctx.children[2].getText()}):\n"
+				self.python_code += f"while not ( {self.conditionget(ctx.children[2])}):\n"
 			Inden.increase_indentation(self)
 		else :
-			var = ctx.parentCtx.children[0].getText()
-			start = ctx.parentCtx.children[1].children[1].getText()
-			condition = ctx.parentCtx.children[3].children[1].getText()
+			start = self.arithmeticExpressionget(ctx.parentCtx.children[1].children[1])
+			print(start,"-------------------")
+			condition = self.conditionget(ctx.parentCtx.children[3].children[1])
+			increase = self.arithmeticExpressionget(ctx.parentCtx.children[2].children[1])
+			var = self.setStringGen(ctx.parentCtx.children[0])+start+"-"+increase+")"
 			self.python_code += Inden.add_indentation(self)
-			self.python_code += f"{var} = {start}\n"
+			self.python_code += f"{var}\n"
 			self.python_code += Inden.add_indentation(self)
-			self.python_code += f"while {condition} :\n"
+			self.python_code += f"while not ({condition} - {increase}) :\n"
 			Inden.increase_indentation(self)
+			self.python_code += Inden.add_indentation(self)
+			self.python_code += self.setStringGen(ctx.parentCtx.children[0])+self.getStringGen(ctx.parentCtx.children[0])+" + "+increase+")\n"
 			Inden.loop_inden_increment(self)
 			
 		return self.visitChildren(ctx)
@@ -968,6 +972,8 @@ class CustomVisitor(Cobol85Visitor):
 #Abbrevation is not done yet
 
 	def arithmeticExpressionget(self,ctx:Cobol85Parser.arithmeticExpression):
+		if self.is_digdec(ctx.getText()):
+			return ctx.getText()
 		node_type = type(ctx)
 		# print(node_type,"-----------------")
 		if node_type == Cobol85Parser.ArithmeticExpressionContext:
