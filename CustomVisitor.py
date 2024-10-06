@@ -74,12 +74,12 @@ class CustomVisitor(Cobol85Visitor):
 		display_at = self.visit(ctx.displayAt()) if ctx.displayAt() else None
 		display_upon = self.visit(ctx.displayUpon()) if ctx.displayUpon() else None
 		display_with = ctx.displayWith() is not None
-
+		print(display_with, " ", display_at, " ", display_upon, " ", display_operands)
 		if display_operands:
 			if display_with:
-				self.python_code += "print(" + ", ".join(f"{operand}" for operand in display_operands) + ", end='')\n"
+				self.python_code += "print(" + ", ".join(f"{operand}" for operand in display_operands) + ",sep = '', end='')\n"
 			else:
-				self.python_code += "print(" + ", ".join(f"{operand}" for operand in display_operands) + ")\n"
+				self.python_code += "print(" + ", ".join(f"{operand}" for operand in display_operands) + ", sep='')\n"
 
 		if display_at:
 			if display_with:
