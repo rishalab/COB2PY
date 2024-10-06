@@ -4,6 +4,7 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
        01 I PIC 9(02) VALUE 0.
+       
        01 J PIC 9(02) VALUE 0.
        01 K PIC 9(02) VALUE 0.
        01 L PIC 9(02) VALUE 0.
