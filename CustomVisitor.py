@@ -65,7 +65,7 @@ class CustomVisitor(Cobol85Visitor):
 		for operand in ctx.displayOperand():
 			# print(type(operand.children[0]),"-----------------")
 			if type(operand.children[0])==Cobol85Parser.IdentifierContext:
-				operand_text=self.getStringGen(operand.children[0])
+				operand_text=self.getDisplayString(operand.children[0])
 			else:
 				operand_text = self.visit(operand)
 			if operand_text:
@@ -857,7 +857,11 @@ class CustomVisitor(Cobol85Visitor):
 		# print(names," 9999999999999999999 ")
 		stringout += 'self.get' + self.mapsearch(names) + '(' + occurs_nums + ')'
 		return stringout
-	
+	def getDisplayString(self,ctx:Cobol85Parser.identifier):
+		names,occurs_nums = self.getVariableLine(ctx)
+		stringout = ''
+		stringout += 'self.getDisplay' + self.mapsearch(names) + '(' + occurs_nums + ')'
+		return stringout
 	def conditionget(self,ctx:Cobol85Parser.condition):
 		if ctx.getChildCount()==1:
 			return self.combinableConditionget(ctx.children[0])

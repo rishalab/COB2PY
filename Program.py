@@ -75,7 +75,7 @@ class Program:
         leadZero,tailZero = '0'*(intPartLen-len(val2[0])),'0'*(decPartLen-len(val2[1]))
         if isSigned:
             leadZero=leadZero[:-1]
-        return valstr+leadZero+val2+tailZero       
+        return valstr+leadZero+val2[0]+'.'+val2[1]+tailZero       
 
     
         
