@@ -35,8 +35,17 @@ class Program:
                 value,sign=[self.unpunch[value[0]][0]+value[1:],self.unpunch[value[0]][1]] if isSignLeading else [value[:-1]+self.unpunch[value[-1]][0],self.unpunch[value[-1]][1]]
                 value = '-'+value if sign=='-' else value
                 return int(value)
-
-
+    
+    def getAsDisplayInt(self,offset,length,isSigned,isSignSeparate,isSignLeading):
+        val = self.getAsInt(offset,length,isSigned,isSignSeparate,isSignLeading)
+        valstr=''
+        if isSigned:
+            valstr = '+' if val >= 0 else '-'
+        val2 = str(abs(val))
+        zero= '0'*(length-len(val2))
+        if isSignSeparate:
+            zero = zero[:-1]
+        return valstr+zero+val2
     
     def getAsFloat(self,offset,length,pic,isSigned,isSignSeparate,isSignLeading):
         intPart,decPart= pic.split('.')
@@ -53,7 +62,20 @@ class Program:
                 value,sign=[self.unpunch[value[0]][0]+value[1:],self.unpunch[value[0]][1]] if isSignLeading else [value[:-1]+self.unpunch[value[-1]][0],self.unpunch[value[-1]][1]]
                 value = '-'+value if sign=='-' else value
                 return float(int(value)/10** decPartLen)
-            
+
+    def getAsDisplayFloat(self,offset,length,pic,isSigned,isSignSeparate,isSignLeading):
+        val = self.getAsFloat(offset,length,pic,isSigned,isSignSeparate,isSignLeading)
+        valstr=''
+        if isSigned:
+            valstr = '+' if val >= 0 else '-'
+        val2 = str(abs(val))
+        intPart,decPart= pic.split('.')
+        intPartLen,decPartLen=len(intPart),len(decPart)
+        val2 = val2.split('.')
+        leadZero,tailZero = '0'*(intPartLen-len(val2[0])),'0'*(decPartLen-len(val2[1]))
+        if isSigned:
+            leadZero=leadZero[:-1]
+        return valstr+leadZero+val2+tailZero       
 
     
         
