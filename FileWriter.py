@@ -129,7 +129,7 @@ class FileWriter:
                         file.write(('\t' * self.indentation) + f"def set{dataName}(self{indexes}, value, isRounded=False):" + '\n')
                         file.write(('\t' * (self.indentation + 1)) + f"return super().setAsFloat({offset}, {length}, value, isRounded, '{pic[0][0]}', {pic[0][2]}, {variable.isSignSeparate}, {variable.isSignLeading})" + '\n')
                         file.write('\n')
-                    file.write(('\t' * self.indentation) + f"def getDispaly{dataName}(self{indexes}):" + '\n')
+                    file.write(('\t' * self.indentation) + f"def getDisplay{dataName}(self{indexes}):" + '\n')
                     file.write(('\t' * (self.indentation + 1)) + f"return super().getAsDisplayFloat({offset}, {length}, '{pic[0][0]}', {pic[0][2]}, {variable.isSignSeparate}, {variable.isSignLeading})" + '\n')
                     file.write('\n')
 
@@ -201,7 +201,7 @@ class FileWriter:
                     file.write(('\t' * (self.indentation + 1)) + f"return super().setAsString({offset}, {length}, value)" + '\n')
                     file.write('\n')
                 
-                    file.write(('\t' * self.indentation) + f"def getDispaly{dataName}(self{indexes}):" + '\n')
+                    file.write(('\t' * self.indentation) + f"def getDisplay{dataName}(self{indexes}):" + '\n')
                     file.write(('\t' * (self.indentation + 1)) + f"return super().getAsString({offset}, {length})" + '\n')
                     file.write('\n')
 
