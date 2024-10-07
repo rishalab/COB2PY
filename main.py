@@ -6,6 +6,7 @@ from SymbolTable import SymbolTable
 import os
 import subprocess
 from FileWriter import FileWriter
+from processend import process_file
 file_path = './tests/TEST.cbl'
 def main(file_path):
     input_stream = FileStream(file_path)
@@ -27,8 +28,9 @@ def main(file_path):
     visitor.visit(tree=tree)
     with open(os.path.join(".","converted.py"),"a+") as f:
         f.write(visitor.get_python_code())
-        f.write("converted().main()\n")
-        
+    process_file('converted.py')
+    with open(os.path.join(".","converted.py"),"a+") as f:
+        f.write("\t\texit()\nconverted().main()")     
     # --------------------------------Files operations------------------------------------
     filename = os.path.basename(file_path)
     output_python_filename = filename.split('.')[0] + "_python_output.py"

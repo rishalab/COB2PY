@@ -9,9 +9,10 @@ class FileWriter:
 
     def writeHeader(self):
         with open(self.CurrentFile+".py", "w") as file:
-            sentences = ["from Program import Program\nimport os\n\n",f"class {self.CurrentFile}(Program):\n","\n"]
+            sentences = ["import sys \nimport os\nsys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))  # Adjust as necessary\nfrom Program import Program\n\n",f"class {self.CurrentFile}(Program):\n","\n"]
             for s in sentences:
                 file.write(s)
+    
     
     def constructor(self,addressMap):
         self.indentation=1
@@ -191,6 +192,9 @@ class FileWriter:
                         file.write('\n')
                     file.write(('\t' * self.indentation) + f"def set{dataName}(self{indexes}, value):" + '\n')
                     file.write(('\t' * (self.indentation + 1)) + f"return super().setAsString({offset}, {length}, value)" + '\n')
+                    file.write('\n')
+                    file.write(('\t' * self.indentation) + f"def getDisplay{dataName}(self{indexes}):" + '\n')
+                    file.write(('\t' * (self.indentation + 1)) + f"return super().getAsString({offset}, {length})" + '\n')
                     file.write('\n')
                         
                 if pic[1]=='':

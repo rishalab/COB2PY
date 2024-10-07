@@ -1,22 +1,17 @@
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. PerformVarmple.
-
-       DATA DIVISION.
-       WORKING-STORAGE SECTION.
-       01 I PIC 9(02) VALUE 0.
-       
-       01 J PIC 9(02) VALUE 0.
-       01 K PIC 9(02) VALUE 0.
-       01 L PIC 9(02) VALUE 0.
-
+       PROGRAM-ID. ProcedureRangePerformExample.
        PROCEDURE DIVISION.
-           PERFORM VARYING I FROM 1 BY 1 UNTIL I > 10
-               AFTER J FROM 1 BY 1 UNTIL J > 5
-               DISPLAY 'Value of I: ' I ', Value of J: ' J
-           END-PERFORM.
-            PERFORM VARYING K FROM 1 BY 1 UNTIL K > 10
-               DISPLAY 'Value of K: ' K 
-           END-PERFORM.
-                      DISPLAY 'HI'
-
+           PERFORM PROCEDURE-1 THRU PROCEDURE-3.
+           PERFORM PROCEDURE-2.
+           DISPLAY 'udiuviudflob'
            STOP RUN.
+           EXIT.
+       PROCEDURE-1.
+           DISPLAY 'This is PROCEDURE-1'.
+           EXIT.
+       PROCEDURE-2.
+           DISPLAY 'This is PROCEDURE-2'.
+           EXIT.
+       PROCEDURE-3.
+           DISPLAY 'This is PROCEDURE-3'.
+           EXIT.

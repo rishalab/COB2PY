@@ -1,5 +1,7 @@
-from Program import Program
+import sys 
 import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))  # Adjust as necessary
+from Program import Program
 
 class converted(Program):
 
@@ -15,10 +17,11 @@ class converted(Program):
 		self.PROCEDURE_3()
 		exit()
 	def PROCEDURE_1(self):
-		print('This is PROCEDURE-1')
+		print('This is PROCEDURE-1', sep='')
+		self.PROCEDURE_2()
 	def PROCEDURE_2(self):
-		print('This is PROCEDURE-2')
+		print('This is PROCEDURE-2', sep='')
 		exit()
 	def PROCEDURE_3(self):
-		print('This is PROCEDURE-3')
+		print('This is PROCEDURE-3', sep='')
 converted().main()

@@ -29,26 +29,31 @@ class CustomVisitor(Cobol85Visitor):
 		varName = name[0]
 		if self.is_digdec(varName):
 			return varName
-		# print(name)
+		print("stack",name)
 		name = name[::-1]
 		name.pop(-1)
 		for x in self.mapaddress:
 			if varName == x[0].dataName:
-				diff = len(x[0].parents) - len(name)
 				found = True
 				for y in x[0].parents:
 					print(y.dataName,"--")
 				# print(name,"!!")
 				for i in range(0,len(name)):
-					print(x[0].parents[i+diff].dataName,name[i],"che",varName)
-					if x[0].parents[i+diff].dataName==name[i]:
-						found&=True
+					for j in range(0,len(x[0].parents)):
+						found1 = False
+						print(x[0].parents[j].dataName,name[i],"che",varName)
+						if x[0].parents[j].dataName==name[i]:
+							found1=True
+							break
+						else:
+							found1=False
+					if found1 and found:
+						found = True
 					else:
-						found&=False
+						found = False
 				if found:
 					return x[1]
-		
-		print(name, " Var Not Found")
+		print(varName,name, " Var Not Found")
 	#overide
 	def visitDataDescriptionEntryFormat1(self, ctx:Cobol85Parser.DataDescriptionEntryFormat1Context):
 		
@@ -702,7 +707,7 @@ class CustomVisitor(Cobol85Visitor):
 				if str != "":
 					str += " or "
 				str += self.evaluatewhenget(child, arr1)
-				print(str, " ############### ")
+				# print(str, " ############### ")
 		if self.isEvaluateStarted:
 			self.python_code += Inden.add_indentation(self)
 			self.python_code += f"elif {str}:\n"
@@ -725,19 +730,19 @@ class CustomVisitor(Cobol85Visitor):
 			# print(str," 9999999999999999********8 ")
 			# print(child.getText()," 888888888888888888888********8 ")
 			# print(child.children[1].getText()," 888888888888888888888********8 ")
-			print(lhs[i], "  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+			# print(lhs[i], "  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 			if type(child)==Cobol85Parser.EvaluateConditionContext:
-				print(str," 9999999999999999********8 ")
-				print(type(child.children[0])," 888888888888888888888********8 ")
-				print(child.children[0].getChildCount()," 888888888888888888888********8 ")
+				# print(str," 9999999999999999********8 ")
+				# print(type(child.children[0])," 888888888888888888888********8 ")
+				# print(child.children[0].getChildCount()," 888888888888888888888********8 ")
 				str += self.evaluateconditionget(child, lhs[i])
 			elif type(child)==Cobol85Parser.EvaluateAlsoConditionContext:
 				str += " and "
-				print(str," 9999999999999999********8 ")
-				print(child.children[1].getText()," 888888888888888888888********8 ")
+				# print(str," 9999999999999999********8 ")
+				# print(child.children[1].getText()," 888888888888888888888********8 ")
 				str += self.evaluateconditionget(child.children[1], lhs[i])
 			i+=1
-			print(str," ||||||||||||||||||||||||| ")
+			# print(str," ||||||||||||||||||||||||| ")
 		return '(' +  str + ')'
 	def evaluateconditionget(self,ctx:Cobol85Parser.EvaluateConditionContext, txt):
 		# print(ctx.getText()," 888888888888888888888********8 ")
@@ -801,8 +806,9 @@ class CustomVisitor(Cobol85Visitor):
 	def getMoveTo(self,ctx:Cobol85Parser.MoveToStatementContext):
 		get = self.getStringGen(ctx.children[0].children[0])
 		set = []
+		get = get.lstrip('0')
 		for child in ctx.children[2:]:
-			print(child.getText()," -----------------")
+			# print(child.getText()," -----------------")
 			set.append(self.setStringGen(child)+get+")\n")
 		return set
 	def getVariableLine(self,ctx:Cobol85Parser.identifier):
@@ -851,6 +857,7 @@ class CustomVisitor(Cobol85Visitor):
 		if(type(ctx) == Cobol85Parser.LiteralContext):
 			return ctx.getText()
 		if(self.is_digdec(ctx.getText())):
+			# print(ctx.getText()," KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKk ")
 			return ctx.getText()
 		names,occurs_nums = self.getVariableLine(ctx)
 		stringout = ''

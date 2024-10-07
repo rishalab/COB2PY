@@ -24,6 +24,8 @@ class Program:
     
     def getAsInt(self,offset,length,isSigned,isSignSeparate,isSignLeading):
         value = ''.join(self.Memory[offset:offset+length])
+        if value=='':
+            return int(0)
         if not isSigned:
             return int(value)
         else:
@@ -51,6 +53,8 @@ class Program:
         intPart,decPart= pic.split('.')
         intPartLen,decPartLen=len(intPart),len(decPart)
         value = ''.join(self.Memory[offset:offset+length])
+        if value=='':
+            return float(0.0)
         if not isSigned:
             return float(int(value)/10** decPartLen)
         else:
@@ -81,6 +85,7 @@ class Program:
         
     
     def setAsInt(self,offset,length,value,isRounded,isSigned,isSignSeparate,isSignLeading):
+        value=int(value)
         sign = '+' if value > 0 else '-'
         if isSigned:
             if isSignSeparate:
@@ -141,6 +146,7 @@ class Program:
                 self.Memory[offset+i]=' '
     
     def setAsFloat(self,offset,length,value,isRounded,pic,isSigned,isSignSeparate,isSignLeading):
+        value=float(value)
         if not isSigned:
             intPart,decPart= pic.split('.')
             intPartLen,decPartLen=len(intPart),len(decPart)
@@ -177,4 +183,3 @@ class Program:
                 value = self.overpunch[ind][value[0]]+value[1:] if isSignLeading else value[:-1]+ self.overpunch[ind][value[-1]]
                 for i in range(0,length):
                     self.Memory[offset+i]=value[i]
-
