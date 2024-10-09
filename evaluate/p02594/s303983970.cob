@@ -1,0 +1,18 @@
+IDENTIFICATION  DIVISION.
+PROGRAM-ID.     HELLO.
+
+ 
+DATA DIVISION.
+	WORKING-STORAGE SECTION.
+        01 X PIC S99.
+      
+PROCEDURE       DIVISION.
+    ACCEPT X.
+    
+    IF X < 30 THEN 
+      DISPLAY 'No'
+    ELSE
+      DISPLAY 'Yes'
+    END-IF.
+    
+    STOP RUN.
