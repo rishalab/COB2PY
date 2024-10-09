@@ -6,91 +6,49 @@ from Program import Program
 class converted(Program):
 
 	def __init__(self):
-		super().__init__(184)
+		super().__init__(59)
 
-	def getINDATA(self):
-		return super().getAsString(0, 100)
+	def getLN(self):
+		return super().getAsString(0, 30)
 
-	def setINDATA(self, value):
-		return super().setAsString(0, 100, value)
+	def setLN(self, value):
+		return super().setAsString(0, 30, value)
 
-	def setINDATA(self, value):
-		return super().setAsString(0, 100, value)
+	def setLN(self, value):
+		return super().setAsString(0, 30, value)
 
-	def getDisplayINDATA(self):
-		return super().getAsString(0, 100)
+	def getDisplayLN(self):
+		return super().getAsString(0, 30)
 
-	def getA1(self):
-		return super().getAsInt(100, 8, True, False, False)
+	def getN(self):
+		return super().getAsInt(30, 10, False, False, False)
 
-	def setA1(self, value, isRounded=False):
-		return super().setAsInt(100, 8, value, isRounded, True, False, False)
+	def setN(self, value, isRounded=False):
+		return super().setAsInt(30, 10, value, isRounded, False, False, False)
 
-	def getDisplayA1(self):
-		return super().getAsDisplayInt(100, 8, True, False, False)
+	def getDisplayN(self):
+		return super().getAsDisplayInt(30, 10, False, False, False)
 
-	def getA2(self):
-		return super().getAsInt(108, 8, True, False, False)
+	def getM(self):
+		return super().getAsInt(40, 10, False, False, False)
 
-	def setA2(self, value, isRounded=False):
-		return super().setAsInt(108, 8, value, isRounded, True, False, False)
+	def setM(self, value, isRounded=False):
+		return super().setAsInt(40, 10, value, isRounded, False, False, False)
 
-	def getDisplayA2(self):
-		return super().getAsDisplayInt(108, 8, True, False, False)
+	def getDisplayM(self):
+		return super().getAsDisplayInt(40, 10, False, False, False)
 
-	def getA3(self):
-		return super().getAsInt(116, 8, True, False, False)
+	def getZS(self):
+		return super().getAsString(50, 9)
 
-	def setA3(self, value, isRounded=False):
-		return super().setAsInt(116, 8, value, isRounded, True, False, False)
+	def setZS(self, value):
+		return super().setAsString(50, 9, value)
 
-	def getDisplayA3(self):
-		return super().getAsDisplayInt(116, 8, True, False, False)
+	def setZS(self, value):
+		return super().setAsString(50, 9, value)
 
-	def getR1(self):
-		return super().getAsInt(124, 8, True, False, False)
-
-	def setR1(self, value, isRounded=False):
-		return super().setAsInt(124, 8, value, isRounded, True, False, False)
-
-	def getDisplayR1(self):
-		return super().getAsDisplayInt(124, 8, True, False, False)
-
-	def getR2(self):
-		return super().getAsInt(132, 8, True, False, False)
-
-	def setR2(self, value, isRounded=False):
-		return super().setAsInt(132, 8, value, isRounded, True, False, False)
-
-	def getDisplayR2(self):
-		return super().getAsDisplayInt(132, 8, True, False, False)
-
-	def getR3(self):
-		return super().getAsInt(140, 8, True, False, False)
-
-	def setR3(self, value, isRounded=False):
-		return super().setAsInt(140, 8, value, isRounded, True, False, False)
-
-	def getDisplayR3(self):
-		return super().getAsDisplayInt(140, 8, True, False, False)
-
-	def getR(self):
-		return super().getAsInt(148, 8, True, False, False)
-
-	def setR(self, value, isRounded=False):
-		return super().setAsInt(148, 8, value, isRounded, True, False, False)
-
-	def getDisplayR(self):
-		return super().getAsDisplayInt(148, 8, True, False, False)
-
-	def getG(self):
-		return super().getAsInt(156, 8, True, False, False)
-
-	def setG(self, value, isRounded=False):
-		return super().setAsInt(156, 8, value, isRounded, True, False, False)
-
-	def getDisplayG(self):
-		return super().getAsDisplayInt(156, 8, True, False, False)
+	def getDisplayZS(self):
+		return super().getAsString(50, 9)
 
 	def unstring(input_str, delimiter, *variables):
 		parts = input_str.split(delimiter)
@@ -103,16 +61,13 @@ class converted(Program):
 		pass
 	def main(self):
 		self.initialize()
-		indata = input()
-		self.setINDATA( indata )
-		a1, a2, a3 = indata.split(' ')
-		self.seta1(a1)
-		self.seta2(a2)
-		self.seta3(a3)
-		self.setA2( self.getA2()+(self.getA1()*3))
-		self.setG(self.getA2() / 2)
-		self.setDISP(self.getG())
-		print(self.getDisplayDISP(), sep='')
+		LN = input()
+		self.setLN( LN )
+		N, M = LN.split(' ')
+		self.setN(N)
+		self.setM(M)
+		self.setZS( self.getN()*(self.getN()-1)/2+self.getM()*(self.getM()-1)/2)
+		print(self.getDisplayZS(), sep='')
 		exit()
 		exit()
 converted().main()

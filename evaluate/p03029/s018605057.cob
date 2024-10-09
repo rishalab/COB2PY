@@ -11,15 +11,15 @@
        01  r3 PIC S9(08).
        01  r pic S9(08).
        01  g pic S9(08).
-       01 disp pic Z(20)9.
+       01 disp pic X(20).
        PROCEDURE DIVISION.
         ACCEPT indata.
         
-        UNSTRING indata DELIMITED BY SPACE INTO a1 a2 a3.
+        UNSTRING indata DELIMITED BY SPACE INTO a1 a2.
         COMPUTE a2 = a2 + (a1 * 3)
         divide a2 by 2 giving g
 
-        MOVE FUNCTION TRIM(g) to disp
+        MOVE g to disp
         DISPLAY disp
 
 

@@ -624,14 +624,17 @@ class CustomVisitor(Cobol85Visitor):
 		if ctx.getChildCount() == 3:
 			if type(ctx.children[1])==Cobol85Parser.UnstringSendingPhraseContext and type(ctx.children[2])==Cobol85Parser.UnstringIntoPhraseContext:
 				input_str = (ctx.children[1].children[0].getText())
-				delimiter = (ctx.children[1].children[1].children[2].getText())
+				if ctx.children[1].children[1].getChildCount() == 3:
+					delimiter = (ctx.children[1].children[1].children[2].getText())
+				elif ctx.children[1].children[1].getChildCount() == 4:
+					delimiter = (ctx.children[1].children[1].children[3].getText())
 				if delimiter == "SPACE":
 					delimiter = "' '"
 				variables = []
 				for child in ctx.children[2].children:
 					if type(child)==Cobol85Parser.UnstringIntoContext:
 						# for i in range(1,child.getChildCount()):
-						variables.append(child.getText())
+						variables.append(child.getText().upper())
 				print(variables,"====================")
 				self.python_code += Inden.add_indentation(self)
 				self.python_code += f"{', '.join(variables)} = {input_str}.split({delimiter})\n"
