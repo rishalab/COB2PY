@@ -491,6 +491,10 @@ class CustomVisitor(Cobol85Visitor):
 		result = self.visitChildren(ctx)
 		Inden.decrease_indentation(self)
 		return result
+#----------------------------- CONTINUE ------------------------------------
+	def visitContinueStatement(self, ctx:Cobol85Parser.ContinueStatementContext):
+		self.python_code += Inden.add_indentation(self)
+		self.python_code += f"pass\n"
 #----------------------------- PERFORM ------------------------------------
 
 	def visitPerformStatement(self, ctx:Cobol85Parser.PerformStatementContext):
@@ -634,7 +638,7 @@ class CustomVisitor(Cobol85Visitor):
 				for child in ctx.children[2].children:
 					if type(child)==Cobol85Parser.UnstringIntoContext:
 						# for i in range(1,child.getChildCount()):
-						variables.append(child.getText().upper())
+						variables.append(child.getText().upper().replace("-", "_"))
 				print(variables,"====================")
 				self.python_code += Inden.add_indentation(self)
 				self.python_code += f"{', '.join(variables)} = {input_str}.split({delimiter})\n"
@@ -948,13 +952,16 @@ class CustomVisitor(Cobol85Visitor):
 			temp1 = 1
 			stringout = self.combinableConditionget(ctx.children[0])
 			while temp1 != number:
+				# print(ctx.children[temp1].getText().upper()," 888888888888888888888********8 ")
+				# print(stringout," 888888888888888888888********8 ")
 				if ctx.children[temp1].children[0].getText().upper() == "AND":
-					if type(ctx.children[temp1].children[1])==Cobol85Parser.ConditionContext:
+					if type(ctx.children[temp1].children[1])==Cobol85Parser.CombinableConditionContext:
 						stringout += " and " + self.combinableConditionget(ctx.children[temp1].children[1])
 				else:
-					if type(ctx.children[temp1].children[1])==Cobol85Parser.ConditionContext:
+					if type(ctx.children[temp1].children[1])==Cobol85Parser.CombinableConditionContext:
 						stringout += " or " + self.combinableConditionget(ctx.children[temp1].children[1])
 				temp1 += 1
+			print(stringout," 888888888888888888888********8 ")
 			return stringout
 	def combinableConditionget(self,ctx:Cobol85Parser.combinableCondition):
 		if ctx.children[0].getText().upper() == "NOT":
@@ -1100,9 +1107,26 @@ class CustomVisitor(Cobol85Visitor):
 				# return ""
 				return f'{self.getStringGen(ctx.children[0])}'
 			elif type(ctx.children[0]) == Cobol85Parser.LiteralContext:
+				if type(ctx.children[0].children[0]) == Cobol85Parser.FigurativeConstantContext:
+					# print(self.figurativeConstantget(ctx.children[0].children[0])," 888888888888888888888********8 ")
+					return self.figurativeConstantget(ctx.children[0].children[0])
 				return str(ctx.children[0].getText())
 		# Default case, in case something is not handled
 		return ''
+	def figurativeConstantget(self,ctx:Cobol85Parser.figurativeConstant):
+		if ctx.getText() == "ZERO":
+			return "0"
+		elif ctx.getText() == "ZEROS":
+			return "0"
+		elif ctx.getText() == "ZEROES":
+			return "0"
+		elif ctx.getText() == "SPACE":
+			return "\" \""
+		elif ctx.getText() == "SPACES":
+			return "\' \'"
+		else:
+			print("Error in figurativeConstant")
+			return ''
 	def visitArithmeticExpression(self, ctx:Cobol85Parser.ArithmeticExpressionContext):
 		# print(self.arithmeticExpressionget(ctx),"------------------")
 		return self.visitChildren(ctx)

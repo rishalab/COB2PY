@@ -1,16 +1,14 @@
 from collections import defaultdict
-import os
 
 class FileWriter:
 
-    def __init__(self,name,dest):
-        self.CurrentFile = name
+    def __init__(self):
+        self.CurrentFile = 'converted'
         self.indentation = 0
-        self.file_path  = os.path.join(dest, self.CurrentFile + ".py")
         pass
 
     def writeHeader(self):
-        with open(self.file_path, "w") as file:
+        with open(self.CurrentFile+".py", "w") as file:
             sentences = ["import sys \nimport os\nsys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))  # Adjust as necessary\nfrom Program import Program\n\n",f"class {self.CurrentFile}(Program):\n","\n"]
             for s in sentences:
                 file.write(s)
@@ -24,14 +22,14 @@ class FileWriter:
         else:
             offset=0
             totalLength=0
-        with open(self.file_path, "a+") as file:
+        with open(self.CurrentFile+".py", "a+") as file:
             file.write(('\t' * self.indentation) +"def __init__(self):\n")
             file.write(('\t' * (self.indentation+1)) +f"super().__init__({offset+totalLength})"+"\n")
             file.write("\n")
     
     def intializer(self,variableMap):
         self.indentation=1
-        with open(self.file_path, "a+") as file:
+        with open(self.CurrentFile+".py", "a+") as file:
             file.write(('\t' * self.indentation) +"def unstring(input_str, delimiter, *variables):\n")
             file.write('\t\t' +"parts = input_str.split(delimiter)\n"+
                        '\t\t' +"result = []\n"+
@@ -108,7 +106,7 @@ class FileWriter:
                     parentOccurs.append(parent.length)
             if (variable.occurs!=1):
                 parentOccurs.append(variable.length)
-            with open(self.file_path, "a+") as file:
+            with open(self.CurrentFile+".py", "a+") as file:
                 offset = str(offset)
                 indexes = ''
                 for i in range(0,len(parentOccurs)):

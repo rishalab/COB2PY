@@ -8,7 +8,7 @@ WORKING-STORAGE SECTION.
 01 qt         PIC 9(10).
 01 rm         PIC 9(10).
 01 ans        PIC 9(10).
-01 zs         PIC Z(9)9.
+01 zs         PIC X(9).
 
 PROCEDURE DIVISION.
   ACCEPT N.
@@ -16,5 +16,5 @@ PROCEDURE DIVISION.
   COMPUTE num = 1000 - rm.
   DIVIDE num BY 1000 GIVING qt REMAINDER ans.
   MOVE ans TO zs.
-  DISPLAY FUNCTION TRIM(zs).
+  DISPLAY zs.
   STOP RUN.
