@@ -19,7 +19,7 @@
         COMPUTE a2 = a2 + (a1 * 3)
         divide a2 by 2 giving g
 
-        MOVE g to disp
+        MOVE FUNCTION TRIM(g) to disp
         DISPLAY disp
 
 

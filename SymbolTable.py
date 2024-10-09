@@ -122,10 +122,11 @@ class SymbolTable(Cobol85Visitor):
 	def visitDataDescriptionEntryFormat1(self, ctx:Cobol85Parser.DataDescriptionEntryFormat1Context):
 		#print("hi1234",self.lastDataName,ctx.children[1].getText())
 		if ctx.children[0].getText()=='77':
+			types=[]
 			dataName,picture,length,value,occurs,picInfo,parents,isRedefined,redinedvariable,isSignLeading,isSignSeparate='','',0,None,1,[[[],[]],[],[]],[],False,'',False,False
 			self.levelContextStack.clear()
 			for child in ctx.children:
-				types .append(type(child))
+				types.append(type(child))
 				if type(child)==Cobol85Parser.DataNameContext:
 					dataName = child.getText().upper().replace('-','_')
 				if type(child)==Cobol85Parser.DataPictureClauseContext:
@@ -149,7 +150,7 @@ class SymbolTable(Cobol85Visitor):
 							maxTimes = int(chi.children[1].getText())
 					occurs=maxTimes if maxTimes is not None else minTimes
 			length= 1+picInfo[0][1] if isSignSeparate else picInfo[0][1]
-			self.addCell(SymbolCell(dataName,77,length,[0][1],picture,occurs,picInfo,value,parents,isRedefined,redinedvariable,isSignLeading,isSignSeparate))
+			self.addCell(SymbolCell(dataName,77,length,picture,occurs,picInfo,value,parents,isRedefined,redinedvariable,isSignLeading,isSignSeparate))
 			
 			
 		elif int(ctx.children[0].getText())<50 and int(ctx.children[0].getText())>0:
