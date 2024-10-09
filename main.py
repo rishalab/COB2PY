@@ -7,8 +7,18 @@ import os
 import subprocess
 from FileWriter import FileWriter
 from processend import process_file
-file_path = './evaluate/p02817/s182051352.cob'
-def main(file_path):
+import argparse
+parser = argparse.ArgumentParser(description="Command-Line Interface")
+parser.add_argument('--src', type=str, help='source file', required=True)
+parser.add_argument('--dest', type=str, help='dest file',required=True)
+parser.add_argument('--name', type=str, help='name of file',required=True)
+args = parser.parse_args()
+
+
+file_path = args.src
+name = args.name
+dest = args.dest
+def main(file_path,name,dest):
     input_stream = FileStream(file_path)
     lexer = Cobol85Lexer(input_stream)
     stream = CommonTokenStream(lexer)
@@ -18,7 +28,7 @@ def main(file_path):
     sym_tab.visit(tree=tree)
     print(sym_tab.stringify())
     initCode = sym_tab.getCode()
-    writer = FileWriter()
+    writer = FileWriter(name,dest)
     writer.writeHeader()
     writer.constructor(sym_tab.addressMap)
     mapaddress=writer.writeGetterAndSetter(sym_tab.addressMap)
@@ -58,6 +68,5 @@ if __name__ == '__main__':
 
 '''issues
 1.commented lines in cobol is not being ignored
-2.your grammar is not  taking ,(coma) as separator it is only taking space
 By default sign is trailing in cobol
 '''
