@@ -9,7 +9,7 @@ WORKING-STORAGE SECTION.
 01 C              PIC 9(10).
 01 K              PIC 9(10).
 01 ans            PIC S9(10).
-01 zs             PIC Z(9)9.
+01 zs             PIC X(10).
 
 PROCEDURE DIVISION.
   ACCEPT ln.

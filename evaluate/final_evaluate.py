@@ -3,31 +3,36 @@ import shutil
 import subprocess
 import openpyxl
 
-def find_cobol_file(folder):
-    """Find the first COBOL file in the folder."""
+def find_cobol_files(folder):
+    """Find all COBOL files in the folder."""
+    cobol_files = []
     for root, dirs, files in os.walk(folder):
         for file in files:
             if file.endswith(".cob"):
-                return os.path.join(root, file)
-    return None
+                cobol_files.append(os.path.join(root, file))
+    return cobol_files
 
 def generate_python_file(cobol_file):
-    """Run the COBOL file through a Python script to generate 'converted.py'."""
-    converted_file = "converted.py"
+    """Run the COBOL file through a Python script to generate a Python file based on COBOL filename."""
     try:
-        # Assuming you have a script or command to convert COBOL to Python
+        # Run the COBOL file conversion script (using placeholder 'testing.py')
         subprocess.run(["python3", "..\\testing.py", cobol_file], check=True)
+        return True
     except subprocess.CalledProcessError as e:
         print(f"Error converting {cobol_file} to Python: {e}")
-        return None
-    return converted_file
+        return False
 
-def copy_python_file(converted_file, dest_folder):
-    """Copy the converted Python file to the destination folder."""
+def copy_python_file(cobol_file, dest_folder):
+    """Copy the converted Python file to destination folder with the same name as the COBOL file."""
+    cobol_basename = os.path.splitext(os.path.basename(cobol_file))[0]  # Get the base name of COBOL file
+    python_filename = f"{cobol_basename}.py"  # Create Python filename based on COBOL file
+    
     try:
-        shutil.copy(converted_file, dest_folder)
+        shutil.move("converted.py", os.path.join(dest_folder, python_filename))  # Move the file to destination
     except Exception as e:
-        print(f"Error copying {converted_file}: {e}")
+        print(f"Error copying the converted file: {e}")
+        return None
+    return python_filename
 
 def run_test_case(python_file, input_file, output_file):
     """Run the Python file with the input file and compare the output to the expected output."""
@@ -38,7 +43,6 @@ def run_test_case(python_file, input_file, output_file):
         result = subprocess.run(["python3", python_file], input=input_data, text=True, capture_output=True, check=True)
         with open(output_file, 'r') as outfile:
             expected_output = outfile.read()
-            # Compare the output
             if result.stdout.strip() == expected_output.strip():
                 return True
     except subprocess.CalledProcessError as e:
@@ -65,67 +69,62 @@ def run_all_tests(python_file, in_folder, out_folder):
     total_tests = len(in_files)
     return passed, total_tests, failed_tests
 
-def update_excel(folder_name, passed, total_tests, excel_file):
-    """Update the Excel file with the folder name, pass percentage, and ratio."""
+def update_excel(folder_name, cobol_file, converted_file, passed, total_tests, excel_file):
+    """Update the Excel file with the folder name, COBOL file, converted filename, pass percentage, and ratio."""
     percentage = (passed / total_tests) * 100 if total_tests > 0 else 0
     ratio = f"{passed}/{total_tests}"
 
     if not os.path.exists(excel_file):
-        # Create a new Excel file if it doesn't exist
         workbook = openpyxl.Workbook()
         sheet = workbook.active
-        sheet.append(["Folder Name", "Percentage", "Ratio"])
+        sheet.append(["Folder Name", "COBOL File", "Converted File", "Percentage", "Ratio"])
     else:
         workbook = openpyxl.load_workbook(excel_file)
         sheet = workbook.active
-
-    # Add the new data
-    sheet.append([folder_name, percentage, ratio])
+    # Add the folder name, COBOL file name, converted file name, percentage, and ratio to the sheet
+    sheet.append([folder_name, os.path.basename(cobol_file), converted_file, percentage, ratio])
     workbook.save(excel_file)
 
 def process_folder(base_folder):
-    """Process a single folder containing COBOL files and test cases."""
-    # Step 1: Find the COBOL file in the folder
-    cobol_file = find_cobol_file(base_folder)
-    if cobol_file is None:
-        print(f"No COBOL file found in {base_folder}.")
-        return
-    print(f"COBOL file found: {cobol_file}")
-    
-    # Step 2: Convert COBOL to Python
-    converted_file = generate_python_file(cobol_file)
-    if not converted_file:
-        print(f"Python file generation failed for {base_folder}.")
+    cobol_files = find_cobol_files(base_folder)
+    if not cobol_files:
+        print(f"No COBOL files found in {base_folder}.")
         return
     
-    # Step 3: Copy the Python file to the target folder
-    copy_python_file(converted_file, base_folder)
-    
-    # Step 4: Run the Python file with test cases
-    in_folder = os.path.join(base_folder, "tc", "in")
-    out_folder = os.path.join(base_folder, "tc", "out")
-    
-    passed, total_tests, failed_tests = run_all_tests(os.path.join(base_folder, converted_file), in_folder, out_folder)
-    
-    # Step 5: Print the results
-    print(f"Test cases passed for {base_folder}: {passed}/{total_tests}")
-    if failed_tests:
-        print(f"Failed test cases: {failed_tests}")
-    
-    # Step 6: Update the Excel sheet
-    excel_file = os.path.join(base_folder, "outice.xlsx")
-    update_excel(base_folder, passed, total_tests, excel_file)
+    for cobol_file in cobol_files:
+        print(f"COBOL file found: {cobol_file}")
+        if not generate_python_file(cobol_file):
+            print(f"Python file generation failed for {cobol_file}.")
+            continue
+        
+        # Copy the converted Python file with the same name as the COBOL file
+        final_converted_file = copy_python_file(cobol_file, base_folder)
+        if not final_converted_file:
+            print(f"Failed to move and rename converted.py for {cobol_file}.")
+            continue
+
+        in_folder = os.path.join(base_folder, "tc", "in")
+        out_folder = os.path.join(base_folder, "tc", "out")
+        
+        passed, total_tests, failed_tests = run_all_tests(os.path.join(base_folder, final_converted_file), in_folder, out_folder)
+        
+        print(f"Test cases passed for {final_converted_file}: {passed}/{total_tests}")
+        if failed_tests:
+            print(f"Failed test cases for {final_converted_file}: {failed_tests}")
+        
+        excel_file = os.path.join(base_folder, "../outice.xlsx")
+        update_excel(base_folder, cobol_file, final_converted_file, passed, total_tests, excel_file)
 
 def main():
-    current_folder = os.getcwd()
-    
-    # Find all folders that start with "p0"
-    folders = [f for f in os.listdir(current_folder) if f.startswith("p0") and os.path.isdir(f)]
-    
-    # Process each folder
-    for folder in folders:
-        print(f"Processing folder: {folder}")
-        process_folder(folder)
+    # Get the current directory (where this script is located)
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Iterate through all folders in the current directory
+    for folder in os.listdir(current_dir):
+        folder_path = os.path.join(current_dir, folder)
+        if os.path.isdir(folder_path):
+            print(f"Processing folder: {folder_path}")
+            process_folder(folder_path)
 
 if __name__ == "__main__":
     main()

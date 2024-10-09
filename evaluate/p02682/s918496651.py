@@ -6,7 +6,7 @@ from Program import Program
 class converted(Program):
 
 	def __init__(self):
-		super().__init__(102)
+		super().__init__(103)
 
 	def getLN(self):
 		return super().getAsString(0, 43)
@@ -64,6 +64,18 @@ class converted(Program):
 
 	def getDisplayANS(self):
 		return super().getAsDisplayInt(83, 10, True, False, False)
+
+	def getZS(self):
+		return super().getAsString(93, 10)
+
+	def setZS(self, value):
+		return super().setAsString(93, 10, value)
+
+	def setZS(self, value):
+		return super().setAsString(93, 10, value)
+
+	def getDisplayZS(self):
+		return super().getAsString(93, 10)
 
 	def unstring(input_str, delimiter, *variables):
 		parts = input_str.split(delimiter)
