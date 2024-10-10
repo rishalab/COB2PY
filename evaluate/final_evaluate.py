@@ -74,6 +74,9 @@ def update_excel(folder_name, cobol_file, converted_file, passed, total_tests, e
     percentage = (passed / total_tests) * 100 if total_tests > 0 else 0
     ratio = f"{passed}/{total_tests}"
 
+
+    folder_name_only = os.path.basename(folder_name)
+
     if not os.path.exists(excel_file):
         workbook = openpyxl.Workbook()
         sheet = workbook.active
@@ -81,9 +84,10 @@ def update_excel(folder_name, cobol_file, converted_file, passed, total_tests, e
     else:
         workbook = openpyxl.load_workbook(excel_file)
         sheet = workbook.active
-    # Add the folder name, COBOL file name, converted file name, percentage, and ratio to the sheet
-    sheet.append([folder_name, os.path.basename(cobol_file), converted_file, percentage, ratio])
+
+    sheet.append([folder_name_only, os.path.basename(cobol_file), converted_file, percentage, ratio])
     workbook.save(excel_file)
+
 
 def process_folder(base_folder):
     cobol_files = find_cobol_files(base_folder)
@@ -116,10 +120,9 @@ def process_folder(base_folder):
         update_excel(base_folder, cobol_file, final_converted_file, passed, total_tests, excel_file)
 
 def main():
-    # Get the current directory (where this script is located)
+
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
-    # Iterate through all folders in the current directory
     for folder in os.listdir(current_dir):
         folder_path = os.path.join(current_dir, folder)
         if os.path.isdir(folder_path):
