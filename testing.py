@@ -1,17 +1,18 @@
 import os
 import subprocess
 import sys
-from antlr4 import FileStream, CommonTokenStream
+from antlr4 import FileStream, CommonTokenStream, InputStream
 from antlr.Cobol85Lexer import Cobol85Lexer
 from antlr.Cobol85Parser import Cobol85Parser
 from CustomVisitor import CustomVisitor
 from SymbolTable import SymbolTable
 from FileWriter import FileWriter
 from processend import process_file
-
+from preprocessing import preprocess_file
 def main(file_path):
     # Read the input COBOL file
-    input_stream = FileStream(file_path)
+    preprocess = preprocess_file(file_path)
+    input_stream = InputStream(preprocess)
     lexer = Cobol85Lexer(input_stream)
     stream = CommonTokenStream(lexer)
     parser = Cobol85Parser(stream)

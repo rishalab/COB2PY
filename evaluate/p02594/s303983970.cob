@@ -8,7 +8,7 @@ DATA DIVISION.
       
 PROCEDURE       DIVISION.
     ACCEPT X.
-    
+  *>
     IF X < 30 THEN 
       DISPLAY 'No'
     ELSE
