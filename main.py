@@ -7,6 +7,7 @@ import os
 import subprocess
 from FileWriter import FileWriter
 from processend import process_file
+from preprocessing import preprocess_file
 import argparse
 parser = argparse.ArgumentParser(description="Command-Line Interface")
 parser.add_argument('--src', type=str, help='source file', required=True)
@@ -19,7 +20,8 @@ file_path = args.src
 name = args.name
 dest = args.dest
 def main(file_path,name,dest):
-    input_stream = FileStream(file_path)
+    preprocess = preprocess_file(file_path)
+    input_stream = FileStream(preprocess)
     lexer = Cobol85Lexer(input_stream)
     stream = CommonTokenStream(lexer)
     parser = Cobol85Parser(stream)

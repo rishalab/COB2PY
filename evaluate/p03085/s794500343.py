@@ -33,13 +33,13 @@ class converted(Program):
 		self.initialize()
 		B = input()
 		self.setB( B )
-		if (self.getB() == "A"):
+		if (self.getB() == ("A")):
 			print("T", sep='')
-		elif (self.getB() == "C"):
+		elif (self.getB() == ("C")):
 			print("G", sep='')
-		elif (self.getB() == "G"):
+		elif (self.getB() == ("G")):
 			print("C", sep='')
-		elif (self.getB() == "T"):
+		elif (self.getB() == ("T")):
 			print("A", sep='')
 		else:
 			pass

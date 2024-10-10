@@ -781,45 +781,34 @@ class CustomVisitor(Cobol85Visitor):
 		str = ""
 		n= len(lhs)
 		i = 0
-		# print(ctx.getText()," 888888888888888888888********8 ")
 		for child in ctx.children[1:]:
-			# print(str," 9999999999999999********8 ")
-			# print(child.getText()," 888888888888888888888********8 ")
-			# print(child.children[1].getText()," 888888888888888888888********8 ")
-			# print(lhs[i], "  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
 			if type(child)==Cobol85Parser.EvaluateConditionContext:
-				# print(str," 9999999999999999********8 ")
-				# print(type(child.children[0])," 888888888888888888888********8 ")
-				# print(child.children[0].getChildCount()," 888888888888888888888********8 ")
 				str += self.evaluateconditionget(child, lhs[i])
 			elif type(child)==Cobol85Parser.EvaluateAlsoConditionContext:
 				str += " and "
-				# print(str," 9999999999999999********8 ")
-				# print(child.children[1].getText()," 888888888888888888888********8 ")
 				str += self.evaluateconditionget(child.children[1], lhs[i])
 			i+=1
-			# print(str," ||||||||||||||||||||||||| ")
 		return '(' +  str + ')'
 	def evaluateconditionget(self,ctx:Cobol85Parser.EvaluateConditionContext, txt):
 		# print(ctx.getText()," 888888888888888888888********8 ")
 		if type(ctx.children[0])==Cobol85Parser.ConditionContext:
-			return txt+' == '+self.conditionget(ctx.children[0])
+			return txt+' == ('+self.conditionget(ctx.children[0]) + ')'
 		elif type(ctx.children[0])==Cobol85Parser.BooleanLiteralContext:
-			return txt + " == " + ctx.children[0].getText()
+			return txt + " == (" + ctx.children[0].getText() + ')'
 		elif ctx.getText().upper() == "ANY":
 			return "True"
 		else:
 			if ctx.children[0].getText().upper() == "NOT":
 				if ctx.getChildCount()==2:
-					return txt + " != " + self.evaluatevalueget(ctx.children[1])
+					return txt + " != (" + self.evaluatevalueget(ctx.children[1]) + ')'
 					# return self.evaluatevalueget(ctx.children[1]) + " <= " + txt + " <= " + self.evaluatevalueget(ctx.children[2].children[1])
 				elif ctx.getChildCount()==3:
-					return '( '+ txt + ' < ' + self.evaluatevalueget(ctx.children[1]) + ' or ' + txt + ' > ' + self.evaluatevalueget(ctx.children[2].children[1]) + ' )'
+					return '( '+ txt + ' < (' + self.evaluatevalueget(ctx.children[1]) + ') or ' + txt + ' > (' + self.evaluatevalueget(ctx.children[2].children[1]) + ') )'
 			else:
 				if ctx.getChildCount()==2:
-					return self.evaluatevalueget(ctx.children[0]) + " <= " + txt + " <= " + self.evaluatevalueget(ctx.children[1].children[1])
+					return '(' +self.evaluatevalueget(ctx.children[0]) + ") <= " + txt + " <= (" + self.evaluatevalueget(ctx.children[1].children[1]) + ')'
 				elif ctx.getChildCount()==1:
-					return txt + " == " + self.evaluatevalueget(ctx.children[0])
+					return txt + " == (" + self.evaluatevalueget(ctx.children[0]) + ')'
 	def evaluatevalueget(self,ctx:Cobol85Parser.EvaluateValueContext):
 		if type(ctx.children[0])==Cobol85Parser.ArithmeticExpressionContext:
 			return self.arithmeticExpressionget(ctx.children[0])
@@ -835,6 +824,10 @@ class CustomVisitor(Cobol85Visitor):
 		elif type(ctx.children[0])==Cobol85Parser.ArithmeticExpressionContext:
 			return self.arithmeticExpressionget(ctx.children[0])
 		elif type(ctx.children[0])==Cobol85Parser.LiteralContext:
+			if (ctx.children[0].getText().upper() == "TRUE"):
+				return "True"
+			elif (ctx.children[0].getText().upper() == "FALSE"):
+				return "False"
 			return ctx.children[0].getText()
 		else:
 			return self.conditionget(ctx.children[0])
