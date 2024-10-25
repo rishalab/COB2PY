@@ -6,49 +6,16 @@ from Program import Program
 class converted(Program):
 
 	def __init__(self):
-		super().__init__(59)
+		super().__init__(4)
 
-	def getLN(self):
-		return super().getAsString(0, 30)
+	def getCHOICE(self):
+		return super().getAsInt(0, 4, False, False, False)
 
-	def setLN(self, value):
-		return super().setAsString(0, 30, value)
+	def setCHOICE(self, value, isRounded=False):
+		return super().setAsInt(0, 4, value, isRounded, False, False, False)
 
-	def setLN(self, value):
-		return super().setAsString(0, 30, value)
-
-	def getDisplayLN(self):
-		return super().getAsString(0, 30)
-
-	def getN(self):
-		return super().getAsInt(30, 10, False, False, False)
-
-	def setN(self, value, isRounded=False):
-		return super().setAsInt(30, 10, value, isRounded, False, False, False)
-
-	def getDisplayN(self):
-		return super().getAsDisplayInt(30, 10, False, False, False)
-
-	def getM(self):
-		return super().getAsInt(40, 10, False, False, False)
-
-	def setM(self, value, isRounded=False):
-		return super().setAsInt(40, 10, value, isRounded, False, False, False)
-
-	def getDisplayM(self):
-		return super().getAsDisplayInt(40, 10, False, False, False)
-
-	def getZS(self):
-		return super().getAsString(50, 9)
-
-	def setZS(self, value):
-		return super().setAsString(50, 9, value)
-
-	def setZS(self, value):
-		return super().setAsString(50, 9, value)
-
-	def getDisplayZS(self):
-		return super().getAsString(50, 9)
+	def getDisplayCHOICE(self):
+		return super().getAsDisplayInt(0, 4, False, False, False)
 
 	def unstring(input_str, delimiter, *variables):
 		parts = input_str.split(delimiter)
@@ -58,16 +25,51 @@ class converted(Program):
 		result.extend([''] * (len(variables) - len(result)))
 		return tuple(result)
 	def initialize(self):
+		self.setCHOICE(10,False)
 		pass
 	def main(self):
 		self.initialize()
-		LN = input()
-		self.setLN( LN )
-		N, M = LN.split(' ')
-		self.setN(N)
-		self.setM(M)
-		self.setZS( self.getN()*(self.getN()-1)/2+self.getM()*(self.getM()-1)/2)
-		print(self.getDisplayZS(), sep='')
+		self.MAIN_PROCEDURE_flow()
+	def MAIN_PROCEDURE(self):
+		self.setCHOICE(2)
+		if self.getCHOICE() == 1:
+			self.INIT_PROC_flow()
+		if self.getCHOICE() == 2:
+			self.MAIN_PROC_flow()
+		if self.getCHOICE() == 3:
+			self.END_PROC_flow()
+	def INIT_PROC(self):
+		print("In INIT-PROC.", sep='')
+	def MAIN_PROC(self):
+		print("In MAIN-PROC.", sep='')
+		self.INIT_PROC_flow()
+		exit()
+	def END_PROC(self):
+		print("In END-PROC.", sep='')
+		exit()
+
+	def MAIN_PROCEDURE_flow(self):
+		self.setCHOICE(2)
+		if self.getCHOICE() == 1:
+			self.INIT_PROC_flow()
+		if self.getCHOICE() == 2:
+			self.MAIN_PROC_flow()
+		if self.getCHOICE() == 3:
+			self.END_PROC_flow()
+		self.INIT_PROC_flow()
+
+	def INIT_PROC_flow(self):
+		print("In INIT-PROC.", sep='')
+		self.MAIN_PROC_flow()
+
+	def MAIN_PROC_flow(self):
+		print("In MAIN-PROC.", sep='')
+		self.INIT_PROC_flow()
+		exit()
+		self.END_PROC_flow()
+
+	def END_PROC_flow(self):
+		print("In END-PROC.", sep='')
 		exit()
 		exit()
 converted().main()

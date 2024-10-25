@@ -1,16 +1,22 @@
-IDENTIFICATION DIVISION.
-PROGRAM-ID. PROGRAM_ID.
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. GoToDependingExample.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       1 CHOICE PIC 9(4) VALUE 10.
+       PROCEDURE DIVISION.
 
-DATA DIVISION.
-WORKING-STORAGE SECTION.
-01 LN             PIC X(30).
-01 N              PIC 9(10).
-01 M              PIC 9(10).
-01 zs             PIC X(9).
+       MAIN-PROCEDURE.
+           MOVE 2 TO CHOICE.
+           GO TO INIT-PROC MAIN-PROC END-PROC DEPENDING ON CHOICE.
 
-PROCEDURE DIVISION.
-  ACCEPT LN.
-  UNSTRING LN DELIMITED BY SPACE INTO N M.
-  COMPUTE zs = N * (N - 1) / 2 + M * (M - 1) / 2.
-  DISPLAY zs.
-  STOP RUN.
+       INIT-PROC.
+           DISPLAY "In INIT-PROC.".
+
+       MAIN-PROC.
+           DISPLAY "In MAIN-PROC.".
+           GO TO INIT-PROC.
+           STOP RUN.
+
+       END-PROC.
+           DISPLAY "In END-PROC."
+           STOP RUN.

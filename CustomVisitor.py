@@ -522,19 +522,34 @@ class CustomVisitor(Cobol85Visitor):
 		i = 0
 		# print(ctx.getChildCount())
 		# print(ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText())
-		while ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText() != ctx.children[0].getText() :
-			i+=1
-			# print(ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText()+"\n")
-			# print(ctx.children[0].getText()+"\n")
-		self.python_code += Inden.add_indentation(self)
-		self.python_code+=f"self.{replacehypwund(ctx.children[0].getText())}()\n"
-		if ctx.getChildCount()!=1:
-			while ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText() != ctx.children[2].getText():
+		if type(ctx.parentCtx.parentCtx.parentCtx.parentCtx)==Cobol85Parser.ParagraphsContext:
+			while ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText() != ctx.children[0].getText() :
 				i+=1
-				self.python_code += Inden.add_indentation(self)
-				tempstr = replacehypwund(ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText())
-				# print(tempstr+"  ==\n")
-				self.python_code+=f"self.{tempstr}()\n"
+				# print(ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText()+"\n")
+				# print(ctx.children[0].getText()+"\n")
+			self.python_code += Inden.add_indentation(self)
+			self.python_code+=f"self.{replacehypwund(ctx.children[0].getText())}()\n"
+			if ctx.getChildCount()!=1:
+				while ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText() != ctx.children[2].getText():
+					i+=1
+					self.python_code += Inden.add_indentation(self)
+					tempstr = replacehypwund(ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText())
+					# print(tempstr+"  ==\n")
+					self.python_code+=f"self.{tempstr}()\n"
+		elif type(ctx.parentCtx.parentCtx.parentCtx.parentCtx.parentCtx) == Cobol85Parser.ParagraphsContext:
+			while ctx.parentCtx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText() != ctx.children[0].getText() :
+				i+=1
+				# print(ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText()+"\n")
+				# print(ctx.children[0].getText()+"\n")
+			self.python_code += Inden.add_indentation(self)
+			self.python_code+=f"self.{replacehypwund(ctx.children[0].getText())}()\n"
+			if ctx.getChildCount()!=1:
+				while ctx.parentCtx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText() != ctx.children[2].getText():
+					i+=1
+					self.python_code += Inden.add_indentation(self)
+					tempstr = replacehypwund(ctx.parentCtx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText())
+					# print(tempstr+"  ==\n")
+					self.python_code+=f"self.{tempstr}()\n"
 		return self.visitChildren(ctx)
 
 
@@ -669,7 +684,7 @@ class CustomVisitor(Cobol85Visitor):
 	#----------------------------- GO TO ------------------------------------
 	def visitGoToStatementSimple(self, ctx: Cobol85Parser.GoToStatementSimpleContext):
 		self.python_code += Inden.add_indentation(self)
-		self.python_code += f"self.{replacehypwund(ctx.children[0].getText())}()\n"
+		self.python_code += f"self.{replacehypwund(ctx.children[0].getText())}_flow()\n"
 		return self.visitChildren(ctx)
 	def visitGoToDependingOnStatement(self, ctx: Cobol85Parser.GoToDependingOnStatementContext):
 		i = 0
@@ -686,7 +701,7 @@ class CustomVisitor(Cobol85Visitor):
 				self.python_code += f"if {self.getStringGen(ctx.children[n-1])} == {j+1}:\n"
 				Inden.increase_indentation(self)
 				self.python_code += Inden.add_indentation(self)
-				self.python_code += f"self.{replacehypwund(ctx.children[j].children[0].getText())}()\n"
+				self.python_code += f"self.{replacehypwund(ctx.children[j].children[0].getText())}_flow()\n"
 				Inden.decrease_indentation(self)
 		return self.visitChildren(ctx)
 	#----------COMPUTE-----------------------------------#
