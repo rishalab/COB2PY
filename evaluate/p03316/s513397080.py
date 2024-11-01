@@ -83,13 +83,6 @@ class converted(Program):
 	def getDisplayAMA(self):
 		return super().getAsDisplayInt(142, 10, False, False, False)
 
-	def unstring(input_str, delimiter, *variables):
-		parts = input_str.split(delimiter)
-		result = []
-		for i in range(min(len(parts), len(variables))):
-			result.append(parts[i])
-		result.extend([''] * (len(variables) - len(result)))
-		return tuple(result)
 	def initialize(self):
 		pass
 	def main(self):
@@ -99,7 +92,7 @@ class converted(Program):
 		self.setN(self.getINP())
 		self.setS(self.getINP())
 		self.setIDX(1)
-		while not ( (self.getIDX() == 10) or (self.getWK_S(self.getIDX() - 1 ) == " ")):
+		while not ( (self.getIDX() == 10) or (self.getWK_S(self.getIDX() - 1 ) == ' ')):
 			self.setANS(self.getWK_S(self.getIDX() - 1 )+self.getANS())
 			self.setIDX(1+self.getIDX())
 		self.setSHO(self.getN() / self.getANS())

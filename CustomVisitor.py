@@ -522,9 +522,11 @@ class CustomVisitor(Cobol85Visitor):
 		i = 0
 		# print(ctx.getChildCount())
 		# print(ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText())
+		# print(self.python_code)
 		if type(ctx.parentCtx.parentCtx.parentCtx.parentCtx)==Cobol85Parser.ParagraphsContext:
 			while ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText() != ctx.children[0].getText() :
 				i+=1
+				# print("HI")
 				# print(ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText()+"\n")
 				# print(ctx.children[0].getText()+"\n")
 			self.python_code += Inden.add_indentation(self)
@@ -642,25 +644,31 @@ class CustomVisitor(Cobol85Visitor):
 	def visitUnstringStatement(self, ctx: Cobol85Parser.UnstringStatementContext):
 		if ctx.getChildCount() == 3:
 			if type(ctx.children[1])==Cobol85Parser.UnstringSendingPhraseContext and type(ctx.children[2])==Cobol85Parser.UnstringIntoPhraseContext:
-				input_str = (ctx.children[1].children[0].getText())
-				if ctx.children[1].children[1].getChildCount() == 3:
-					delimiter = (ctx.children[1].children[1].children[2].getText())
-				elif ctx.children[1].children[1].getChildCount() == 4:
-					delimiter = (ctx.children[1].children[1].children[3].getText())
-				if delimiter == "SPACE":
-					delimiter = "' '"
-				variables = []
-				for child in ctx.children[2].children:
-					if type(child)==Cobol85Parser.UnstringIntoContext:
-						# for i in range(1,child.getChildCount()):
-						variables.append(child.getText().upper().replace("-", "_"))
-				print(variables,"====================")
-				self.python_code += Inden.add_indentation(self)
-				self.python_code += f"{', '.join(variables)} = {input_str}.split({delimiter})\n"
-				# self.python_code += Inden.add_indentation(self)
-				for variable in variables:
+				if ctx.children[2].getChildCount() == 2:
 					self.python_code += Inden.add_indentation(self)
-					self.python_code += f"self.set{variable}({variable})\n"
+					self.python_code += f"{self.setStringGen(ctx.children[2].children[1].children[0])} {self.getStringGen(ctx.children[1].children[0])})\n"
+				else:
+					input_str = (ctx.children[1].children[0].getText())
+					if ctx.children[1].children[1].getChildCount() == 3:
+						delimiter = (ctx.children[1].children[1].children[2].getText())
+					elif ctx.children[1].children[1].getChildCount() == 4:
+						delimiter = (ctx.children[1].children[1].children[3].getText())
+					if delimiter == "SPACE":
+						delimiter = "' '"
+					variables = []
+					for child in ctx.children[2].children:
+						if type(child)==Cobol85Parser.UnstringIntoContext:
+							# for i in range(1,child.getChildCount()):
+							variables.append(child.getText().upper().replace("-", "_"))
+					print(variables,"====================")
+					# self.python_code += Inden.add_indentation(self)
+					# self.python_code += f"{input_str} = {self.getStringGen(ctx.children[1].children[0])}\n"
+					self.python_code += Inden.add_indentation(self)
+					self.python_code += f"{', '.join(variables)} = {input_str}.split({delimiter})\n"
+					# self.python_code += Inden.add_indentation(self)
+					for variable in variables:
+						self.python_code += Inden.add_indentation(self)
+						self.python_code += f"self.set{variable}({variable})\n"
 				
 		return self.visitChildren(ctx)
 	# ----------------------------- STRING ------------------------------------

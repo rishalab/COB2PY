@@ -104,13 +104,6 @@ class converted(Program):
 	def getDisplayW_B(self):
 		return super().getAsDisplayInt(19, 1, False, False, False)
 
-	def unstring(input_str, delimiter, *variables):
-		parts = input_str.split(delimiter)
-		result = []
-		for i in range(min(len(parts), len(variables))):
-			result.append(parts[i])
-		result.extend([''] * (len(variables) - len(result)))
-		return tuple(result)
 	def initialize(self):
 		for idx1 in range(0,3):
 			self.setSA(idx1," ")

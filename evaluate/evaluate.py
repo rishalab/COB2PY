@@ -86,7 +86,7 @@ def update_excel(folder_name, cobol_file, converted_file, passed, total_tests, e
     workbook.save(excel_file)
 
 def main():
-    base_folder = "p03085"
+    base_folder = "p03544"
     cobol_files = find_cobol_files(base_folder)
     if not cobol_files:
         print("No COBOL files found.")

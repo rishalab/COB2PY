@@ -1,6 +1,6 @@
+import re
 def preprocess_file(file_path):
     try:
-        # Open and read the COBOL file
         with open(file_path, 'r') as file:
             lines = file.readlines()
 
@@ -14,7 +14,12 @@ def preprocess_file(file_path):
 
             # Remove inline comments starting with '*>'
             line = line.split('*>')[0]
-
+            if re.search(r'(?<!\bnot\s)(?<!\bis\s)ZERO', line):
+                line = line.replace('ZERO', '0')
+            line = line.replace('SPACE', "' '")
+            line = line.replace('SPACES', "' '")
+            line = line.replace('QUOTE', "'")
+            line = line.replace('QUOTES', "'")
             # Strip trailing spaces or any unnecessary formatting
             preprocessed_lines.append(line.rstrip())
 

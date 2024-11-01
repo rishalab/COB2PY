@@ -68,13 +68,6 @@ class converted(Program):
 	def getDisplayANS(self):
 		return super().getAsString(9, 3)
 
-	def unstring(input_str, delimiter, *variables):
-		parts = input_str.split(delimiter)
-		result = []
-		for i in range(min(len(parts), len(variables))):
-			result.append(parts[i])
-		result.extend([''] * (len(variables) - len(result)))
-		return tuple(result)
 	def initialize(self):
 		self.setFLG(0,False)
 		pass

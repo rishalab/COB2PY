@@ -30,13 +30,13 @@ class FileWriter:
     def intializer(self,variableMap):
         self.indentation=1
         with open(self.CurrentFile+".py", "a+") as file:
-            file.write(('\t' * self.indentation) +"def unstring(input_str, delimiter, *variables):\n")
-            file.write('\t\t' +"parts = input_str.split(delimiter)\n"+
-                       '\t\t' +"result = []\n"+
-                       '\t\t' +"for i in range(min(len(parts), len(variables))):\n"+
-                       '\t\t\t' +"result.append(parts[i])\n"+
-                       '\t\t' +"result.extend([''] * (len(variables) - len(result)))\n"+
-                       '\t\t' +"return tuple(result)\n")
+            # file.write(('\t' * self.indentation) +"def unstring(input_str, delimiter, *variables):\n")
+            # file.write('\t\t' +"parts = input_str.split(delimiter)\n"+
+            #            '\t\t' +"result = []\n"+
+            #            '\t\t' +"for i in range(min(len(parts), len(variables))):\n"+
+            #            '\t\t\t' +"result.append(parts[i])\n"+
+            #            '\t\t' +"result.extend([''] * (len(variables) - len(result)))\n"+
+            #            '\t\t' +"return tuple(result)\n")
                        
             
             file.write(('\t' * self.indentation) +"def initialize(self):\n")
