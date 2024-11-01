@@ -1065,8 +1065,8 @@ class CustomVisitor(Cobol85Visitor):
 	def relationalOperatorget(self,ctx:Cobol85Parser.relationalOperator):
 		operator_input = ctx.getText().upper()
 		# print(operator_input," ((((((((((((((((()))))))))))))))))")
-		operator_mapping = {">": ">", ">": ">", "<": "<", "<": "<", "=": "==", "=": "==", "<>": "!=", ">=": ">=", "MORETHANOREQUAL": ">=", "LESSTHANOREQUALTO": "<=", "LESSTHANOREQUAL": "<="}
-		negated_operator_mapping = {">": "<=", "<": ">=", "=": "!=", ">=": "<", "<=": ">", "<>": "=="}
+		operator_mapping = {"GREATERTHAN": ">", ">": ">", "LESSTHAN": "<", "<": "<", "EQUALTO": "==", "=": "==", "NOTEQUALCHAR":"!=", "<>": "!=", ">=": ">=", "MORETHANOREQUAL": ">=", "LESSTHANOREQUALTO": "<=", "LESSTHANOREQUAL": "<="}
+		negated_operator_mapping = {"GREATERTHAN": "<=",">": "<=","LESSTHAN": ">=", "<": ">=", "EQUALTO": "!=","=": "!=", "MORETHANOREQUAL": "<",">=": "<", "<=": ">","LESSTHANOREQUALTO": ">", "NOTEQUALCHAR": "==", "<>": "=="}
 		if operator_input.startswith("IS"):
 			operator_input = operator_input[2:]
 		elif operator_input.startswith("ARE"):
