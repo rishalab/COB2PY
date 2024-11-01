@@ -150,10 +150,10 @@ class SymbolTable(Cobol85Visitor):
 							maxTimes = int(chi.children[1].getText())
 					occurs=maxTimes if maxTimes is not None else minTimes
 			length= 1+picInfo[0][1] if isSignSeparate else picInfo[0][1]
-			if value.upper()=="SPACE" or value=="SPACES":
+			if  value and (value.upper()=="SPACE" or value=="SPACES"):
 				value= ' '*length
-			if value.upper()=="ZERO" or value.upper()=="ZEROES" or value.upper()=="ZEROS":
-						value ='0'
+			if value and (value.upper()=="ZERO" or value.upper()=="ZEROES" or value.upper()=="ZEROS"):
+				value ='0'
 			self.addCell(SymbolCell(dataName,77,length,picture,occurs,picInfo,value,parents,isRedefined,redinedvariable,isSignLeading,isSignSeparate))
 			
 			

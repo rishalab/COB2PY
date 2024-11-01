@@ -29,7 +29,7 @@ class CustomVisitor(Cobol85Visitor):
 		varName = name[0]
 		if self.is_digdec(varName):
 			return varName
-		print("stack",name)
+		# print("stack",name)
 		name = name[::-1]
 		name.pop(-1)
 		for x in self.mapaddress:
@@ -653,6 +653,8 @@ class CustomVisitor(Cobol85Visitor):
 						delimiter = (ctx.children[1].children[1].children[2].getText())
 					elif ctx.children[1].children[1].getChildCount() == 4:
 						delimiter = (ctx.children[1].children[1].children[3].getText())
+					elif ctx.children[1].children[1].getChildCount() == 2:
+						delimiter = (ctx.children[1].children[1].children[1].getText())
 					if delimiter == "SPACE":
 						delimiter = "' '"
 					variables = []
@@ -892,13 +894,13 @@ class CustomVisitor(Cobol85Visitor):
 			
 		else:
 			get = self.getStringGen(ctx.children[0].children[0])
-		print(get," 888888888888888888888********8 ")
+		# print(get," 888888888888888888888********8 ")
 		set = []
 		if(len(get)>1):
 			get = get.lstrip('0')
 		for child in ctx.children[2:]:
 			# print(child.getText()," -----------------")
-			print(child.getText()," 888888888888888888888********8 ")
+			# print(child.getText()," 888888888888888888888********8 ")
 			set.append(self.setStringGen(child)+get+")\n")
 		return set
 	def getVariableLine(self,ctx:Cobol85Parser.identifier):
@@ -977,7 +979,7 @@ class CustomVisitor(Cobol85Visitor):
 					if type(ctx.children[temp1].children[1])==Cobol85Parser.CombinableConditionContext:
 						stringout += " or " + self.combinableConditionget(ctx.children[temp1].children[1])
 				temp1 += 1
-			print(stringout," 888888888888888888888********8 ")
+			# print(stringout," 888888888888888888888********8 ")
 			return stringout
 	def combinableConditionget(self,ctx:Cobol85Parser.combinableCondition):
 		if ctx.children[0].getText().upper() == "NOT":
@@ -1062,7 +1064,7 @@ class CustomVisitor(Cobol85Visitor):
 		return string
 	def relationalOperatorget(self,ctx:Cobol85Parser.relationalOperator):
 		operator_input = ctx.getText().upper()
-		print(operator_input," ((((((((((((((((()))))))))))))))))")
+		# print(operator_input," ((((((((((((((((()))))))))))))))))")
 		operator_mapping = {">": ">", ">": ">", "<": "<", "<": "<", "=": "==", "=": "==", "<>": "!=", ">=": ">=", "MORETHANOREQUAL": ">=", "LESSTHANOREQUALTO": "<=", "LESSTHANOREQUAL": "<="}
 		negated_operator_mapping = {">": "<=", "<": ">=", "=": "!=", ">=": "<", "<=": ">", "<>": "=="}
 		if operator_input.startswith("IS"):

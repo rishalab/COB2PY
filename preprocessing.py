@@ -20,6 +20,8 @@ def preprocess_file(file_path):
             line = line.replace('SPACES', "' '")
             line = line.replace('QUOTE', "'")
             line = line.replace('QUOTES', "'")
+            if stripped_line.startswith('DISPLAY') and line.rstrip().endswith("UPON CONSOLE"):
+                line = line.rsplit("UPON CONSOLE", 1)[0].rstrip()
             # Strip trailing spaces or any unnecessary formatting
             preprocessed_lines.append(line.rstrip())
 
