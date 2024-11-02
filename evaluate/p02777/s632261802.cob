@@ -10,8 +10,8 @@
  01 A         PIC 9(2).
  01 B         PIC 9(2).
  01 U         PIC X(10).
- 01 ANS-A     PIC X(2).
- 01 ANS-B     PIC X(2).
+ 01 ANS-A     PIC Z9.
+ 01 ANS-B     PIC Z9.
 
  PROCEDURE DIVISION.
   ACCEPT INP.
@@ -31,5 +31,5 @@
     COMPUTE ANS-B = B - 1
   END-IF.
   
-  DISPLAY ANS-A ' ' ANS-B.
+  DISPLAY ANS-A ANS-B.
  STOP RUN.   

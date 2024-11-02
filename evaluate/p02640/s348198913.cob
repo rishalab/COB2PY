@@ -6,16 +6,20 @@ WORKING-STORAGE SECTION.
 01 X          PIC 9(03).
 01 Y          PIC 9(03).
 01 I          PIC 9(03).
+*>
 PROCEDURE DIVISION.
   ACCEPT INP.
   UNSTRING INP DELIMITED BY ' '
       INTO X Y.
+*>
   PERFORM VARYING I FROM 1 BY 1 
             UNTIL I > X OR I * 2 + (X - I) * 4 = Y OR I * 4 + (X - I) * 2 = Y
   END-PERFORM.
+*>
   IF (I <= X)
     DISPLAY 'Yes'
   ELSE
     DISPLAY 'No'
   END-IF.
+*>
   STOP RUN.

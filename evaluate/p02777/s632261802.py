@@ -6,7 +6,7 @@ from Program import Program
 class converted(Program):
 
 	def __init__(self):
-		super().__init__(68)
+		super().__init__(64)
 
 	def getINP(self):
 		return super().getAsString(0, 30)
@@ -74,30 +74,6 @@ class converted(Program):
 	def getDisplayU(self):
 		return super().getAsString(54, 10)
 
-	def getANS_A(self):
-		return super().getAsString(64, 2)
-
-	def setANS_A(self, value):
-		return super().setAsString(64, 2, value)
-
-	def setANS_A(self, value):
-		return super().setAsString(64, 2, value)
-
-	def getDisplayANS_A(self):
-		return super().getAsString(64, 2)
-
-	def getANS_B(self):
-		return super().getAsString(66, 2)
-
-	def setANS_B(self, value):
-		return super().setAsString(66, 2, value)
-
-	def setANS_B(self, value):
-		return super().setAsString(66, 2, value)
-
-	def getDisplayANS_B(self):
-		return super().getAsString(66, 2)
-
 	def initialize(self):
 		pass
 	def main(self):
@@ -121,7 +97,7 @@ class converted(Program):
 		else:
 			self.setANS_A(self.getA())
 			self.setANS_B( self.getB()-1)
-		print(self.getDisplayANS_A(), ' ', self.getDisplayANS_B(), sep='')
+		print(self.getDisplayANS_A(), self.getDisplayANS_B(), sep='')
 		exit()
 		exit()
 converted().main()
