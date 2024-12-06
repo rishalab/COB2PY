@@ -51,11 +51,11 @@ class SymbolTable(Cobol85Visitor):
 	def stringify(self):
 		for varible in self.table.values():
 			if varible.level==1 or varible.level==77:
-				print(f' {varible.dataName} {varible.level} {varible.picture} {varible.length}')
+				# print(f' {varible.dataName} {varible.level} {varible.picture} {varible.length}')
 				ans = self.dfs(varible,0)
-				print("size is ",ans)
+				# print("size is ",ans)
 
-		print("checking length--------------------------------------------------------------------------")
+		# print("checking length--------------------------------------------------------------------------")
 		offsets={}
 		for varible in self.table.values():
 			offsets[varible.dataName]=self.memoryAdresss
@@ -65,9 +65,11 @@ class SymbolTable(Cobol85Visitor):
 				else:
 					self.memoryPointer=offsets[varible.redefinedVariable]
 				self.dfs2(varible,0,1)
-		print("checking addressMap--------------------------------------------------------------------------")		
+		# print("checking addressMap--------------------------------------------------------------------------")		
 		for x in self.addressMap:
-			print(x)
+			# print(x)
+			# print("--------------------------------------------------------------------------")
+			pass
 
 		
 	
@@ -76,7 +78,7 @@ class SymbolTable(Cobol85Visitor):
 		if len((variable.children))!=0:
 			length = 0
 			for child in variable.children:
-				print(f'length cal {child} {child.dataName} {child.level} {child.picture} {child.length} level{level} {len(child.children)}')
+				# print(f'length cal {child} {child.dataName} {child.level} {child.picture} {child.length} level{level} {len(child.children)}')
 				#print("ins ",child.dataName,' le:',length)
 				if child.isRedefined:
 					self.dfs(child,level+1)
@@ -91,7 +93,7 @@ class SymbolTable(Cobol85Visitor):
 			return variable.length
 	
 	def dfs2(self,variable,level,occ):
-		print(f'{variable.dataName} {variable.level} {variable.picInfo} len:{variable.length} occurs{variable.occurs} {len(variable.children)}')
+		# print(f'{variable.dataName} {variable.level} {variable.picInfo} len:{variable.length} occurs{variable.occurs} {len(variable.children)}')
 
 		self.addressMap.append([variable,variable.dataName,self.memoryPointer,variable.occurs*variable.length,variable.length,variable.picInfo])
 		variable.offset = self.memoryPointer
@@ -411,6 +413,6 @@ class SymbolTable(Cobol85Visitor):
 				pair = (a,b)
 				arr.append(pair)
 			i+=1
-		print(arr, " arr===============")
-		print(brr, " brr===============")
+		# print(arr, " arr===============")
+		# print(brr, " brr===============")
 		return arr,brr

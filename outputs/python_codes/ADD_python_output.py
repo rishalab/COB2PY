@@ -53,6 +53,9 @@ class converted(Program):
 	def setOVERFLOW_FLAG(self, value):
 		return super().setAsString(13, 2, value)
 
+	def getDisplayOVERFLOW_FLAG(self):
+		return super().getAsString(13, 2)
+
 	def initialize(self):
 		self.setA(10,False)
 		self.setB(20,False)
@@ -61,6 +64,7 @@ class converted(Program):
 		pass
 	def main(self):
 		self.initialize()
+		self.setRESULT(0)
 		print("Simple ADD: ", sep='')
 		self.setB(self.getA()+self.getB())
 		print("A + B = ", self.getDisplayB(), sep='')
@@ -91,5 +95,6 @@ class converted(Program):
 		print("SUBTRACT multiple literals: ", sep='')
 		self.setRESULT(self.getB()-(5+10+3))
 		print("B - 5 - 10 - 3 giving RESULT = ", self.getDisplayRESULT(), sep='')
+		exit()
 		exit()
 converted().main()

@@ -35,13 +35,13 @@ class CustomVisitor(Cobol85Visitor):
 		for x in self.mapaddress:
 			if varName == x[0].dataName:
 				found = True
-				for y in x[0].parents:
-					print(y.dataName,"--")
+				# for y in x[0].parents:
+				# 	print(y.dataName,"--")
 				# print(name,"!!")
 				for i in range(0,len(name)):
 					for j in range(0,len(x[0].parents)):
 						found1 = False
-						print(x[0].parents[j].dataName,name[i],"che",varName)
+						# print(x[0].parents[j].dataName,name[i],"che",varName)
 						if x[0].parents[j].dataName==name[i]:
 							found1=True
 							break
@@ -79,7 +79,7 @@ class CustomVisitor(Cobol85Visitor):
 		display_at = self.visit(ctx.displayAt()) if ctx.displayAt() else None
 		display_upon = self.visit(ctx.displayUpon()) if ctx.displayUpon() else None
 		display_with = ctx.displayWith() is not None
-		print(display_with, " ", display_at, " ", display_upon, " ", display_operands)
+		# print(display_with, " ", display_at, " ", display_upon, " ", display_operands)
 		if display_operands:
 			if display_with:
 				self.python_code += Inden.add_indentation(self)
@@ -123,20 +123,20 @@ class CustomVisitor(Cobol85Visitor):
 		rhs,lhs=[],[]
 		isrhs=True
 		for child in ctx.children:
-			print(lhs,rhs,"rfd ")
+			# print(lhs,rhs,"rfd ")
 			if child.getText().upper()=='TO' and  isrhs:
 				isrhs=False
 			elif isrhs:
 				if type(child)==Cobol85Parser.AddFromContext:
 					if(len(self.mapsearch(self.extractMultipleDataNamesFrom(child)[0]))!=0):
-						print(self.getVariableLine(child.children[0]),'--------------------------------------------------------------------------------------',child.identifier().getText())
+						# print(self.getVariableLine(child.children[0]),'--------------------------------------------------------------------------------------',child.identifier().getText())
 						rhs.append(self.mapsearch(self.extractMultipleDataNamesFrom(child)[0]))
 					if(len(self.extractMultipleDataNamesFrom(child)[1])!=0):
 						rhs.append(self.extractMultipleDataNamesFrom(child)[1])
 			elif not isrhs:
 				if type(child)==Cobol85Parser.AddToContext:
 					if(len(self.mapsearch(self.extractMultipleDataNames(child)))!=0):
-						print(self.extractMultipleDataNames(child),"beforee")
+						# print(self.extractMultipleDataNames(child),"beforee")
 						lhs.append(self.mapsearch(self.extractMultipleDataNames(child)))
 			rhs1 = ''
 		for x in rhs:
@@ -157,10 +157,10 @@ class CustomVisitor(Cobol85Visitor):
 				if self.is_digdec(child.getText()):
 					rhs.append(child.getText())
 				else:
-					print("add== ",child.children[0].getText())
+					# print("add== ",child.children[0].getText())
 					rhs.append(self.getStringGen(child.children[0]))
 			if type(child)==Cobol85Parser.AddToContext:
-				print("add== ",child.children[0].getText())
+				# print("add== ",child.children[0].getText())
 				lhs.append([self.getStringGen(child.children[0]),self.setStringGen(child.children[0]),True if len(child.children)==2 else False])
 		rhs1 = ''
 		for x in rhs:
@@ -190,10 +190,10 @@ class CustomVisitor(Cobol85Visitor):
 				if self.is_digdec(child.getText()):
 					rhs.append(child.getText())
 				else:
-					print("add1== ",child.children[0].getText())
+					# print("add1== ",child.children[0].getText())
 					rhs.append(self.getStringGen(child.children[0]))
 			if type(child)==Cobol85Parser.AddGivingContext:
-				print("add== ",child.children[0].getText())
+				# print("add== ",child.children[0].getText())
 				lhs.append([self.getStringGen(child.children[0]),self.setStringGen(child.children[0]),True if len(child.children)==2 else False])
 		rhs1 = ''
 		for x in rhs:
@@ -233,7 +233,7 @@ class CustomVisitor(Cobol85Visitor):
 		for x in lhs :
 			lhs1+=(x[0]+"+")
 		lhs1=lhs1[:-1]
-		print(rhs1,lhs1)
+		# print(rhs1,lhs1)
 		for x in lhs :
 			y = 'True' if x[2] else ''
 			self.python_code+=Inden.add_indentation(self)
@@ -248,21 +248,21 @@ class CustomVisitor(Cobol85Visitor):
 		rhs,lhs=[],[]
 		minuend=''
 		for child in ctx.children:
-			print("--",child.getText(),type(child))
+			# print("--",child.getText(),type(child))
 			if type(child)==Cobol85Parser.SubtractMinuendGivingContext:
 				if self.is_digdec(child.getText()):
 					minuend=(child.getText())
 				else:
-					print("add== ",child.children[0].getText())
+					# print("add== ",child.children[0].getText())
 					minuend=(self.getStringGen(child.children[0]))
 			if type(child)==Cobol85Parser.SubtractSubtrahendContext:
 				if self.is_digdec(child.getText()):
 					rhs.append(child.getText())
 				else:
-					print("add== ",child.children[0].getText())
+					# print("add== ",child.children[0].getText())
 					rhs.append(self.getStringGen(child.children[0]))
 			if type(child)==Cobol85Parser.SubtractGivingContext:
-				print("add== ",child.children[0].getText())
+				# print("add== ",child.children[0].getText())
 				lhs.append([self.getStringGen(child.children[0]),self.setStringGen(child.children[0]),True if len(child.children)==2 else False])
 		rhs1 = ''
 		for x in rhs:
@@ -662,7 +662,7 @@ class CustomVisitor(Cobol85Visitor):
 						if type(child)==Cobol85Parser.UnstringIntoContext:
 							# for i in range(1,child.getChildCount()):
 							variables.append(child.getText().upper().replace("-", "_"))
-					print(variables,"====================")
+					# print(variables,"====================")
 					# self.python_code += Inden.add_indentation(self)
 					# self.python_code += f"{input_str} = {self.getStringGen(ctx.children[1].children[0])}\n"
 					self.python_code += Inden.add_indentation(self)
@@ -703,8 +703,8 @@ class CustomVisitor(Cobol85Visitor):
 				break
 			i+=1
 		n = ctx.getChildCount()
-		print(ctx.children[n-1].getText(),"====================")
-		print(i,"====================")
+		# print(ctx.children[n-1].getText(),"====================")
+		# print(i,"====================")
 		for j in range(0,i):
 			if type(ctx.children[j])==Cobol85Parser.ProcedureNameContext:
 				self.python_code += Inden.add_indentation(self)
@@ -726,7 +726,7 @@ class CustomVisitor(Cobol85Visitor):
 			if child.getText().upper() == "EQUAL" or child.getText().upper() == "=":
 				break
 			i+=1
-		print(i,"====================")
+		# print(i,"====================")
 		for j in range(1,i):
 			if type(ctx.children[j])==Cobol85Parser.ComputeStoreContext:
 				self.python_code += Inden.add_indentation(self)
@@ -742,7 +742,7 @@ class CustomVisitor(Cobol85Visitor):
 			if type(child)==Cobol85Parser.ExhibitOperandContext:
 				break
 			i+=1
-		print (i, "====================")
+		# print (i, "====================")
 		for child in ctx.children[i:]:
 			if type(child.children[0])==Cobol85Parser.LiteralContext:
 				self.python_code += Inden.add_indentation(self)
@@ -751,7 +751,7 @@ class CustomVisitor(Cobol85Visitor):
 				arr, brr = self.getVariableLine(child.children[0])
 				str = ""
 				str = " in ".join(arr)
-				print(str, "====================")	
+				# print(str, "====================")	
 				self.python_code += Inden.add_indentation(self)
 				self.python_code += f"print('{str}',' = ', {self.getStringGen(child.children[0])},end='\t\t')\n"
 			

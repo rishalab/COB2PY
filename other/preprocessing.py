@@ -6,8 +6,8 @@ def preprocess_file(file_path):
 
         preprocessed_lines = []
         first_line = lines[0].lstrip() if lines else ""
-        if not re.match(r'^IDENTIFICATION\s*DIVISION\.', first_line):
-            preprocessed_lines.append("IDENTIFICATION DIVISION.")
+        if not any(re.match(r'^\s*IDENTIFICATION\s*DIVISION\.', line, re.IGNORECASE) for line in lines):
+            preprocessed_lines.insert(0, "IDENTIFICATION DIVISION.")
         for line in lines:
             line = re.sub(r'^\d{6}\s*', '', line)
             # print(line)
@@ -27,9 +27,10 @@ def preprocess_file(file_path):
                 line = line.rsplit("UPON CONSOLE", 1)[0].rstrip()
             # Strip trailing spaces or any unnecessary formatting
             preprocessed_lines.append(line.rstrip())
+            preprocessed_lines.append('\n')
         # Join the processed lines into a single block of text
-        preprocessed_data = '\n'.join(preprocessed_lines)
-
+        preprocessed_data = ''.join(preprocessed_lines)
+        # print("-------------------------------------------------\n"+preprocessed_data)
         return preprocessed_data
 
     except Exception as e:
