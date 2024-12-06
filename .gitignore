@@ -5,3 +5,6 @@ gen
 .antlr
 converted.py
 /local.md
+count_statements.py
+testing.py
+evaluate_similarity.py
