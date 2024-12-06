@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>COB2PY : A COBOL to Python Translator</title>
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">    
+    <link rel="shortcut icon" href="favicon.ico">  
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <!-- FontAwesome JS -->
+    <script defer src="assets/fontawesome/js/all.js"></script>
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="assets/plugins/bootstrap/css/bootstrap.min.css">   
+    <!-- Plugins CSS -->    
+    <link rel="stylesheet" href="assets/plugins/prism/prism.css">
+    <link rel="stylesheet" href="assets/plugins/elegant_font/css/style.css">  
+      
+    <!-- Theme CSS -->
+    <link id="theme-style" rel="stylesheet" href="assets/css/styles.css">
+    
+</head> 
+
+<body class="body-green">
+    <div class="page-wrapper">
+        <!-- ******Header****** -->
+        <header id="header" class="header">
+            <div class="container">
+                <div class="branding">
+                    <h1 class="logo">
+                        <a href="index.html">
+<!--                             <span aria-hidden="true" class="icon_documents_alt icon"></span> -->
+                            <span class="text-highlight"></span><span class="text-bold">COB2PY</span>
+                        </a>
+                    </h1>
+                    
+                </div>
+                
+                <!-- <div class="top-search-box">
+	                 <form class="form-inline search-form justify-content-center" action="" method="get">
+	            
+			            <input type="text" placeholder="Search..." name="search" class="form-control search-input">
+			            
+			            <button type="submit" class="btn search-btn" value="Search"><i class="fas fa-search"></i></button>
+			            
+			        </form>
+                </div> -->
+                
+            </div><!--//container-->
+        </header><!--//header-->
+        <div class="doc-wrapper">
+            <div class="container">
+                <!-- <div id="doc-header" class="doc-header text-center">
+                    <h1 class="doc-title"><i class="icon fa fa-paper-plane"></i> Quick Start</h1>
+                    <div class="meta"><i class="far fa-clock"></i> Last updated: Nov 21st, 2020</div>
+                </div>//doc-header -->
+                <div class="doc-body row">
+                    <div class="doc-content col-md-9 col-12 order-1">
+                        <div class="content-inner">
+                            <section id="download-section" class="doc-section">
+                                <h1 class="section-title">COB2PY : A COBOL to Python Translator</h1>
+                                <br>
+                                <h3 class="block-title">Tool Description</h3>
+                                <div class="section-block">
+                                    <p>
+                                        COB2PY is a open-source tool to automatically translate COBOL code into equivalent Python code.  The tool is employs the rule-based approach for translation.
+                                        The tool generates the translated code in object-oriented paradigm.
+                                    </p>                                  
+                                </div>
+                            </section><!--//doc-section-->
+                            <section id="installation-section" class="doc-section">
+                                <h2 class="section-title">Installation</h2>
+                                <div id="step1"  class="section-block">
+                                    <h3 class="block-title" id="requirements">Requirements</h3>
+                                    <div class="code-block">
+                                        <p>
+                                          Create a new Python environment and activate
+					                    </p>
+                                        <p><code>python(3) -m venv &lt;path_to_env/env_name&gt;&lt;/path_to_env&gt;</code></p>
+                                        <p>
+                                            Clone or download the Repo
+                                        </p>
+                                        <p><code>git clone </code></p>
+                                        <p>
+                                            Install the requirements for required
+                                        </p>
+                                        <p><code>pip install -r requirements.txt</code></p>
+                                        <p>
+                                            Run the tool
+                                        </p>
+                                        <p><code>python(3) main.py --src input_file_path --dest output_file_path</code></p>
+
+                                    </div>
+                                </section>
+
+                                <!-- <section id="usage" class="doc-section">
+                                    <h2 class="section-title">Usage</h2>
+                                    <div class="section-block">
+                                        <p>
+                                            The tool is designed as a Chrome extension. The extension can be installed by following the below steps:
+                                        </p>
+                                        <ol>
+                                                <li>Clone the GitHub repository by running the following command:
+                                                    <div class="code-block">
+                                                        <code>git clone https://github.com/Chiranjeevi2001/legacylens.git </code>
+                                                    </div>
+                                                </li>
+
+                                                <li>Provide the GitHub Personal Token for rate limit extension
+                                                    <ul>
+                                                        <li>Create your <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token">GitHub PAT</a> (Leave permissions as default)</li>
+                                                        <li>Copy the token and paste it in the RHS of line number 4 in `popup.js` file:
+                                                            <div class="code-block">
+                                                                <code>const token = 'PASTE YOUR TOKEN HERE' </code>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+
+                                                <li>Open Chrome Extensions manager
+                                                    <ul>
+                                                        <li>Open Google Chrome or any Chormium-based browser</li>
+                                                        <li>Navigate to the extensions page by entering <code>chrome://extensions</code> in the address bar</li>
+                                                    </ul>
+                                                </li>
+
+                                                <li>Enable Developer Mode: In the top right corner, toggle the <i>Developer Mode</i> switch to enable it</li>
+                                                <img class="img-fluid" src="assets/images/demo/load_unpacked.png" alt="screenshot" width="500" height="700"/>
+
+                                                <li>Load the extension
+                                                    <ul>
+                                                        <li>Click the <i>Load Unpacked</i> button</li>
+                                                        <li>In the file browser, select the folder where the repository was cloned (it should contain `manifest.json` file)</li>
+                                                        <li>Click <i>Open</i></li>
+                                                        <li>Click on the pin icon to pin the extension to your browser's toolbar</li>
+                                                    </ul>
+                                                </li>
+                                                
+
+                                                <li>Enjoy the extension!: Run the extension on the main page of any public GitHub repository to see the assessment results</li>
+
+                                </section> -->
+      
+                            <section id="icons-section" class="doc-section">
+                                <h2 class="section-title">Approach diagram</h2>
+                                <div class="section-block">
+                                            <img class="img-fluid" src="assets/images/demo/COB2PY Architecture.jpg" alt="approach" />
+                                            <br>
+                                            <p>
+                                                COB2PY translation can be divided to four main phases
+                                                <h3>1.Abstract Syntax Tree(AST) Generation</h3>
+                                                <p>
+                                                    The first phase is about generating AST. The AST is generated from parser and the given input COBOL code. The parser is generated using the
+                                                    ANTLR4 tool , the input grammar for ANTLR is taken from <a href="https://github.com/antlr/grammars-v4"> ANTLR Grammars-V4</a> repository 
+                                                </p>
+                                                <h3>2.Symbol Table Generation</h3>
+                                                <p>
+                                                    In the second phase we visit the Data Division in the AST constructed from input COBOL code. We use the visitor class generated from the ANTLR and override
+                                                    the AST node visitor methods to extract the neccessary information and context of variable. The extracted information of each variable is stored in symbol 
+                                                    table. The symbol table which is built is used in the next phase
+                                                </p>
+                                                <h3>3.Procedure Division Analysis</h3>
+                                                <p>
+                                                    In this phase , we override the AST node vistor class for statements in procedure division . Each statement , the information of variables used is retrived
+                                                    from the symbol table which is built in previous phase and mapped to its equivalent statement in Python . The variable are renamed due to the differnt syntax in COBOL and Python.
+
+                                                </p>
+                                                <h3>4.Translated Code Generation</h3>
+                                                <p>
+                                                    The translated code is written into the output python file . The paragraphs in Procedure division are converted to functions to preserve the
+                                                    control flow of the code . The output file contains a Python class of converted COBOL code .
+                                                </p>
+                                            </p>
+                                
+                            </section>
+                            
+
+                            <section id="uses-section" class="doc-section">
+                                <h2 class="section-title">Goal</h2>
+                                <div class="section-block">
+                                    The migration of legacy systems is work intensive and diffcult for deveopers to understand the logis anf context of program . We propose this tool to
+                                    ease the migration process for both developers and industries. The goal of the tool is to help software community with the ongoing migration of COBOL based system and reducing the efforts of developers in
+                                    COBOL based legacy systems.
+                                </div>
+                                
+                            </section>
+
+
+        
+				
+			<section id="result-section" class="doc-section">
+                                <h2 class="section-title">Results</h2>
+                                <div class="section-block">
+                                   The tool was tested on 103 programs on CodeNet dataset which is collection of programs from AIZU and AtCoder competative programming platforms. The selected programs
+                                   are converted to Python and was executed on test cases of corresponding programs. Out of 103 programs , 99 had passed all test cases and with significant average 
+                                   test case pass percentage of 98.35% proving the efficiency and effectiveness of the tool for supported constructs.          
+                                </div>
+                                
+                            </section>
+                            
+                            
+                             
+                            
+                            
+                
+                            
+                            
+                            
+                            <section id="video-section" class="doc-section">
+                                <h2 class="section-title">Demo Video</h2>
+                                <div class="section-block">
+                                    <div class="row">
+                                        <div class="col-md-6 col-12">
+                                            
+                                            <iframe width="560" height="315" src="https://www.youtube.com/embed/Ls_sukXGl_I?si=LGN0WVoBn6PTsLh8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                            
+                            </section>
+                        </div><!--//content-inner-->
+                    </div><!--//doc-content-->
+                    <div class="doc-sidebar col-md-3 col-12 order-0 d-none d-md-flex">
+                        <div id="doc-nav" class="doc-nav">
+	                        
+	                            <nav id="doc-menu" class="nav doc-menu flex-column sticky">
+	                                <a class="nav-link scrollto" href="#installation-section">Installation</a>
+                                    <nav class="doc-sub-menu nav flex-column">
+                                        <a class="nav-link scrollto" href="#requirements">Requirements</a>
+                                    </nav><!--//nav-->
+                                    <a class="nav-link scrollto" href="#icons-section">Approach</a>
+                                    <!-- <a class="nav-link scrollto" href="#feature-section">Screenshots</a> -->
+                                    <a class="nav-link scrollto" href="#uses-section">Goals</a>
+					                <a class="nav-link scrollto" href="#result-section">Results</a>
+	                                <a class="nav-link scrollto" href="#video-section">Demo Video</a>
+	                            </nav><!--//doc-menu-->
+	                        
+                        </div>
+                    </div><!--//doc-sidebar-->
+                </div><!--//doc-body-->              
+            </div><!--//container-->
+        </div><!--//doc-wrapper-->
+        
+        <div id="promo-block" class="promo-block">
+            <div class="container">
+                <div class="promo-block-inner">
+                   
+                    <!-- <h3 class="promo-title">Contributors</h3> -->
+                    <div class="content-holder col-lg-7 col-md-6 col-7">
+                        <div class="content-holder-inner">
+                            <div class="desc">
+                                <h3 class="promo-title">Contributors</h3>
+                                <p> Kowshik Reddy Challa, Sonith M V, Chiranjeevi B S, Sridhar Chimalakonda</p>
+                                <!-- <a class="btn btn-cta" href="" target="_blank"><i class="fas fa-external-link-alt"></i> Preprint</a> -->
+                            </div><!--//desc-->
+                        </div><!--//content-holder-inner-->
+                    </div><!--//content-holder-->
+
+                </div><!--//promo-block-inner-->  
+            </div><!--//container-->
+        </div><!--//promo-block-->
+        
+    </div><!--//page-wrapper-->
+    <!-- Main Javascript -->          
+    <script type="text/javascript" src="assets/plugins/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="assets/plugins/prism/prism.js"></script>    
+    <script type="text/javascript" src="assets/plugins/jquery-scrollTo/jquery.scrollTo.min.js"></script>      
+    <script type="text/javascript" src="assets/plugins/stickyfill/dist/stickyfill.min.js"></script>                                                             
+    <script type="text/javascript" src="assets/js/main.js"></script>
+    
+</body>
+</html> 

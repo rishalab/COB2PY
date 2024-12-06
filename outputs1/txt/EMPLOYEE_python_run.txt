@@ -1,5 +1,0 @@
-Employee Name: JOHN SMITH          
-Employee ID: 00000
-Employee Salary: 05000.00
-Employee Gender: M
-00

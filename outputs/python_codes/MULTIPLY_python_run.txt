@@ -1,6 +1,0 @@
-Initial Values: A= 10  B= 20  C= 0  D= 0  E= 0  F= 0
-After MULTIPLY A BY B: A= 10  B= 200
-After MULTIPLY 2 BY A B: A= 20  B= 400
-After MULTIPLY 3 BY A GIVING C: C= 60
-After MULTIPLY 4 BY A GIVING D ROUNDED: D= 80
-After MULTIPLY A BY 2 GIVING E F: E= 40  F= 40
