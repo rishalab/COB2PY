@@ -5,9 +5,9 @@ from CustomVisitor import CustomVisitor
 from SymbolTable import SymbolTable
 import os
 import subprocess
-from FileWriter import FileWriter
-from processend import process_file
-from preprocessing import preprocess_file
+from other.FileWriter import FileWriter
+from other.processend import process_file
+from other.preprocessing import preprocess_file
 import argparse
 parser = argparse.ArgumentParser(description="Command-Line Interface")
 parser.add_argument('--src', type=str, help='source file', required=True)

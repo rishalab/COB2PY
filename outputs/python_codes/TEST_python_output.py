@@ -167,13 +167,6 @@ class converted(Program):
 	def getDisplayOUT(self):
 		return super().getAsString(19, 3)
 
-	def unstring(input_str, delimiter, *variables):
-		parts = input_str.split(delimiter)
-		result = []
-		for i in range(min(len(parts), len(variables))):
-			result.append(parts[i])
-		result.extend([''] * (len(variables) - len(result)))
-		return tuple(result)
 	def initialize(self):
 		pass
 	def main(self):

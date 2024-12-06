@@ -5,8 +5,8 @@ from CustomVisitor import CustomVisitor
 from SymbolTable import SymbolTable
 import os
 import subprocess
-from FileWriter import FileWriter
-from processend import process_file
+from other.FileWriter import FileWriter
+from other.processend import process_file
 file_path = './tests/TEST.cbl'
 def main(file_path):
     input_stream = FileStream(file_path)
