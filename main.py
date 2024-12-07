@@ -23,7 +23,6 @@ def main(file_path):
     sym_tab = SymbolTable()
     sym_tab.visit(tree=tree)
     sym_tab.stringify()
-    # print(sym_tab.stringify())
     initCode = sym_tab.getCode()
     writer = FileWriter()
     writer.writeHeader()
@@ -49,7 +48,7 @@ def main(file_path):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description="COBOL TO PYTHON TRANSLATOR",
-        epilog="Example: python script_name.py ./tests/ADD.cbl"
+        epilog="Example: python main.py ./tests/ADD.cbl"
     )
     parser.add_argument(
         'file_path', 
@@ -63,7 +62,7 @@ if __name__ == '__main__':
     # Validate arguments
     if not os.path.isfile(args.file_path):
         print(f"Error: The file '{args.file_path}' does not exist.")
-        print("Usage: python script_name.py <file_path>")
+        print("Usage: python main.py <file_path>")
         exit(1)
 
     main(args.file_path)
@@ -71,5 +70,5 @@ if __name__ == '__main__':
     # Extract the base name without extension to display
     output_file_name = os.path.basename(args.file_path).split('.')[0] + "_python_output.py"
     print("Conversion successful\n")
-    print(f"Check the 'outputs/python_codes{output_file_name}' file or './converted.py' file for the output Python file\n")
+    print(f"Check the 'outputs/python_codes/{output_file_name}' file or './converted.py' file for the output Python file\n")
     

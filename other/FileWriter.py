@@ -66,13 +66,13 @@ class FileWriter:
                                 file.write(('\t' * self.indentation) +f'self.set{Name}({indexes}{variable.value})'+'\n')
                             self.indentation-=le
                         else:
-                            print(variable,Name,variable.picInfo,"intializer")
+                            # print(variable,Name,variable.picInfo,"intializer")
                             if variable.picInfo[-1]=='decimal' :
                                 file.write(('\t' * self.indentation) +f'self.set{Name}({float(variable.value)},False)'+'\n')
-                                print(('\t' * self.indentation) +f'self.set{Name}({float(variable.value)},False)'+'\n')
+                                # print(('\t' * self.indentation) +f'self.set{Name}({float(variable.value)},False)'+'\n')
                             elif variable.picInfo[-1]=='integer' :
                                 file.write(('\t' * self.indentation) +f'self.set{Name}({int(variable.value)},False)'+'\n')
-                                print(('\t' * self.indentation) +f'self.set{Name}({int(variable.value)},False)'+'\n')
+                                # print(('\t' * self.indentation) +f'self.set{Name}({int(variable.value)},False)'+'\n')
                             elif variable.picInfo[-1]=="alphaNumericEdited":
                                 file.write(('\t' * self.indentation) +f'self.set{Name}({variable.value})'+'\n')
             file.write(('\t' * self.indentation) +"pass\n")
