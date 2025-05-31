@@ -69,7 +69,7 @@ class SymbolTable(Cobol85Visitor):
 		for x in self.addressMap:
 			# print(x)
 			# print("--------------------------------------------------------------------------")
-			pass
+			return
 
 		
 	
@@ -244,7 +244,7 @@ class SymbolTable(Cobol85Visitor):
 				picture = picInfo[0]
 			if type(child)==Cobol85Parser.DataValueClauseContext:
 				a,b=self.getDataValueClause(child)
-		parents=[]
+		parents= self.lastSymbol.parents + [self.lastSymbol] if self.lastSymbol else []
 		cell= SymbolCell(dataName,level,length,picture,occurs,picInfo,value,parents,isRedefined,redinedvariable,False,False)
 		self.lastSymbol.level88Vars.append([cell,a,b])
 

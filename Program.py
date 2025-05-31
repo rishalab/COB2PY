@@ -77,8 +77,8 @@ class Program:
         intPartLen,decPartLen=len(intPart),len(decPart)
         val2 = val2.split('.')
         leadZero,tailZero = '0'*(intPartLen-len(val2[0])),'0'*(decPartLen-len(val2[1]))
-        if isSigned:
-            leadZero=leadZero[:-1]
+        # if isSigned:
+        #     leadZero=leadZero[:-1]
         return valstr+leadZero+val2[0]+'.'+val2[1]+tailZero       
 
     
@@ -142,7 +142,7 @@ class Program:
         else:
             for i in range(0,dataLength):
                 self.Memory[offset+i]=value[i]
-            for i in range(length,dataLength):
+            for i in range(dataLength,length):
                 self.Memory[offset+i]=' '
     
     def setAsFloat(self,offset,length,value,isRounded,pic,isSigned,isSignSeparate,isSignLeading):
