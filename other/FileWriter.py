@@ -165,7 +165,7 @@ class FileWriter:
                     else:
                         file.write(('\t' * self.indentation) + f"def get{dataName}(self{indexes}):" + '\n')
                         print(pic)
-                        file.write(('\t' * (self.indentation + 1)) + f"return super().getAsInt({offset}, {length}, '{pic[0][0]}', {pic[0][2]}, {variable.isSignSeparate}, {variable.isSignLeading})" + '\n\n')
+                        file.write(('\t' * (self.indentation + 1)) + f"return super().getAsInt({offset}, {length}, {pic[0][2]}, {variable.isSignSeparate}, {variable.isSignLeading})" + '\n\n')
                         for condition in variable.level88Vars:
                             variableCount = nameMap.get(condition[0].dataName)
                             hashval = ''
