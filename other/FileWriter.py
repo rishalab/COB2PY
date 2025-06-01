@@ -142,7 +142,7 @@ class FileWriter:
                                 x=x.replace(',','')
                                 cond+=f'(val == {float(x)}) or '
                             cond=cond[:-3]
-                            file.write(('\t' * (self.indentation + 1)) + f"val = self.get{dataName}({offset}, {length}, '{pic[0][0]}', {pic[0][2]}, {variable.isSignSeparate}, {variable.isSignLeading})" + '\n')
+                            file.write(('\t' * (self.indentation + 1)) + f"val = self.get{dataName}()" + '\n')
                             file.write(('\t' * (self.indentation + 1)) + f"return True if ({cond}) else False" + '\n\n')
                         # file.write(('\t' * (self.indentation + 1)) + 'return val'+'\n')
                         
@@ -185,7 +185,7 @@ class FileWriter:
                                 x=x.replace(',','')
                                 cond+=f'(val == {int(x)}) or '
                             cond=cond[:-3]
-                            file.write(('\t' * (self.indentation + 1)) + f"val = self.get{dataName}({offset}, {length}, '{pic[0][0]}', {pic[0][2]}, {variable.isSignSeparate}, {variable.isSignLeading})" + '\n')
+                            file.write(('\t' * (self.indentation + 1)) + f"val = self.get{dataName}()" + '\n')
                             file.write(('\t' * (self.indentation + 1)) + f"return True if ({cond}) else False" + '\n\n')
                         # file.write(('\t' * (self.indentation + 1)) + 'return val'+'\n')
                         
@@ -228,7 +228,7 @@ class FileWriter:
                                 x=x.replace(',','')
                                 cond+=f'(val == {x}) or '
                             cond=cond[:-3]
-                            file.write(('\t' * (self.indentation + 1)) + f"val = self.get{dataName}({offset}, {length})" + '\n')
+                            file.write(('\t' * (self.indentation + 1)) + f"val = self.get{dataName}()" + '\n')
                             file.write(('\t' * (self.indentation + 1)) + f"return True if ({cond}) else False" + '\n\n')
                         # file.write(('\t' * (self.indentation + 1)) + 'return val'+'\n')
                         
