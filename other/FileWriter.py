@@ -5,7 +5,7 @@ class FileWriter:
     def __init__(self):
         self.CurrentFile = 'converted'
         self.indentation = 0
-        pass
+        
 
     def writeHeader(self):
         with open(self.CurrentFile+".py", "w") as file:
@@ -25,6 +25,15 @@ class FileWriter:
         with open(self.CurrentFile+".py", "a+") as file:
             file.write(('\t' * self.indentation) +"def __init__(self):\n")
             file.write(('\t' * (self.indentation+1)) +f"super().__init__({offset+totalLength})"+"\n")
+            file.write("\n")
+
+    def writeComments(self,comments):
+        self.indentation=0
+        with open(self.CurrentFile+".py", "a+") as file:
+            if len(comments)>0:
+                file.write(('\t' * self.indentation) +"# Comments from source COBOL File:\n")
+                for comment in comments:
+                    file.write(('\t' * (self.indentation+1)) +f"# Line {comment[1]}: {comment[0]}\n")
             file.write("\n")
     
     def intializer(self,variableMap):

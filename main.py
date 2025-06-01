@@ -13,8 +13,9 @@ from other.processend import process_file
 active_file = './active_test.cbl'
 
 def main(file_path):
+    content, comments = preprocess_file(file_path)
     with open(active_file, 'w') as file:
-        file.write(preprocess_file(file_path))
+        file.write(content)
     input_stream = FileStream(active_file)
     lexer = Cobol85Lexer(input_stream)
     stream = CommonTokenStream(lexer)
@@ -26,6 +27,7 @@ def main(file_path):
     initCode = sym_tab.getCode()
     writer = FileWriter()
     writer.writeHeader()
+    writer.writeComments(comments)
     writer.constructor(sym_tab.addressMap)
     mapaddress = writer.writeGetterAndSetter(sym_tab.addressMap)
     writer.intializer(mapaddress)
