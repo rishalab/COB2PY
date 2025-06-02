@@ -27,5 +27,4 @@
            DISPLAY "Units:    " UNITS
            DISPLAY "Bill:     Rs" BILL
            DISPLAY "-----------------------------"
-
            STOP RUN.

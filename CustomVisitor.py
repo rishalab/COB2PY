@@ -440,6 +440,7 @@ class CustomVisitor(Cobol85Visitor):
 
 	def visitAcceptStatement(self, ctx:Cobol85Parser.AcceptStatementContext):
 		var_accept = ctx.children[1].getText()
+		var_accept = var_accept.replace("-", "_")
 		self.python_code+=Inden.add_indentation(self)
 		self.python_code += f"{var_accept} = input()\n"
 		self.python_code += Inden.add_indentation(self)
@@ -532,6 +533,7 @@ class CustomVisitor(Cobol85Visitor):
 			self.python_code += Inden.add_indentation(self)
 			self.python_code+=f"self.{replacehypwund(ctx.children[0].getText())}()\n"
 			if ctx.getChildCount()!=1:
+				# print(ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText())
 				while ctx.parentCtx.parentCtx.parentCtx.parentCtx.children[i].children[0].getText() != ctx.children[2].getText():
 					i+=1
 					self.python_code += Inden.add_indentation(self)
@@ -562,6 +564,7 @@ class CustomVisitor(Cobol85Visitor):
 
 	# Visit a parse tree produced by Cobol85Parser#performTimes.
 	def visitPerformTimes(self, ctx:Cobol85Parser.PerformTimesContext):
+		# print(ctx.getText(),"-------------------")
 		self.python_code += Inden.add_indentation(self)
 		self.python_code += f"for _ in range({self.getStringGen(ctx.children[0])}):\n"
 		Inden.increase_indentation(self)
@@ -572,7 +575,7 @@ class CustomVisitor(Cobol85Visitor):
 	def visitPerformUntil(self, ctx:Cobol85Parser.PerformUntilContext):
 		if ctx.parentCtx.parentCtx.children[0].getText() != "VARYING" and ctx.parentCtx.parentCtx.children[0].getText() != "AFTER" :
 			self.python_code += Inden.add_indentation(self)
-			if ctx.children[0].getText() == "UNTIL":
+			if ctx.children[0].getText().upper() == "UNTIL":
 				self.python_code += f"while not ( {self.conditionget(ctx.children[1])}):\n"
 			else:
 				self.python_code += f"while not ( {self.conditionget(ctx.children[2])}):\n"
@@ -904,6 +907,7 @@ class CustomVisitor(Cobol85Visitor):
 			set.append(self.setStringGen(child)+get+")\n")
 		return set
 	def getVariableLine(self,ctx:Cobol85Parser.identifier):
+		# print(type(ctx)," ++++++++++++++++++++++++++++++")
 		names = []
 		occurs_nums = []
 		# print(ctx.getText(),"******************************8")
@@ -931,6 +935,9 @@ class CustomVisitor(Cobol85Visitor):
 					start = False
 				else:
 					names.append(child.children[0].children[1].getText().replace('-', '_').upper())
+		elif type(ctx)==Cobol85Parser.CombinableConditionContext:
+			names.append(ctx.getText().replace('-', '_').upper())
+			# print(names,"    names+++++++++++++++++++++++++++++++")
 		# print(occurs_nums,"============iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii=======")
 		# print (names," --000000000000000000000000-------------------\n")
 		output_string = ','.join(occurs_nums)
@@ -991,10 +998,20 @@ class CustomVisitor(Cobol85Visitor):
 			return self.relationConditionget(ctx.children[0])
 		elif type(ctx.children[0])==Cobol85Parser.ClassConditionContext:
 			return self.classConditionget(ctx.children[0])
-		# elif type(ctx.children[0])==Cobol85Parser.ConditionNameReferenceContext:
-		#     return conditionNameConditionget(ctx.children[0])
-		else :
+		elif type(ctx.children[0])==Cobol85Parser.ConditionNameReferenceContext:
+			# print("hi")
+			return self.conditionNameConditionget(ctx.children[0])
+		else:
+			# print()
+			# print(ctx.children[0].getText()," Error in simpleConditionget")
 			return '(' + self.conditionget(ctx.children[1]) + ')'
+	def conditionNameConditionget(self,ctx:Cobol85Parser.conditionNameReference):
+		# print((ctx.children[0].getText()), " 888888888888888888888********8 ")
+		# return "self.get"+ctx.children[0].getText() + "() == True"
+		# print(ctx.parentCtx.parentCtx.getText(), " --------------------")
+		# print(type(ctx.parentCtx.parentCtx), " --------------------")
+		return self.getStringGen(ctx.parentCtx.parentCtx)
+
 	def classConditionget(self,ctx:Cobol85Parser.classCondition):
 		value = self.getStringGen(ctx.children[0])
 		count = ctx.getChildCount()
@@ -1171,4 +1188,25 @@ class CustomVisitor(Cobol85Visitor):
 		# print(brr, " brr===============")
 		return arr,brr
 	
-	
+	def visitInitializeStatement(self, ctx:Cobol85Parser.InitializeStatementContext):
+		identifiers = []
+		for child in ctx.children:
+			if type(child) == Cobol85Parser.IdentifierContext:
+				identifiers.append(child)
+		
+		replacing_phrase = None
+		for child in ctx.children:
+			if type(child) == Cobol85Parser.InitializeReplacingPhraseContext:
+				replacing_phrase = child
+				break
+		
+		for identifier in identifiers:
+			self.python_code += Inden.add_indentation(self)
+			if replacing_phrase:
+				replacing_by = self.visit(replacing_phrase)
+				self.python_code += f"{self.setStringGen(identifier)}{replacing_by})\n"
+			else:
+				self.python_code += f"{self.setStringGen(identifier)}0)\n"  # or "" for strings
+		
+		return self.visitChildren(ctx)
+

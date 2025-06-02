@@ -6,182 +6,57 @@ from Program import Program
 class converted(Program):
 
 	def __init__(self):
-		super().__init__(22)
+		super().__init__(40)
 
-	def getINP(self):
-		return super().getAsString(0, 10)
+	def getNAME(self):
+		return super().getAsString(0, 30)
 
-	def setINP(self, value):
-		return super().setAsString(0, 10, value)
+	def setNAME(self, value):
+		return super().setAsString(0, 30, value)
 
-	def setINP(self, value):
-		return super().setAsString(0, 10, value)
+	def getDisplayNAME(self):
+		return super().getAsString(0, 30)
 
-	def getDisplayINP(self):
-		return super().getAsString(0, 10)
+	def getUNITS(self):
+		return super().getAsInt(30, 4, False, False, False)
 
-	def getC1(self):
-		return super().getAsString(10, 3)
+	def setUNITS(self, value, isRounded=False):
+		return super().setAsInt(30, 4, value, isRounded, False, False, False)
 
-	def setC1(self, value):
-		return super().setAsString(10, 3, value)
+	def getDisplayUNITS(self):
+		return super().getAsDisplayInt(30, 4, False, False, False)
 
-	def getDisplayC1(self):
-		return super().getAsString(10, 3)
+	def getBILL(self):
+		return super().getAsInt(34, 6, False, False, False)
 
-	def getC11(self):
-		return super().getAsString(10, 1)
+	def setBILL(self, value, isRounded=False):
+		return super().setAsInt(34, 6, value, isRounded, False, False, False)
 
-	def setC11(self, value):
-		return super().setAsString(10, 1, value)
-
-	def setC11(self, value):
-		return super().setAsString(10, 1, value)
-
-	def getDisplayC11(self):
-		return super().getAsString(10, 1)
-
-	def getC12(self):
-		return super().getAsString(11, 1)
-
-	def setC12(self, value):
-		return super().setAsString(11, 1, value)
-
-	def setC12(self, value):
-		return super().setAsString(11, 1, value)
-
-	def getDisplayC12(self):
-		return super().getAsString(11, 1)
-
-	def getC13(self):
-		return super().getAsString(12, 1)
-
-	def setC13(self, value):
-		return super().setAsString(12, 1, value)
-
-	def setC13(self, value):
-		return super().setAsString(12, 1, value)
-
-	def getDisplayC13(self):
-		return super().getAsString(12, 1)
-
-	def getC2(self):
-		return super().getAsString(13, 3)
-
-	def setC2(self, value):
-		return super().setAsString(13, 3, value)
-
-	def getDisplayC2(self):
-		return super().getAsString(13, 3)
-
-	def getC21(self):
-		return super().getAsString(13, 1)
-
-	def setC21(self, value):
-		return super().setAsString(13, 1, value)
-
-	def setC21(self, value):
-		return super().setAsString(13, 1, value)
-
-	def getDisplayC21(self):
-		return super().getAsString(13, 1)
-
-	def getC22(self):
-		return super().getAsString(14, 1)
-
-	def setC22(self, value):
-		return super().setAsString(14, 1, value)
-
-	def setC22(self, value):
-		return super().setAsString(14, 1, value)
-
-	def getDisplayC22(self):
-		return super().getAsString(14, 1)
-
-	def getC23(self):
-		return super().getAsString(15, 1)
-
-	def setC23(self, value):
-		return super().setAsString(15, 1, value)
-
-	def setC23(self, value):
-		return super().setAsString(15, 1, value)
-
-	def getDisplayC23(self):
-		return super().getAsString(15, 1)
-
-	def getC3(self):
-		return super().getAsString(16, 3)
-
-	def setC3(self, value):
-		return super().setAsString(16, 3, value)
-
-	def getDisplayC3(self):
-		return super().getAsString(16, 3)
-
-	def getC31(self):
-		return super().getAsString(16, 1)
-
-	def setC31(self, value):
-		return super().setAsString(16, 1, value)
-
-	def setC31(self, value):
-		return super().setAsString(16, 1, value)
-
-	def getDisplayC31(self):
-		return super().getAsString(16, 1)
-
-	def getC32(self):
-		return super().getAsString(17, 1)
-
-	def setC32(self, value):
-		return super().setAsString(17, 1, value)
-
-	def setC32(self, value):
-		return super().setAsString(17, 1, value)
-
-	def getDisplayC32(self):
-		return super().getAsString(17, 1)
-
-	def getC33(self):
-		return super().getAsString(18, 1)
-
-	def setC33(self, value):
-		return super().setAsString(18, 1, value)
-
-	def setC33(self, value):
-		return super().setAsString(18, 1, value)
-
-	def getDisplayC33(self):
-		return super().getAsString(18, 1)
-
-	def getOUT(self):
-		return super().getAsString(19, 3)
-
-	def setOUT(self, value):
-		return super().setAsString(19, 3, value)
-
-	def setOUT(self, value):
-		return super().setAsString(19, 3, value)
-
-	def getDisplayOUT(self):
-		return super().getAsString(19, 3)
+	def getDisplayBILL(self):
+		return super().getAsDisplayInt(34, 6, False, False, False)
 
 	def initialize(self):
-		pass
+		return
 	def main(self):
 		self.initialize()
-		INP = input()
-		self.setINP( INP )
-		self.setC1(self.getINP())
-		INP = input()
-		self.setINP( INP )
-		self.setC2(self.getINP())
-		INP = input()
-		self.setINP( INP )
-		self.setC3(self.getINP())
-		self.setOUT( self.getC11() + self.getC22() + self.getC33())
-		print(self.getDisplayOUT(), sep='')
+		print("Customer Name: ", sep='')
+		NAME = input()
+		self.setNAME( NAME )
+		print("Units Consumed: ", sep='')
+		UNITS = input()
+		self.setUNITS( UNITS )
+		if self.getUNITS() <= 100 :
+			self.setBILL( self.getUNITS()*5)
+		else:
+			if self.getUNITS() <= 200 :
+				self.setBILL( 100*5+(self.getUNITS()-100)*7)
+			else:
+				self.setBILL( 100*5+100*7+(self.getUNITS()-200)*10)
+		print("-----------------------------", sep='')
+		print("Customer: ", self.getDisplayNAME(), sep='')
+		print("Units:    ", self.getDisplayUNITS(), sep='')
+		print("Bill:     Rs", self.getDisplayBILL(), sep='')
+		print("-----------------------------", sep='')
 		exit()
 		exit()
 converted().main()
