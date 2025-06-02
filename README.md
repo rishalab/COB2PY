@@ -32,12 +32,12 @@ python(3) -m venv <path_to_env/env_name>
 
 HTTPS:
 ```bash
-git clone https://github.com/Kowshik0514/cobol_to_python.git
+git clone https://github.com/rishalab/COB2PY.git
 ```
 
 SSH:
 ```bash
-git clone git@github.com:Kowshik0514/cobol_to_python.git
+git clone git@github.com:rishalab/COB2PY.git
 ```
 Navigate to the `cobol_to_python` directory:
 ```bash
@@ -96,7 +96,7 @@ This demonstrates the tool's effectiveness and accuracy for supported COBOL cons
 ---
 
 ## Demo Video
-[Watch the COB2PY Demo Video](https://www.youtube.com/embed/nCmbjJUf78E?rel=0)
+[Watch the COB2PY Demo Video](https://www.youtube.com/embed/26zWETD5m3w?rel=0)
 
 ---
 
